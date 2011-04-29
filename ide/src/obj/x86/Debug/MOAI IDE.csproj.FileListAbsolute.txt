@@ -1,0 +1,35 @@
+C:\Documents and Settings\Patrick\My Documents\git\moai\ide\bin\x86\Debug\Deployment\Completion Cache\Engine.Collections.xml
+C:\Documents and Settings\Patrick\My Documents\git\moai\ide\bin\x86\Debug\Deployment\Completion Cache\Engine.Unmanaged.xml
+C:\Documents and Settings\Patrick\My Documents\git\moai\ide\bin\x86\Debug\Deployment\Completion Cache\Engine.xml
+C:\Documents and Settings\Patrick\My Documents\git\moai\ide\bin\x86\Debug\Deployment\Completion Cache\root.xml
+C:\Documents and Settings\Patrick\My Documents\git\moai\ide\bin\x86\Debug\Deployment\Menus.xml
+C:\Documents and Settings\Patrick\My Documents\git\moai\ide\bin\x86\Debug\Deployment\Start Page\bg.png
+C:\Documents and Settings\Patrick\My Documents\git\moai\ide\bin\x86\Debug\Deployment\Start Page\bullet_blue.png
+C:\Documents and Settings\Patrick\My Documents\git\moai\ide\bin\x86\Debug\Deployment\Start Page\bullet_green.png
+C:\Documents and Settings\Patrick\My Documents\git\moai\ide\bin\x86\Debug\Deployment\Start Page\bullet_orange.png
+C:\Documents and Settings\Patrick\My Documents\git\moai\ide\bin\x86\Debug\Deployment\Start Page\bullet_purple.png
+C:\Documents and Settings\Patrick\My Documents\git\moai\ide\bin\x86\Debug\Deployment\Start Page\bullet_red.png
+C:\Documents and Settings\Patrick\My Documents\git\moai\ide\bin\x86\Debug\Deployment\Start Page\index.htm
+C:\Documents and Settings\Patrick\My Documents\git\moai\ide\bin\x86\Debug\Deployment\Start Page\sbl.png
+C:\Documents and Settings\Patrick\My Documents\git\moai\ide\bin\x86\Debug\Deployment\Start Page\sbr.png
+C:\Documents and Settings\Patrick\My Documents\git\moai\ide\bin\x86\Debug\Deployment\Start Page\stc.png
+C:\Documents and Settings\Patrick\My Documents\git\moai\ide\bin\x86\Debug\Deployment\Start Page\stl.png
+C:\Documents and Settings\Patrick\My Documents\git\moai\ide\bin\x86\Debug\Deployment\Start Page\str.png
+C:\Documents and Settings\Patrick\My Documents\git\moai\ide\bin\x86\Debug\Deployment\Start Page\stylesheet.css
+C:\Documents and Settings\Patrick\My Documents\git\moai\ide\bin\x86\Debug\Deployment\Start Page\title.png
+C:\Documents and Settings\Patrick\My Documents\git\moai\ide\bin\x86\Debug\MOAI.exe
+C:\Documents and Settings\Patrick\My Documents\git\moai\ide\bin\x86\Debug\MOAI.pdb
+C:\Documents and Settings\Patrick\My Documents\git\moai\ide\src\obj\x86\Debug\ResolveAssemblyReference.cache
+C:\Documents and Settings\Patrick\My Documents\git\moai\ide\src\obj\x86\Debug\MOAI.Designers.Code.Designer.resources
+C:\Documents and Settings\Patrick\My Documents\git\moai\ide\src\obj\x86\Debug\MOAI.Designers.Start.Designer.resources
+C:\Documents and Settings\Patrick\My Documents\git\moai\ide\src\obj\x86\Debug\MOAI.IDE.resources
+C:\Documents and Settings\Patrick\My Documents\git\moai\ide\src\obj\x86\Debug\MOAI.ManagementOld.NewImageForm.resources
+C:\Documents and Settings\Patrick\My Documents\git\moai\ide\src\obj\x86\Debug\MOAI.NewSolutionForm.resources
+C:\Documents and Settings\Patrick\My Documents\git\moai\ide\src\obj\x86\Debug\MOAI.Properties.Resources.resources
+C:\Documents and Settings\Patrick\My Documents\git\moai\ide\src\obj\x86\Debug\MOAI.Tools.ConsoleTool.resources
+C:\Documents and Settings\Patrick\My Documents\git\moai\ide\src\obj\x86\Debug\MOAI.Tools.ErrorListTool.resources
+C:\Documents and Settings\Patrick\My Documents\git\moai\ide\src\obj\x86\Debug\MOAI.Tools.OutputTool.resources
+C:\Documents and Settings\Patrick\My Documents\git\moai\ide\src\obj\x86\Debug\MOAI.Tools.SolutionExplorerTool.resources
+C:\Documents and Settings\Patrick\My Documents\git\moai\ide\src\obj\x86\Debug\MOAI IDE.csproj.GenerateResource.Cache
+C:\Documents and Settings\Patrick\My Documents\git\moai\ide\src\obj\x86\Debug\MOAI.exe
+C:\Documents and Settings\Patrick\My Documents\git\moai\ide\src\obj\x86\Debug\MOAI.pdb
