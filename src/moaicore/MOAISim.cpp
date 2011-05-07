@@ -8,6 +8,7 @@
 #include <moaicore/MOAINodeMgr.h>
 #include <moaicore/MOAIProp2D.h>
 #include <moaicore/MOAISim.h>
+#include <moaicore/MOAIDebug.h>
 #include <moaicore/MOAIFmod.h>
 #include <aku/AKU.h>
 
@@ -505,6 +506,7 @@ void MOAISim::RunFile ( cc8* filename ) {
 
 	int status;
 	USLuaStateHandle state = USLuaRuntime::Get ().State ();
+	MOAIDebug::HookLua(state, "127.0.0.1", 7018);
 	
 	status = luaL_loadfile ( state, filename );
 	if ( state.PrintErrors ( status )) return;

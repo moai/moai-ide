@@ -660,6 +660,14 @@
 			Name="sim"
 			>
 			<File
+				RelativePath="..\..\src\moaicore\MOAIDebug.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\moaicore\MOAIDebug.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\moaicore\MOAISim.cpp"
 				>
 			</File>
@@ -1111,6 +1119,10 @@
 				RelativePath="..\..\src\moaicore\MOAIEventSource.h"
 				>
 			</File>
+		</Filter>
+		<Filter
+			Name="json"
+			>
 		</Filter>
 		<File
 			RelativePath="..\..\src\moaicore\moaiconf.h"

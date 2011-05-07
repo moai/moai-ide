@@ -46,6 +46,19 @@ namespace MOAI.Templates
             else
                 p = Project.Create(data.Name, Path.Combine(data.Path, data.Name));
 
+            // Create a new file associated with the project.
+            Management.File f = new Management.File(p, p.ProjectInfo.Directory.FullName, "Main.lua");
+            StreamWriter w = new StreamWriter(f.FileInfo.FullName);
+            w.WriteLine("-- Main game entry point.");
+            w.WriteLine();
+            w.Close();
+
+            // Add the file to the project.
+            p.AddFile(f);
+            
+            // Save the project back to disk.
+            p.Save();
+
             // Add the project to the solution.
             s.Projects.Add(p);
 
