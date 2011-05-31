@@ -18,7 +18,7 @@ class USLuaStateHandle;
 //================================================================//
 class USLuaObject :
 	public virtual USObject {
-private:
+protected:
 
 	USLuaRef		mInstanceTable;		// strong ref to instance table stack
 	USLuaRef		mUserdata;			// weak ref to handle userdata 
@@ -27,6 +27,10 @@ private:
 	//----------------------------------------------------------------//
 	static int		_delete		( lua_State* L );
 	//static int		_tostring	( lua_State* L );
+
+	//----------------------------------------------------------------//
+	void					OnRelease				( u32 refCount );
+	void					OnRetain				( u32 refCount );
 
 public:
 

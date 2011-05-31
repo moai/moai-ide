@@ -17,6 +17,7 @@ include libpng.mk
 include libuslscore.mk
 include libuslsext.mk
 include libmoaicore.mk
+include libssl.mk
 include libcontrib.mk
 
 #================================================================#
@@ -25,7 +26,7 @@ include libcontrib.mk
 include $(CLEAR_VARS)
 
 LOCAL_MODULE := libmoai
-LOCAL_LDLIBS := -lm -llog -ljnigraphics -lGLESv1_CM -ldl -lz
+LOCAL_LDLIBS := -lm -llog -ljnigraphics -lGLESv1_CM -ldl -lz libcrypto.a
 LOCAL_CFLAGS := -DANDROID_NDK -DDISABLE_IMPORTGL
 APP_STL := gnustl_static
 
@@ -65,6 +66,7 @@ $(SRC_PATH)/3rdparty/lpng140 \
 $(SRC_PATH)/3rdparty/curl-7.19.7/include-android\
 $(SRC_PATH)/3rdparty/sqlite-3.6.16 \
 $(SRC_PATH)/3rdparty/tinyxml \
+$(SRC_PATH)/3rdparty/openssl-1.0.0d/include-android \
 
 #----------------------------------------------------------------#
 # included files
@@ -88,6 +90,7 @@ LOCAL_STATIC_LIBRARIES += libsqlite
 LOCAL_STATIC_LIBRARIES += libtinyxml
 LOCAL_STATIC_LIBRARIES += libpng
 LOCAL_STATIC_LIBRARIES += libcurl
+LOCAL_STATIC_LIBRARIES += libssl
 LOCAL_STATIC_LIBRARIES += libcontrib
 
 include $(BUILD_SHARED_LIBRARY)

@@ -91,10 +91,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\libraries\LuaInterface\LuaInterface.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json.Net35, Version=4.0.2.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\libraries\Json.NET\Newtonsoft.Json.Net35.dll</HintPath>
-    </Reference>
     <Reference Include="ScintillaNet, Version=2.2.3581.19319, Culture=neutral, PublicKeyToken=948d6c9751444115, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\libraries\Scintilla.NET\ScintillaNet.dll</HintPath>
@@ -432,33 +428,6 @@
     <Content Include="Deployment\Completion Cache\root.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Deployment\Engines\Win32\Debug\glewinfo.exe">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Deployment\Engines\Win32\Debug\glut32.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Deployment\Engines\Win32\Debug\hexdump.exe">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Deployment\Engines\Win32\Debug\lua-5.1.3.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Deployment\Engines\Win32\Debug\lua.exe">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Deployment\Engines\Win32\Debug\luac.exe">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Deployment\Engines\Win32\Debug\moai-DLL.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Deployment\Engines\Win32\Debug\moai.exe">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Deployment\Engines\Win32\Debug\visualinfo.exe">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <Content Include="Deployment\Menus.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -505,9 +474,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="icon.ico" />
-    <Compile Include="Debug\Communicator.cs" />
-    <Compile Include="Debug\Message.cs" />
-    <Compile Include="Debug\Messages\ExcpInternalMessage.cs" />
     <Compile Include="Management\Path.cs" />
     <None Include="Deployment\Framework\Engine\Area.rs" />
     <None Include="Deployment\Framework\Engine\Audio.rs" />
@@ -610,6 +576,7 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Deployment\Engines\Win32\Debug\" />
     <Folder Include="Deployment\Engines\Win32\Release\" />
     <Folder Include="Deployment\Engines\Win64\Debug\" />
     <Folder Include="Deployment\Engines\Win64\Release\" />

@@ -5,6 +5,7 @@
 #define	MOAIPARTICLESCRIPT_H
 
 class MOAIParticle;
+class MOAIParticleState;
 class MOAIParticleSystem;
 
 //================================================================//
@@ -13,18 +14,22 @@ class MOAIParticleSystem;
 /**	@name	MOAIParticleScript
 	@text	Particle script.
 
-	@const	X_OFF
-	@const	Y_OFF
-	@const	ROT
-	@const	X_SCL
-	@const	Y_SCL
-	@const	R
-	@const	G
-	@const	B
-	@const	A
-	@const	OPACITY
-	@const	GLOW
-	@const	IDX
+	@const	PARTICLE_X
+	@const	PARTICLE_Y
+	@const	PARTICLE_DX
+	@const	PARTICLE_DY
+
+	@const	SPRITE_X_LOC
+	@const	SPRITE_Y_LOC
+	@const	SPRITE_ROT
+	@const	SPRITE_X_SCL
+	@const	SPRITE_Y_SCL
+	@const	SPRITE_RED
+	@const	SPRITE_GREEN
+	@const	SPRITE_BLUE
+	@const	SPRITE_OPACITY
+	@const	SPRITE_GLOW
+	@const	SPRITE_IDX
 */
 class MOAIParticleScript :
 	public virtual USLuaObject {
@@ -32,33 +37,39 @@ private:
 	
 	friend class MOAIParticleState;
 	
+	static const u32 MAX_PARTICLE_REGISTERS = 256;
+	static const u32 PARTICLE_REGISTER_MASK = 0x000000ff;
+	
 	enum {
-		X_OFF,
-		Y_OFF,
-		ROT,
-		X_SCL,
-		Y_SCL,
-		R,
-		G,
-		B,
-		A,
-		OPACITY,
-		GLOW,
-		IDX,
-		TOTAL,
+		SPRITE_X_LOC,
+		SPRITE_Y_LOC,
+		SPRITE_ROT,
+		SPRITE_X_SCL,
+		SPRITE_Y_SCL,
+		SPRITE_RED,
+		SPRITE_GREEN,
+		SPRITE_BLUE,
+		SPRITE_OPACITY,
+		SPRITE_GLOW,
+		SPRITE_IDX,
+		TOTAL_SPRITE_REG,
 	};
 	
 	enum {
 		END = 0,
-		EASE_CONST,
-		EASE_VAR,
-		INIT_CONST,
-		INIT_RAND,
-		INIT_RAND_VEC,
-		RAND_CONST,
-		RAND_VAR,
-		SET_CONST,
+		ADD,
+		CYCLE,
+		DIV,
+		EASE,
+		EASE_DELTA,
+		MUL,
+		RAND,
+		RAND_VEC,
+		SET,
 		SPRITE,
+		SUB,
+		TIME,
+		WRAP,
 	};
 	
 	//----------------------------------------------------------------//
@@ -69,6 +80,7 @@ private:
 		
 		u32		mOpcode;
 		u32		mParams [ MAX_PARAMS ];
+		u8		mTypes [ MAX_PARAMS ];
 		cc8*	mFormat;
 		u32		mSize;
 		
@@ -87,24 +99,41 @@ private:
 	bool mCompiled;
 
 	//----------------------------------------------------------------//
-	static int		_easeConst			( lua_State* L );
-	static int		_easeVar			( lua_State* L );
-	static int		_initConst			( lua_State* L );
-	static int		_initRand			( lua_State* L );
-	static int		_initRandVec		( lua_State* L );
-	static int		_randConst			( lua_State* L );
-	static int		_randVar			( lua_State* L );
-	static int		_setConst			( lua_State* L );
+	static int		_add				( lua_State* L );
+	static int		_cycle				( lua_State* L );
+	static int		_div				( lua_State* L );
+	static int		_ease				( lua_State* L );
+	static int		_easeDelta			( lua_State* L );
+	static int		_mul				( lua_State* L );
+	static int		_packConst			( lua_State* L );
+	static int		_packReg			( lua_State* L );
+	static int		_rand				( lua_State* L );
+	static int		_randVec			( lua_State* L );
+	static int		_set				( lua_State* L );
 	static int		_sprite				( lua_State* L );
+	static int		_sub				( lua_State* L );
+	static int		_time				( lua_State* L );
+	static int		_wrap				( lua_State* L );
 	
 	//----------------------------------------------------------------//
+	static u64		Pack64					( u32 low, u32 hi );
 	Instruction&	PushInstruction			( u32 op, cc8* format );
-	void			PushSprite				( MOAIParticleSystem& system, MOAIParticle& particle, float* registers );
-	void			ResetRegisters			( float* registers );
+	void			PushSprite				( MOAIParticleSystem& system, float* registers );
+	void			ResetRegisters			( float* spriteRegisters, float* particleRegisters );
 
 public:
 	
 	DECL_LUA_FACTORY ( MOAIParticleScript )
+	
+	enum {
+		PARAM_TYPE_FLAG				= 0x00,
+		PARAM_TYPE_CONST			= 0x01,
+		PARAM_TYPE_PARTICLE_REG		= 0x02,
+		PARAM_TYPE_SPRITE_REG		= 0x04,
+		
+		PARAM_TYPE_REG_MASK			= 0x06,
+		PARAM_TYPE_MASK				= 0x07,
+	};
 	
 	//----------------------------------------------------------------//
 	u8*				Compile					();
@@ -112,7 +141,7 @@ public:
 					~MOAIParticleScript		();
 	void			RegisterLuaClass		( USLuaState& state );
 	void			RegisterLuaFuncs		( USLuaState& state );
-	void			Run						( MOAIParticleSystem& system, MOAIParticle& particle );
+	void			Run						( MOAIParticleSystem& system, MOAIParticle& particle, float step );
 	STLString		ToString				();
 };
 

@@ -187,8 +187,19 @@ int USLuaState::DebugCall ( int nArgs, int nResults ) {
 	
 	#ifdef _DEBUG
 	
+		int errIdx = this->AbsIndex ( -( nArgs + 1 ));
+		
 		this->Push ( USLuaRuntime::Get ().mTraceback );
-		int status = lua_pcall ( this->mState, nArgs + 1, nResults, -1 );
+		lua_insert ( this->mState, errIdx );
+
+		int status = lua_pcall ( this->mState, nArgs, nResults, errIdx );
+
+		if ( status ) {
+			lua_settop ( this->mState, errIdx - 1 );
+		}
+		else {
+			lua_remove ( this->mState, errIdx );
+		}
 	
 	#else
 	
@@ -487,6 +498,16 @@ u32 USLuaState::GetValue < u32 >( int idx, u32 value ) {
 }
 
 //----------------------------------------------------------------//
+template <>
+u64 USLuaState::GetValue < u64 >( int idx, u64 value ) {
+
+	if ( this->IsType ( idx, LUA_TNUMBER )) {
+		return ( u64 )lua_tonumber ( this->mState, idx );
+	}
+	return value;
+}
+
+//----------------------------------------------------------------//
 USLuaRef USLuaState::GetWeakRef ( int idx ) {
 
 	USLuaRef ref;
@@ -662,6 +683,12 @@ void USLuaState::Push ( u16 value ) {
 void USLuaState::Push ( u32 value ) {
 
 	lua_pushnumber ( this->mState, value );
+}
+
+//----------------------------------------------------------------//
+void USLuaState::Push ( u64 value ) {
+
+	lua_pushnumber ( this->mState, ( double )value );
 }
 
 //----------------------------------------------------------------//

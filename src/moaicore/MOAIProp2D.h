@@ -7,6 +7,7 @@
 #include <moaicore/MOAIProp.h>
 
 class MOAIDeck;
+class MOAIDeckRemapper;
 class MOAIGrid;
 class MOAILayoutFrame;
 class MOAIOverlapPrim2D;
@@ -22,9 +23,9 @@ class MOAISurfaceSampler2D;
 	
 	@attr	ATTR_INDEX
 	
-	@const	FRAME_FROM_SOURCE
+	@const	FRAME_FROM_DECK
 	@const	FRAME_FROM_PARENT
-	@const	FRAME_FROM_DEFINE
+	@const	FRAME_FROM_SELF
 */
 class MOAIProp2D :
 	public MOAIProp {
@@ -41,16 +42,19 @@ protected:
 		REPEAT_Y	= 0x00000002,
 	};
 	
-	USRef < MOAIDeck >		mDeck;
-	u32						mIndex;
-	USRef < MOAIGrid >		mGrid;
-	u32						mRepeat;
+	USRef < MOAIDeck >			mDeck;
+	USRef < MOAIDeckRemapper >	mRemapper;
+	u32							mIndex;
 	
-	u32				mFrameSource;
-	USRect			mFrame;
+	USRef < MOAIGrid >			mGrid;
+	u32							mRepeat;
+	USVec2D						mGridScale;
+	
+	u32							mFrameSource;
+	USRect						mFrame;
 	
 	USRef < MOAIShader >		mShader;
-	USRef < MOAITransform >		mUVTransform;
+	USRef < MOAITransformBase >	mUVTransform;
 	
 	//----------------------------------------------------------------//
 	static int		_getGrid			( lua_State* L );
@@ -60,15 +64,17 @@ protected:
 	static int		_setFrame			( lua_State* L );
 	static int		_setFrameSource		( lua_State* L );
 	static int		_setGrid			( lua_State* L );
+	static int		_setGridScale		( lua_State* L );
 	static int		_setIndex			( lua_State* L );
+	static int		_setRemapper		( lua_State* L );
 	static int		_setRepeat			( lua_State* L );
 	static int		_setShader			( lua_State* L );
 	static int		_setUVTransform		( lua_State* L );
 	
 	//----------------------------------------------------------------//
 	bool			BindDeck				();
-	void			GetBoundsInRect			( const USRect& rect, USTileCoord& c0, USTileCoord& c1 );
-	void			GetBoundsInView			( USTileCoord& c0, USTileCoord& c1 );
+	void			GetBoundsInRect			( const USRect& rect, USCellCoord& c0, USCellCoord& c1 );
+	void			GetBoundsInView			( USCellCoord& c0, USCellCoord& c1 );
 	void			LoadShader				();
 
 public:

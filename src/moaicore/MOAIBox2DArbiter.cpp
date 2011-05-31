@@ -15,100 +15,46 @@ SUPPRESS_EMPTY_FILE_WARNING
 //================================================================//
 
 //----------------------------------------------------------------//
-/**	@name	countContacts
-	@text	This method isn't supported yet.
+/**	@name	getNormalImpulse
+	@text	Returns total normal impulse for contact.
 	
 	@in		MOAIBox2DArbiter self
-	@out	nil
+	@out	number impulse
 */
-int MOAIBox2DArbiter::_countContacts ( lua_State* L ) {
+int MOAIBox2DArbiter::_getNormalImpulse ( lua_State* L ) {
 	MOAI_LUA_SETUP ( MOAIBox2DArbiter, "U" )
-
-	// TODO: Box2D
-	return 0;
+	
+	state.Push ( self->mNormalImpulse );
+	return 1;
 }
 
 //----------------------------------------------------------------//
-/**	@name	getContactDepth
-	@text	This method isn't supported yet.
+/**	@name	getTangentImpulse
+	@text	Returns total tangent impulse for contact.
 	
 	@in		MOAIBox2DArbiter self
-	@out	nil
+	@out	number impulse
 */
-int MOAIBox2DArbiter::_getContactDepth ( lua_State* L ) {
-	MOAI_LUA_SETUP ( MOAIBox2DArbiter, "UN" )
-
-	// TODO: Box2D
-	return 0;
-}
-
-//----------------------------------------------------------------//
-/**	@name	getContactNormal
-	@text	This method isn't supported yet.
-	
-	@in		MOAIBox2DArbiter self
-	@out	nil
-*/
-int MOAIBox2DArbiter::_getContactNormal ( lua_State* L ) {
-	MOAI_LUA_SETUP ( MOAIBox2DArbiter, "UN" )
-
-	// TODO: Box2D
-	return 0;
-}
-
-//----------------------------------------------------------------//
-/**	@name	getContactPoint
-	@text	This method isn't supported yet.
-	
-	@in		MOAIBox2DArbiter self
-	@out	nil
-*/
-int MOAIBox2DArbiter::_getContactPoint ( lua_State* L ) {
-	MOAI_LUA_SETUP ( MOAIBox2DArbiter, "UN" )
-
-	// TODO: Box2D
-	return 0;
-}
-
-//----------------------------------------------------------------//
-/**	@name	getTotalImpulse
-	@text	This method isn't supported yet.
-	
-	@in		MOAIBox2DArbiter self
-	@out	nil
-*/
-int MOAIBox2DArbiter::_getTotalImpulse ( lua_State* L ) {
+int MOAIBox2DArbiter::_getTangentImpulse ( lua_State* L ) {
 	MOAI_LUA_SETUP ( MOAIBox2DArbiter, "U" )
-
-	// TODO: Box2D
-	return 0;
+	
+	state.Push ( self->mTangentImpulse );
+	return 1;
 }
 
 //----------------------------------------------------------------//
-/**	@name	getTotalImpulseWithFriction
-	@text	This method isn't supported yet.
+/**	@name	setContactEnabled
+	@text	Enabled or disable the contact.
 	
 	@in		MOAIBox2DArbiter self
-	@out	nil
+	@out	number impulse
 */
-int MOAIBox2DArbiter::_getTotalImpulseWithFriction ( lua_State* L ) {
+int MOAIBox2DArbiter::_setContactEnabled ( lua_State* L ) {
 	MOAI_LUA_SETUP ( MOAIBox2DArbiter, "U" )
-
-	// TODO: Box2D
-	return 0;
-}
-
-//----------------------------------------------------------------//
-/**	@name	isFirstContact
-	@text	This method isn't supported yet.
 	
-	@in		MOAIBox2DArbiter self
-	@out	nil
-*/
-int MOAIBox2DArbiter::_isFirstContact ( lua_State* L ) {
-	MOAI_LUA_SETUP ( MOAIBox2DArbiter, "U" )
-
-	// TODO: Box2D
+	bool enabled = state.GetValue < bool >( 2, false );
+	self->mContact->SetEnabled ( enabled );
+	
 	return 0;
 }
 
@@ -135,14 +81,17 @@ void MOAIBox2DArbiter::BeginContact ( b2Contact* contact ) {
 	this->mContact = contact;
 	this->mImpulse = 0;
 	
+	this->mNormalImpulse = 0.0f;
+	this->mTangentImpulse = 0.0f;
+	
 	b2Fixture* fixtureA = contact->GetFixtureA ();
 	b2Fixture* fixtureB = contact->GetFixtureB ();
 	
 	MOAIBox2DFixture* moaiFixtureA = ( MOAIBox2DFixture* )fixtureA->GetUserData ();
 	MOAIBox2DFixture* moaiFixtureB = ( MOAIBox2DFixture* )fixtureB->GetUserData ();
 	
-	moaiFixtureA->BeginContact ( moaiFixtureB, this );
-	moaiFixtureB->BeginContact ( moaiFixtureA, this );
+	moaiFixtureA->HandleCollision ( BEGIN, moaiFixtureB, this );
+	moaiFixtureB->HandleCollision ( BEGIN, moaiFixtureA, this );
 }
 
 //----------------------------------------------------------------//
@@ -157,8 +106,8 @@ void MOAIBox2DArbiter::EndContact ( b2Contact* contact ) {
 	MOAIBox2DFixture* moaiFixtureA = ( MOAIBox2DFixture* )fixtureA->GetUserData ();
 	MOAIBox2DFixture* moaiFixtureB = ( MOAIBox2DFixture* )fixtureB->GetUserData ();
 	
-	moaiFixtureA->EndContact ( moaiFixtureB, this );
-	moaiFixtureB->EndContact ( moaiFixtureA, this );
+	moaiFixtureA->HandleCollision ( END, moaiFixtureB, this );
+	moaiFixtureB->HandleCollision ( END, moaiFixtureA, this );
 }
 
 //----------------------------------------------------------------//
@@ -187,8 +136,19 @@ void MOAIBox2DArbiter::PostSolve ( b2Contact* contact, const b2ContactImpulse* i
 	MOAIBox2DFixture* moaiFixtureA = ( MOAIBox2DFixture* )fixtureA->GetUserData ();
 	MOAIBox2DFixture* moaiFixtureB = ( MOAIBox2DFixture* )fixtureB->GetUserData ();
 	
-	moaiFixtureA->PostSolve ( moaiFixtureB, this );
-	moaiFixtureB->PostSolve ( moaiFixtureA, this );
+	b2Manifold* manifold = contact->GetManifold ();
+	u32 totalPoints = manifold->pointCount;
+	
+	this->mNormalImpulse = 0.0f;
+	this->mTangentImpulse = 0.0f;
+	
+	for ( u32 i = 0; i < totalPoints; ++i ) {
+		this->mNormalImpulse += impulse->normalImpulses [ i ];
+		this->mTangentImpulse += impulse->tangentImpulses [ i ];
+	}
+	
+	moaiFixtureA->HandleCollision ( POST_SOLVE, moaiFixtureB, this );
+	moaiFixtureB->HandleCollision ( POST_SOLVE, moaiFixtureA, this );
 }
 
 //----------------------------------------------------------------//
@@ -204,8 +164,8 @@ void MOAIBox2DArbiter::PreSolve ( b2Contact* contact, const b2Manifold* oldManif
 	MOAIBox2DFixture* moaiFixtureA = ( MOAIBox2DFixture* )fixtureA->GetUserData ();
 	MOAIBox2DFixture* moaiFixtureB = ( MOAIBox2DFixture* )fixtureB->GetUserData ();
 	
-	moaiFixtureA->PreSolve ( moaiFixtureB, this );
-	moaiFixtureB->PreSolve ( moaiFixtureA, this );
+	moaiFixtureA->HandleCollision ( PRE_SOLVE, moaiFixtureB, this );
+	moaiFixtureB->HandleCollision ( PRE_SOLVE, moaiFixtureA, this );
 }
 
 //----------------------------------------------------------------//
@@ -229,13 +189,10 @@ void MOAIBox2DArbiter::RegisterLuaClass ( USLuaState& state ) {
 void MOAIBox2DArbiter::RegisterLuaFuncs ( USLuaState& state ) {
 
 	luaL_Reg regTable [] = {
-		{ "countContacts",					_countContacts },
-		{ "getContactDepth",				_getContactDepth },
-		{ "getContactNormal",				_getContactNormal },
-		{ "getContactPoint",				_getContactPoint },
-		{ "getTotalImpulse",				_getTotalImpulse },
-		{ "getTotalImpulseWithFriction",	_getTotalImpulseWithFriction },
-		{ "isFirstContact",					_isFirstContact },
+		{ "getNormalImpulse",			_getNormalImpulse },
+		{ "getTangentImpulse",			_getTangentImpulse },
+		{ "setContactEnabled",			_setContactEnabled },
+		{ "new",						_new },
 		{ NULL, NULL }
 	};
 	

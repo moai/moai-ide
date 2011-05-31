@@ -335,7 +335,7 @@ void Java_com_moai_MoaiView_InitializeAku
 
 extern "C"
 void Java_com_moai_MoaiView_Run
-	(JNIEnv *env, jclass clazz, jstring fileName)
+	(JNIEnv *env, jclass clazz, jstring fileName, jint width, jint height)
 {
 	__android_log_write(ANDROID_LOG_ERROR,"MoaiJNI","Entering Run Func");
 	char buf[512];
@@ -349,8 +349,9 @@ void Java_com_moai_MoaiView_Run
 	 strcpy(buf, str);
     env->ReleaseStringUTFChars(fileName, str);
 
-
+	//USDeviceTime::ResetTime();
 	AKUSetContext ( mAku );
+	AKUResize(width, height);
 	AKURunScript (buf);
 	
 }
@@ -359,13 +360,13 @@ void Java_com_moai_MoaiView_FinalizeAku
 	(JNIEnv *env, jclass clazz)
 {
 	AKUFinalize();
+	//importGLDeinit();
 }
 extern "C"
 void Java_com_moai_MoaiView_DeinitializeAku
 (JNIEnv *env, jclass clazz)
 {
 	AKUDeleteContext ( mAku );
-	importGLDeinit();
 }
 extern "C"
 void Java_com_moai_MoaiView_onDraw

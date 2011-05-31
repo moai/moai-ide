@@ -27,6 +27,8 @@ TextureAtlas.prototype.addRect = function ( list, name, width, height ) {
 	
 	rect.name = name;
 	list.push ( rect );
+	
+	return rect;
 }
 
 //----------------------------------------------------------------//
@@ -110,14 +112,13 @@ TextureAtlas.prototype.createTextureAtlasDoc = function () {
 		var idx = library.findItemIndex ( rect.name );
 		var item = library.items [ idx ];
 		
-		var loc = {};
-		loc.x = rect.x0 + ( rect.width * 0.5 );
-		loc.y = rect.y0 + ( rect.height * 0.5 );
+		atlasDoc.addItem ({ x:0, y:0 }, item );
 		
-		atlasDoc.addItem ( loc, item );
+		var element = atlasDoc.selection [ 0 ];
+		element.x = rect.x0 + ( rect.width * 0.5 );
+		element.y = rect.y0 + ( rect.height * 0.5 );
 		
 		if ( rect.isRotated ) {
-			var element = atlasDoc.selection [ 0 ];
 			element.setTransformationPoint ({ x:0, y:0 });
 			element.rotation = 90;
 		}
@@ -151,6 +152,8 @@ TextureAtlas.prototype.getBaseHeight = function ( skyline, i, width ) {
 }
 
 //----------------------------------------------------------------//
+// This generates a list of packed rects based on the current document's library.
+// The rects represent the library items as laid out into a pow2 image.
 TextureAtlas.prototype.getPackListForLibrary = function () {
 
 	var list = new Array ();
@@ -173,10 +176,31 @@ TextureAtlas.prototype.getPackListForLibrary = function () {
 		var frame = layer.frames [ 0 ];
 		var element = frame.elements [ 0 ];
 		
-		var width = Math.ceil ( element.width );
-		var height = Math.ceil ( element.height );
+		var width = element.width;
+		var height = element.height;
 		
-		this.addRect ( list, item.name, width + 2, height + 2 );
+		var rect = {};
+		rect.name = item.name;
+		
+		if ( height > width ) {
+			rect.width = height;
+			rect.height = width;
+			rect.isRotated = true;
+		}
+		else {
+			rect.width = width;
+			rect.height = height;
+		}
+		
+		// store the original width and height
+		rect.originalWidth = rect.width;
+		rect.originalHeight = rect.height;
+		
+		// pad the width and height to a pixel boundary
+		rect.width = Math.ceil ( rect.width ) + 2;
+		rect.height = Math.ceil ( rect.height ) + 2;
+		
+		list.push ( rect );
 		
 		scratchDoc.selectAll ();
 		scratchDoc.deleteSelection ();
@@ -184,7 +208,30 @@ TextureAtlas.prototype.getPackListForLibrary = function () {
 	
 	fl.closeDocument ( scratchDoc, false );
 	
-	return this.packRects ( list );
+	// pack the rects
+	list = this.packRects ( list );
+	
+	// remove the padding and adjust the final rect
+	for ( var i = 0; i < list.length; i++ ) {
+		var rect = list [ i ];
+		
+		// restore the original dimensions 
+		rect.width = rect.originalWidth;
+		rect.height = rect.originalHeight;
+		
+		// clear out the temp variables
+		rect.originalWidth = null;
+		rect.originalHeight = null;
+		
+		// offset the rect
+		rect.x0 += 1;
+		rect.y0 += 1;
+		
+		// set up the max dimensions
+		rect.x1 = rect.x0 + rect.width;
+		rect.y1 = rect.y0 + rect.height;
+	}
+	return list;
 }
 
 //----------------------------------------------------------------//
@@ -237,7 +284,7 @@ TextureAtlas.prototype.newSpan = function ( x0, x1, y ) {
 //----------------------------------------------------------------//
 TextureAtlas.prototype.packRects = function ( list ) {
 
-	list.sort ( this.sortRectByHeight );
+	list.sort ( this.sortRectByWidth );
 	list.reverse ();
 	
 	var size = 1;
@@ -257,7 +304,7 @@ TextureAtlas.prototype.packRects = function ( list ) {
 			if ( !this.placeRect ( skyline, rect, size )) {
 				packed = new Array ();
 				break;
-			}			
+			}
 			skyline = this.rebuildTextureAtlas ( skyline, rect );
 			packed.push ( rect );
 		}
@@ -293,8 +340,8 @@ TextureAtlas.prototype.placeRect = function ( skyline, rect, size ) {
 		
 	rect.x0 = bestX;
 	rect.y0 = bestY;
-	rect.x1 = bestX + rect.width;
-	rect.y1 = bestY + rect.height;
+	rect.x1 = rect.x0 + rect.width;
+	rect.y1 = rect.y0 + rect.height;
 	
 	return true;
 }
@@ -351,10 +398,8 @@ TextureAtlas.prototype.rebuildTextureAtlas = function ( list, rect ) {
 }
 
 //----------------------------------------------------------------//
-TextureAtlas.prototype.sortRectByHeight = function ( a, b ) {
+TextureAtlas.prototype.sortRectByWidth = function ( a, b ) {
 
-	if ( a.height == b.height ) return 0;
-	return a.height < b.height ? -1 : 1;
+	if ( a.width == b.width ) return 0;
+	return a.width < b.width ? -1 : 1;
 }
-
-

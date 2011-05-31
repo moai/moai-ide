@@ -61,10 +61,7 @@ private:
 	void					EnqueueParticle			( MOAIParticle& particle );
 	MOAIParticleSprite*		GetTopSprite			();
 	MOAIParticleState*		GetState				( u32 id );
-	void					LoadParticle			( u32 particleID, float registers []);
 	void					OnUpdate				( float step );
-	u32						PackRegisterIDs			( u8 r0, u8 r1, u8 r2, u8 r3 );
-	void					StoreParticle			( u32 particleID, float registers []);
 
 public:
 	

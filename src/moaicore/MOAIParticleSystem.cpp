@@ -347,7 +347,7 @@ void MOAIParticleSystem::Draw () {
 		drawingMtx = this->GetLocalToWorldMtx ();
 		drawingMtx.Append ( spriteMtx );
 		
-		this->mDeck->Draw ( drawingMtx, ( u32 )sprite.mGfxID );
+		this->mDeck->Draw ( drawingMtx, ( u32 )sprite.mGfxID, this->mRemapper );
 	}
 }
 
@@ -422,11 +422,11 @@ MOAIParticleSystem::~MOAIParticleSystem () {
 //----------------------------------------------------------------//
 void MOAIParticleSystem::OnUpdate ( float step ) {
 
-	// bail if no particles
-	if ( !this->mHead ) return;
-
 	// clear out the sprites
 	this->mSpriteTop = 0;
+
+	// bail if no particles
+	if ( !this->mHead ) return;
 
 	// grab the head then clear out the queue
 	MOAIParticle* cursor = this->mHead;
@@ -483,9 +483,16 @@ bool MOAIParticleSystem::PushParticle ( float x, float y, float dx, float dy ) {
 	
 	if ( particle ) {
 		
-		particle->mLoc.Init ( x, y );
-		particle->mVelocity.Init ( dx, dy );
-		particle->mOffset.Init ( 0.0f, 0.0f );
+		float* r = particle->mData;
+		
+		r [ MOAIParticle::PARTICLE_X ] = x;
+		r [ MOAIParticle::PARTICLE_Y ] = y;
+		r [ MOAIParticle::PARTICLE_DX ] = dx;
+		r [ MOAIParticle::PARTICLE_DY ] = dy;
+		
+		for ( u32 i = MOAIParticle::TOTAL_PARTICLE_REG; i < this->mParticleSize; ++i ) {
+			r [ i ] = 0.0f;
+		}
 		
 		state->InitParticle ( *this, *particle );
 		this->EnqueueParticle ( *particle );
@@ -549,6 +556,8 @@ void MOAIParticleSystem::RegisterLuaFuncs ( USLuaState& state ) {
 //----------------------------------------------------------------//
 void MOAIParticleSystem::ReserveParticles ( u32 maxParticles, u32 particleSize ) {
 	
+	particleSize += MOAIParticle::TOTAL_PARTICLE_REG;
+	
 	this->mHead = 0;
 	this->mTail = 0;
 	this->mFree = 0;
@@ -557,6 +566,7 @@ void MOAIParticleSystem::ReserveParticles ( u32 maxParticles, u32 particleSize )
 	
 	this->mParticles.Init ( maxParticles );
 	this->mParticleData.Init ( maxParticles * particleSize );
+	this->mParticleData.Fill ( 0.0f );
 	
 	for ( u32 i = 0; i < maxParticles; ++i ) {
 		MOAIParticle& particle = this->mParticles [ i ];

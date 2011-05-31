@@ -40,27 +40,19 @@ namespace MOAI.Debug
             if (this.m_OutputTool != null)
                 this.m_OutputTool.ClearLog();
 
-            // Start the debug listening service.
-            Communicator communicator = new Communicator(7018);
-            communicator.MessageArrived += new EventHandler<MessageEventArgs>((sender, e) =>
-            {
-                MessageBox.Show(e.Message.ID);
-            });
-
             Process proc = new Process();
             /*if (File.Exists("C:\\Windows\\system32\\vsjitdebugger.exe"))
             {
                 proc.StartInfo.FileName = "C:\\Windows\\system32\\vsjitdebugger.exe";
-                proc.StartInfo.Arguments = '"' + Path.Combine(Program.Manager.Settings["RootPath"], "Engines\\Win32\\Debug\\moai.exe") + '"';
+                proc.StartInfo.Arguments = '"' + Path.Combine(Program.Manager.Settings["RootPath"], "Engines\\Win32\\Debug\\Roket3D.exe") + '"';
             }
             else*/
-            proc.StartInfo.FileName = Path.Combine(Program.Manager.Settings["RootPath"], "Engines\\Win32\\Debug\\moai.exe");
+                proc.StartInfo.FileName = Path.Combine(Program.Manager.Settings["RootPath"], "Engines\\Win32\\Debug\\Roket3D.exe");
 
             proc.StartInfo.WorkingDirectory = project.ProjectInfo.Directory.FullName;
             proc.StartInfo.UseShellExecute = false;
             proc.StartInfo.RedirectStandardOutput = true;
-            proc.StartInfo.Arguments = "Main.lua";
-            //proc.OutputDataReceived += new DataReceivedEventHandler(proc_OutputDataReceived);
+            proc.OutputDataReceived += new DataReceivedEventHandler(proc_OutputDataReceived);
             proc.EnableRaisingEvents = true;
             proc.Exited += new EventHandler(proc_Exited);
 

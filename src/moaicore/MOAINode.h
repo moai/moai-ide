@@ -72,7 +72,6 @@ private:
 	static int	_setDependency		( lua_State* L );
 	
 	//----------------------------------------------------------------//
-	void			Activate				( MOAINode& activator );
 	void			ActivateOnLink			( MOAINode& srcNode );
 	MOAIAttrLink*	AffirmAttrLink			( int attrID, MOAINode* srcNode, int srcAttrID );
 	MOAIAttrLink*	AffirmDependency		( MOAINode& srcNode );
@@ -89,6 +88,44 @@ private:
 protected:
 
 	//----------------------------------------------------------------//
+	template < typename TYPE >
+	void SetDependentMember ( USRef < TYPE >& member, TYPE* ref ) {
+		
+		if ( member == ref ) return;
+	
+		if ( member ) {
+			this->ClearDependency ( *member );
+		}
+		
+		member = ref;
+		
+		if ( ref ) {
+			this->SetDependency ( *ref );
+		}
+		
+		this->ScheduleUpdate ();
+	}
+
+	//----------------------------------------------------------------//
+	template < typename TYPE >
+	void SetDependentMember ( USWeak < TYPE >& member, TYPE* ref ) {
+		
+		if ( member == ref ) return;
+	
+		if ( member ) {
+			this->ClearDependency ( *member );
+		}
+		
+		member = ref;
+		
+		if ( ref ) {
+			this->SetDependency ( *ref );
+		}
+		
+		this->ScheduleUpdate ();
+	}
+
+	//----------------------------------------------------------------//
 	virtual void	OnDepNodeUpdate		();
 
 public:
@@ -100,6 +137,7 @@ public:
 	static const u32 NULL_ATTR = 0xffffffff;
 	
 	//----------------------------------------------------------------//
+	void			Activate				( MOAINode& activator );
 	void			ClearDependency			( MOAINode& srcNode );
 	void			ClearAttrLink			( int attrID );
 	void			ForceUpdate				();

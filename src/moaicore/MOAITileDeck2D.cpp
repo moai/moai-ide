@@ -2,6 +2,7 @@
 // http://getmoai.com
 
 #include "pch.h"
+#include <moaicore/MOAIDeckRemapper.h>
 #include <moaicore/MOAIGrid.h>
 #include <moaicore/MOAILogMessages.h>
 #include <moaicore/MOAIProp.h>
@@ -48,20 +49,38 @@ int MOAITileDeck2D::_setRect ( lua_State* L ) {
 	@in		MOAITileDeck2D self
 	@in		number width			Width of the tile deck in tiles.
 	@in		number height			Height of the tile deck in tiles.
-	@opt	number tileWidth		Width of individual tile in UV space. Defaults to 1 / width.
-	@opt	number tileHeight		Height of individual tile in UV space. Defaults to 1 / height.
+	@opt	number cellWidth		Width of individual tile in UV space. Defaults to 1 / width.
+	@opt	number cellHeight		Height of individual tile in UV space. Defaults to 1 / height.
+	@opt	number xOff				X offset of the tile from the cell.
+	@opt	number yOff				Y offset of the tile from the cell.
+	@opt	number tileWidth		Default value is cellWidth.
+	@opt	number tileHeight		Default value is cellHeight.
 	@out	nil
 */
 int	MOAITileDeck2D::_setSize ( lua_State* L ) {
 	MOAI_LUA_SETUP ( MOAITileDeck2D, "UNN" )
 	
-	u32 width = state.GetValue < u32 >( 2, 0 );
-	u32 height = state.GetValue < u32 >( 3, 0 );
-	float tileWidth = state.GetValue < float >( 4, 1.0f / ( float )width );
-	float tileHeight = state.GetValue < float >( 5, 1.0f / ( float )height );
+	u32 width			= state.GetValue < u32 >( 2, 0 );
+	u32 height			= state.GetValue < u32 >( 3, 0 );
+	
+	float cellWidth		= state.GetValue < float >( 4, 1.0f / ( float )width );
+	float cellHeight	= state.GetValue < float >( 5, 1.0f / ( float )height );
+	
+	float xOff			= state.GetValue < float >( 6, 0.0f );
+	float yOff			= state.GetValue < float >( 7, 0.0f );
+	
+	float tileWidth		= state.GetValue < float >( 8, cellWidth );
+	float tileHeight	= state.GetValue < float >( 9, cellHeight );
 	
 	self->SetWidth ( width );
 	self->SetHeight ( height );
+	
+	self->SetCellWidth ( cellWidth );
+	self->SetCellHeight ( cellHeight );
+	
+	self->SetXOff ( xOff );
+	self->SetYOff ( yOff );
+	
 	self->SetTileWidth ( tileWidth );
 	self->SetTileHeight ( tileHeight );
 	
@@ -105,9 +124,10 @@ bool MOAITileDeck2D::Bind () {
 //----------------------------------------------------------------//
 void MOAITileDeck2D::DrawPatch ( u32 idx, float xOff, float yOff, float xScale, float yScale ) {
 	
-	idx = idx - 1;		
+	idx = idx - 1;
 	
-	USRect uvRect = this->GetTileRect ( idx );
+	USCellCoord coord = this->GetCellCoord ( idx );
+	USRect uvRect = this->GetTileRect ( coord );
 	uvRect.FlipY ();
 	
 	USGLQuad quad;
@@ -117,8 +137,9 @@ void MOAITileDeck2D::DrawPatch ( u32 idx, float xOff, float yOff, float xScale, 
 }
 
 //----------------------------------------------------------------//
-USRect MOAITileDeck2D::GetBounds ( u32 idx ) {
+USRect MOAITileDeck2D::GetBounds ( u32 idx, MOAIDeckRemapper* remapper ) {
 	UNUSED ( idx );
+	UNUSED ( remapper );
 
 	return this->mRect;
 }

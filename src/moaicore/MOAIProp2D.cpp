@@ -3,6 +3,7 @@
 
 #include "pch.h"
 #include <moaicore/MOAIDeck.h>
+#include <moaicore/MOAIDeckRemapper.h>
 #include <moaicore/MOAIDebugLines.h>
 #include <moaicore/MOAIGrid.h>
 #include <moaicore/MOAILayoutFrame.h>
@@ -78,7 +79,7 @@ int	MOAIProp2D::_inside ( lua_State* L ) {
 	@out	nil
 */
 int MOAIProp2D::_setDeck ( lua_State* L ) {
-	MOAI_LUA_SETUP ( MOAIProp2D, "UU" )
+	MOAI_LUA_SETUP ( MOAIProp2D, "U" )
 
 	self->mDeck = state.GetLuaObject < MOAIDeck >( 2 );
 
@@ -112,6 +113,7 @@ int MOAIProp2D::_setFrame ( lua_State* L ) {
 	float y1	= state.GetValue < float >( 5, 0.0f );
 	
 	self->mFrame.Init ( x0, y0, x1, y1 );
+	self->ScheduleUpdate ();
 	
 	return 0;
 }
@@ -134,6 +136,7 @@ int MOAIProp2D::_setFrameSource ( lua_State* L ) {
 	MOAI_LUA_SETUP ( MOAIProp2D, "UN" )
 
 	self->mFrameSource = state.GetValue < u32 >( 2, self->mFrameSource );
+	self->ScheduleUpdate ();
 
 	return 0;
 }
@@ -148,12 +151,30 @@ int MOAIProp2D::_setFrameSource ( lua_State* L ) {
 	@out	nil
 */
 int MOAIProp2D::_setGrid ( lua_State* L ) {
-	MOAI_LUA_SETUP ( MOAIProp2D, "UU" )
+	MOAI_LUA_SETUP ( MOAIProp2D, "U" )
 	
 	MOAIGrid* grid = state.GetLuaObject < MOAIGrid >( 2 );
 	if ( !grid ) return 0;
 	
 	self->mGrid = grid;
+	
+	return 0;
+}
+
+//----------------------------------------------------------------//
+/**	@name	setGridScale
+	@text	Scale applied to deck items before rendering to grid cell.
+	
+	@in		MOAIProp2D self
+	@opt	number xScale		Default value is 1.
+	@opt	number yScale		Default value is 1.
+	@out	nil
+*/
+int MOAIProp2D::_setGridScale ( lua_State* L ) {
+	MOAI_LUA_SETUP ( MOAIProp2D, "U" )
+
+	self->mGridScale.mX = state.GetValue < float >( 2, 1.0f );
+	self->mGridScale.mY = state.GetValue < float >( 3, 1.0f );
 	
 	return 0;
 }
@@ -172,6 +193,17 @@ int MOAIProp2D::_setIndex ( lua_State* L ) {
 	self->mIndex = state.GetValue < u32 >( 2, 1 );
 	self->ScheduleUpdate ();
 
+	return 0;
+}
+
+//----------------------------------------------------------------//
+// TODO: doxygen
+int MOAIProp2D::_setRemapper ( lua_State* L ) {
+	MOAI_LUA_SETUP ( MOAIProp2D, "U" )
+
+	MOAIDeckRemapper* remapper = state.GetLuaObject < MOAIDeckRemapper >( 2 );
+	self->SetDependentMember < MOAIDeckRemapper >( self->mRemapper, remapper );
+	
 	return 0;
 }
 
@@ -210,16 +242,10 @@ int MOAIProp2D::_setRepeat ( lua_State* L ) {
 */
 int MOAIProp2D::_setShader ( lua_State* L ) {
 	MOAI_LUA_SETUP ( MOAIProp2D, "U" )
-
-	if ( self->mShader ) {
-		self->ClearDependency ( *self->mShader );
-	}
-
-	self->mShader = state.GetLuaObject < MOAIShader >( 2 );
 	
-	if ( self->mShader ) {
-		self->SetDependency ( *self->mShader );
-	}
+	MOAIShader* shader = state.GetLuaObject < MOAIShader >( 2 );
+	self->SetDependentMember < MOAIShader >( self->mShader, shader );
+	
 	return 0;
 }
 
@@ -228,13 +254,14 @@ int MOAIProp2D::_setShader ( lua_State* L ) {
 	@text	Sets or clears the prop's UV transform.
 	
 	@in		MOAIProp2D self
-	@opt	MOAITransform transform	Default value is nil.
+	@opt	MOAITransformBase transform	Default value is nil.
 	@out	nil
 */
 int MOAIProp2D::_setUVTransform ( lua_State* L ) {
 	MOAI_LUA_SETUP ( MOAIProp2D, "U" )
-	
-	self->mUVTransform = state.GetLuaObject < MOAITransform >( 2 );
+
+	MOAITransformBase* transform = state.GetLuaObject < MOAITransformBase >( 2 );
+	self->SetDependentMember < MOAITransformBase >( self->mUVTransform, transform );
 
 	return 0;
 }
@@ -280,14 +307,14 @@ void MOAIProp2D::Draw () {
 	
 	if ( this->mGrid ) {
 	
-		USTileCoord c0;
-		USTileCoord c1;
+		USCellCoord c0;
+		USCellCoord c1;
 		
 		this->GetBoundsInView ( c0, c1 );
-		this->mDeck->Draw ( this->GetLocalToWorldMtx (), *this->mGrid, c0, c1 );
+		this->mDeck->Draw ( this->GetLocalToWorldMtx (), *this->mGrid, this->mRemapper, this->mGridScale, c0, c1 );
 	}
 	else {
-		this->mDeck->Draw ( this->GetLocalToWorldMtx (), this->mIndex );
+		this->mDeck->Draw ( this->GetLocalToWorldMtx (), this->mIndex, this->mRemapper );
 	}
 	
 	MOAILayoutFrame* parentFrame = USCast < MOAILayoutFrame >( this->mParent );
@@ -307,7 +334,7 @@ void MOAIProp2D::DrawDebug () {
 			debugLines.SetWorldMtx ( this->GetLocalToWorldMtx ());
 			debugLines.SetPenSpace ( MOAIDebugLines::MODEL_SPACE );
 			
-			USRect bounds = this->mDeck->GetBounds ( this->mIndex );
+			USRect bounds = this->mDeck->GetBounds ( this->mIndex, this->mRemapper );
 			debugLines.DrawRect ( bounds );
 			
 			if ( this->mGrid ) {
@@ -315,11 +342,11 @@ void MOAIProp2D::DrawDebug () {
 				debugLines.SetPenColor ( 0x40ffffff );
 				debugLines.SetPenWidth ( 2 );
 		
-				USTileCoord c0;
-				USTileCoord c1;
+				USCellCoord c0;
+				USCellCoord c1;
 				
 				this->GetBoundsInView ( c0, c1 );
-				this->mDeck->DrawDebug ( this->GetLocalToWorldMtx (), *this->mGrid, c0, c1 );
+				this->mDeck->DrawDebug ( this->GetLocalToWorldMtx (), *this->mGrid, this->mRemapper, this->mGridScale, c0, c1 );
 			}
 		}
 	}
@@ -333,7 +360,7 @@ void MOAIProp2D::DrawDebug () {
 	debugLines.SetPenWidth ( 2 );
 	
 	if ( this->mDeck ) {
-		this->mDeck->DrawDebug ( this->GetLocalToWorldMtx (), this->mIndex );
+		this->mDeck->DrawDebug ( this->GetLocalToWorldMtx (), this->mIndex, this->mRemapper );
 	}
 	
 	if ( debugLines.IsVisible ( MOAIDebugLines::PARTITION_CELLS ) || debugLines.IsVisible ( MOAIDebugLines::PARTITION_PADDED_CELLS )) {
@@ -372,33 +399,33 @@ void MOAIProp2D::GatherSurfaces ( MOAISurfaceSampler2D& sampler ) {
 		
 		USRect localRect = sampler.GetLocalRect ();
 		
-		USTileCoord c0;
-		USTileCoord c1;
+		USCellCoord c0;
+		USCellCoord c1;
 		
 		this->GetBoundsInRect ( localRect, c0, c1 );
-		this->mDeck->GatherSurfaces ( *this->mGrid, c0, c1, sampler );
+		this->mDeck->GatherSurfaces ( *this->mGrid, this->mRemapper, this->mGridScale, c0, c1, sampler );
 	}
 	else {
-		this->mDeck->GatherSurfaces ( this->mIndex, sampler );
+		this->mDeck->GatherSurfaces ( this->mIndex, this->mRemapper, sampler );
 	}
 }
 
 //----------------------------------------------------------------//
-void MOAIProp2D::GetBoundsInRect ( const USRect& rect, USTileCoord& c0, USTileCoord& c1 ) {
+void MOAIProp2D::GetBoundsInRect ( const USRect& rect, USCellCoord& c0, USCellCoord& c1 ) {
 
 	if ( this->mGrid ) {
 
-		c0 = this->mGrid->GetTileCoord ( rect.mXMin, rect.mYMin );
-		c1 = this->mGrid->GetTileCoord ( rect.mXMax, rect.mYMax );
+		c0 = this->mGrid->GetCellCoord ( rect.mXMin, rect.mYMin );
+		c1 = this->mGrid->GetCellCoord ( rect.mXMax, rect.mYMax );
 		
 		if ( !( this->mRepeat & REPEAT_X )) {
-			this->mGrid->ClampX ( c0 );
-			this->mGrid->ClampX ( c1 );
+			c0 = this->mGrid->ClampX ( c0 );
+			c1 = this->mGrid->ClampX ( c1 );
 		}
 		
 		if ( !( this->mRepeat & REPEAT_Y )) {
-			this->mGrid->ClampY ( c0 );
-			this->mGrid->ClampY ( c1 );
+			c0 = this->mGrid->ClampY ( c0 );
+			c1 = this->mGrid->ClampY ( c1 );
 		}
 	}
 	else {
@@ -409,7 +436,7 @@ void MOAIProp2D::GetBoundsInRect ( const USRect& rect, USTileCoord& c0, USTileCo
 }
 
 //----------------------------------------------------------------//
-void MOAIProp2D::GetBoundsInView ( USTileCoord& c0, USTileCoord& c1 ) {
+void MOAIProp2D::GetBoundsInView ( USCellCoord& c0, USCellCoord& c1 ) {
 
 	const USAffine2D& invWorldMtx = this->GetWorldToLocalMtx ();
 
@@ -434,7 +461,7 @@ u32 MOAIProp2D::GetLocalFrame ( USRect& frame ) {
 	}
 	else if ( this->mDeck ) {
 	
-		frame = this->mDeck->GetBounds ( this->mIndex );
+		frame = this->mDeck->GetBounds ( this->mIndex, this->mRemapper );
 		return BOUNDS_OK;
 	}
 	
@@ -444,12 +471,13 @@ u32 MOAIProp2D::GetLocalFrame ( USRect& frame ) {
 //----------------------------------------------------------------//
 bool MOAIProp2D::Inside ( USVec2D vec ) {
 
-	if ( !this->mDeck ) return false;
-	
 	const USAffine2D& worldToLocal = this->GetWorldToLocalMtx ();
 	worldToLocal.Transform ( vec );
-	
-	return this->mDeck->Contains ( this->mIndex, vec );
+
+	if ( !this->mDeck ) {
+		return this->mFrameSource == FRAME_FROM_SELF ? this->mFrame.Contains ( vec ) : false; 
+	}
+	return this->mDeck->Contains ( this->mIndex, this->mRemapper, vec );
 }
 
 //----------------------------------------------------------------//
@@ -484,6 +512,7 @@ void MOAIProp2D::LoadShader () {
 MOAIProp2D::MOAIProp2D () :
 	mIndex( 1 ),
 	mRepeat ( 0 ),
+	mGridScale ( 1.0f, 1.0f ),
 	mFrameSource ( FRAME_FROM_PARENT ) {
 	
 	RTTI_BEGIN
@@ -507,18 +536,6 @@ void MOAIProp2D::OnDepNodeUpdate () {
 	if ( localFrame.Area () == 0.0f ) {
 		frameStatus = BOUNDS_EMPTY;
 	}
-	
-	// this here is where we do the logic to fit to the target frame
-	// simply... we have our local frame
-	// target frame is selected from parent (MOAIProp2D or MOAILayoutFrame)
-	// then, if *scaling* to frame, just compute the matrix and prepend
-	// if *stretching* to frame, compute the translation matrix and store the stretch factor
-	// not all prims can stretch, btw... but that is their problem
-	// the stretched/scaled prop should align with its parent frame only when using the identity transform
-	// any additional transforms are applied *after* the fit; better for animated widgets, etc.
-	
-	// this is sort of a pain in the butt, but should be worth it
-	// well, I hope it's worth it...
 	
 	USVec2D offset ( 0.0f, 0.0f );
 	USVec2D stretch ( 1.0f, 1.0f );
@@ -602,7 +619,9 @@ void MOAIProp2D::RegisterLuaFuncs ( USLuaState& state ) {
 		{ "setFrame",			_setFrame },
 		{ "setFrameSource",		_setFrameSource },
 		{ "setGrid",			_setGrid },
+		{ "setGridScale",		_setGridScale },
 		{ "setIndex",			_setIndex },
+		{ "setRemapper",		_setRemapper },
 		{ "setRepeat",			_setRepeat },
 		{ "setShader",			_setShader },
 		{ "setUVTransform",		_setUVTransform },

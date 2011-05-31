@@ -3,6 +3,7 @@
 
 #include "pch.h"
 #include <moaicore/MOAIDebugLines.h>
+#include <moaicore/MOAIDeckRemapper.h>
 #include <moaicore/MOAIGrid.h>
 #include <moaicore/MOAILogMessages.h>
 #include <moaicore/MOAIProp.h>
@@ -101,7 +102,9 @@ int MOAISurfaceDeck2D::_setSurface ( lua_State* L ) {
 //================================================================//
 
 //----------------------------------------------------------------//
-void MOAISurfaceDeck2D::DrawDebug ( const USAffine2D& transform, u32 idx ) {
+void MOAISurfaceDeck2D::DrawDebug ( const USAffine2D& transform, u32 idx, MOAIDeckRemapper* remapper ) {
+	
+	idx = remapper ? remapper->Remap ( idx ) : idx;
 	
 	MOAIDebugLines& debugLines = MOAIDebugLines::Get ();
 	debugLines.SetWorldMtx ( transform );
@@ -142,7 +145,8 @@ void MOAISurfaceDeck2D::DrawDebug ( u32 idx, float xOff, float yOff, bool xFlip,
 }
 
 //----------------------------------------------------------------//
-void MOAISurfaceDeck2D::DrawDebug ( const USAffine2D& transform, MOAIGrid& grid, USTileCoord& c0, USTileCoord& c1 ) {
+void MOAISurfaceDeck2D::DrawDebug ( const USAffine2D& transform, MOAIGrid& grid, MOAIDeckRemapper* remapper, USVec2D& gridScale, USCellCoord& c0, USCellCoord& c1 ) {
+	UNUSED ( gridScale ); // TODO
 	
 	MOAIDebugLines& debugLines = MOAIDebugLines::Get ();
 	debugLines.SetWorldMtx ( transform );
@@ -152,9 +156,12 @@ void MOAISurfaceDeck2D::DrawDebug ( const USAffine2D& transform, MOAIGrid& grid,
 		for ( int x = c0.mX; x <= c1.mX; ++x ) {
 			
 			u32 tile = grid.GetTile ( x, y );
+			tile = remapper ? remapper->Remap ( tile ) : tile;
+			
 			if ( tile & USTile::HIDDEN ) continue;
 			
-			USVec2D loc = grid.GetTilePoint ( x, y, USGridSpace::TILE_CENTER );
+			USCellCoord coord ( x, y );
+			USVec2D loc = grid.GetCellPoint ( coord, USGridSpace::TILE_CENTER );
 			
 			bool xFlip = (( tile & USTile::XFLIP ) != 0 );
 			bool yFlip = (( tile & USTile::YFLIP ) != 0 );
@@ -165,11 +172,13 @@ void MOAISurfaceDeck2D::DrawDebug ( const USAffine2D& transform, MOAIGrid& grid,
 }
 
 //----------------------------------------------------------------//
-void MOAISurfaceDeck2D::GatherSurfaces ( u32 idx, MOAISurfaceSampler2D& sampler ) {
+void MOAISurfaceDeck2D::GatherSurfaces ( u32 idx, MOAIDeckRemapper* remapper, MOAISurfaceSampler2D& sampler ) {
+	
+	idx = remapper ? remapper->Remap ( idx ) : idx;
 	
 	idx = idx - 1;
 	idx = idx % this->mBrushes.Size ();
-		
+	
 	MOAISurfaceBrush2D& brush = this->mBrushes [ idx ];
 
 	u32 total = brush.mEdges.Size ();
@@ -184,15 +193,19 @@ void MOAISurfaceDeck2D::GatherSurfaces ( u32 idx, MOAISurfaceSampler2D& sampler 
 }
 
 //----------------------------------------------------------------//
-void MOAISurfaceDeck2D::GatherSurfaces ( MOAIGrid& grid, USTileCoord& c0, USTileCoord& c1, MOAISurfaceSampler2D& sampler ) {
+void MOAISurfaceDeck2D::GatherSurfaces ( MOAIGrid& grid, MOAIDeckRemapper* remapper, USVec2D& gridScale, USCellCoord& c0, USCellCoord& c1, MOAISurfaceSampler2D& sampler ) {
+	UNUSED ( gridScale ); // TODO
 
 	for ( int y = c0.mY; y <= c1.mY; ++y ) {
 		for ( int x = c0.mX; x <= c1.mX; ++x ) {
 			
 			u32 tile = grid.GetTile ( x, y );
+			tile = remapper ? remapper->Remap ( tile ) : tile;
+			
 			if ( tile & USTile::HIDDEN ) continue;
 			
-			USVec2D loc = grid.GetTilePoint ( x, y, USGridSpace::TILE_CENTER );
+			USCellCoord coord ( x, y );
+			USVec2D loc = grid.GetCellPoint ( coord, USGridSpace::TILE_CENTER );
 			
 			bool xFlip = (( tile & USTile::XFLIP ) != 0 );
 			bool yFlip = (( tile & USTile::YFLIP ) != 0 );
@@ -249,8 +262,9 @@ void MOAISurfaceDeck2D::GatherSurfaces ( u32 idx, float xOff, float yOff, bool x
 }
 
 //----------------------------------------------------------------//
-USRect MOAISurfaceDeck2D::GetBounds ( u32 idx ) {
+USRect MOAISurfaceDeck2D::GetBounds ( u32 idx, MOAIDeckRemapper* remapper ) {
 	
+	idx = remapper ? remapper->Remap ( idx ) : idx;
 	idx = idx - 1;
 	
 	if ( idx < this->mBrushes.Size ()) {

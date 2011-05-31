@@ -12,6 +12,12 @@
 #include <moaicore/MOAIFmod.h>
 #include <aku/AKU.h>
 
+#if USE_LUA_SOCKET
+	//extern "C" {
+		#include <luasocket.h>
+	//}
+#endif
+
 //================================================================//
 // local
 //================================================================//
@@ -182,8 +188,23 @@ int MOAISim::_getFrameSize ( lua_State* L ) {
 int	MOAISim::_getNetworkStatus ( lua_State* L ) {
 
 	MOAISim& device = MOAISim::Get ();
-	lua_pushboolean( L, device.mHasNetwork );
+	lua_pushboolean ( L, device.mHasNetwork );
 	
+	return 1;
+}
+
+//----------------------------------------------------------------//
+/**	@name	getPerformance
+	@text	Returns an estimated frames per second based on measurements
+			taked at every render.
+
+	@out	number fps		Estimated frames per second.
+*/
+int MOAISim::_getPerformance ( lua_State* L ) {
+
+	MOAISim& device = MOAISim::Get ();
+	lua_pushnumber ( L, device.mFrameRate );
+
 	return 1;
 }
 
@@ -382,6 +403,9 @@ MOAISim::MOAISim () :
 	mDeviceTime ( 0.0f ),
 	mStep ( 0.01f ),
 	mTime ( 0.0f ),
+	mFrameTime ( 0.0 ),
+	mFrameRate ( 0.0f ),
+	mFrameRateIdx ( 0 ),
 	mClearFlags ( GL_COLOR_BUFFER_BIT ),
 	mClearColor ( 0xff000000 ),
 	mHasNetwork ( false ) {
@@ -395,13 +419,42 @@ MOAISim::MOAISim () :
 
 	luaRuntime.Open ();
 	luaRuntime.LoadLibs ( "moai" );
+	
+	#if USE_LUA_SOCKET
+		USLuaStateHandle state = luaRuntime.State ();
+		luaopen_socket_core ( state );
+	#endif
+	
+	for ( u32 i = 0; i < FPS_BUFFER_SIZE; ++i ) {
+		this->mFrameRateBuffer [ i ] = 0.0f;
+	}
 }
 
 //----------------------------------------------------------------//
 MOAISim::~MOAISim () {
 
-	//this->mDataIOThread.Stop ();
 	this->Clear ();
+}
+
+//----------------------------------------------------------------//
+void MOAISim::MeasureFrameRate () {
+
+	double delay = USDeviceTime::GetTimeInSeconds () - this->mFrameTime;
+	this->mFrameTime = USDeviceTime::GetTimeInSeconds ();
+	
+	if ( delay > 0.0 ) {
+	
+		float sample = ( float )( 1.0 / delay );
+		
+		this->mFrameRateBuffer [ this->mFrameRateIdx++ ] = sample;
+		this->mFrameRateIdx %= FPS_BUFFER_SIZE;
+		
+		sample = 0.0f;
+		for ( u32 i = 0; i < FPS_BUFFER_SIZE; ++i ) {
+			sample += this->mFrameRateBuffer [ i ];
+		}
+		this->mFrameRate = sample / ( float )FPS_BUFFER_SIZE;
+	}
 }
 
 //----------------------------------------------------------------//
@@ -445,6 +498,7 @@ void MOAISim::RegisterLuaClass ( USLuaState& state ) {
 		{ "getElapsedTime",				_getElapsedTime },
 		{ "getFrameSize",				_getFrameSize },
 		{ "getNetworkStatus",			_getNetworkStatus },
+		{ "getPerformance",				_getPerformance },
 		{ "openWindow",					_openWindow },
 		{ "pauseTimer",					_pauseTimer },
 		{ "popRenderPass",				_popRenderPass },
@@ -560,6 +614,8 @@ void MOAISim::SetUniqueIdentifier ( cc8* uniqueID ) {
 
 //----------------------------------------------------------------//
 void MOAISim::Update () {
+
+	this->MeasureFrameRate ();
 
 	this->mDeviceTime = USDeviceTime::GetTimeInSeconds ();
 

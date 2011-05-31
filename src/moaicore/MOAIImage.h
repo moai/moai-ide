@@ -32,9 +32,12 @@ class MOAIImage :
 private:
 
 	//----------------------------------------------------------------//
+	static int		_bleedRect			( lua_State* L );
 	static int		_convertColors		( lua_State* L );
 	static int		_copy				( lua_State* L );
+	static int		_copyBits			( lua_State* L );
 	static int		_getColor32			( lua_State* L );
+	static int		_getFormat			( lua_State* L );
 	static int		_getRGBA			( lua_State* L );
 	static int		_getSize			( lua_State* L );
 	static int		_init				( lua_State* L );
@@ -43,19 +46,20 @@ private:
 	static int		_resizeCanvas		( lua_State* L );
 	static int		_setColor32			( lua_State* L );
 	static int		_setRGBA			( lua_State* L );
+	static int		_writePNG			( lua_State* L );
 
 public:
 	
 	DECL_LUA_FACTORY ( MOAIImage )
 	
 	//----------------------------------------------------------------//
-							MOAIImage				();
-							~MOAIImage				();
-	void					SerializeIn				( USLuaState& state, USLuaSerializer& serializer );
-	void					SerializeOut			( USLuaState& state, USLuaSerializer& serializer );
-	void					RegisterLuaClass		( USLuaState& state );
-	void					RegisterLuaFuncs		( USLuaState& state );
-	STLString				ToString				();
+						MOAIImage				();
+						~MOAIImage				();
+	void				SerializeIn				( USLuaState& state, USLuaSerializer& serializer );
+	void				SerializeOut			( USLuaState& state, USLuaSerializer& serializer );
+	void				RegisterLuaClass		( USLuaState& state );
+	void				RegisterLuaFuncs		( USLuaState& state );
+	STLString			ToString				();
 };
 
 #endif

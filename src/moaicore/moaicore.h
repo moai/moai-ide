@@ -10,12 +10,16 @@
 #include <moaicore/MOAIAnim.h>
 #include <moaicore/MOAIAnimCurve.h>
 #include <moaicore/MOAIButtonSensor.h>
+#include <moaicore/MOAICameraAnchor2D.h>
+#include <moaicore/MOAICameraFitter2D.h>
 #include <moaicore/MOAIColor.h>
 #include <moaicore/MOAICompassSensor.h>
 #include <moaicore/MOAIDataBuffer.h>
 #include <moaicore/MOAIDataIOAction.h>
 #include <moaicore/MOAIDebugLines.h>
 #include <moaicore/MOAIDeck.h>
+#include <moaicore/MOAIDeck2D.h>
+#include <moaicore/MOAIDeckRemapper.h>
 #include <moaicore/MOAIEaseDriver.h>
 #include <moaicore/MOAIEaseType.h>
 #include <moaicore/MOAIEventSource.h>

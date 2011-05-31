@@ -596,9 +596,7 @@ void MOAITransform::BuildTransforms ( float xOff, float yOff, float xStretch, fl
 		USAffine2D inherit;
 		inherit.Ident ();
 		
-		if ( this->mParent ) {
-			inherit.Append ( this->mParent->GetLocalToWorldMtx ());
-		}
+		inherit.Append ( this->mParent->GetLocalToWorldMtx ());
 		
 		if ( this->mFilter == INHERIT_ALL ) {
 			this->mLocalToWorldMtx.Append ( inherit );
@@ -711,19 +709,7 @@ void MOAITransform::SetLoc ( float x, float y ) {
 //----------------------------------------------------------------//
 void MOAITransform::SetParent ( MOAITransformBase* parent ) {
 
-	if ( this->mParent == parent ) return;
-	
-	if ( this->mParent ) {
-		this->ClearDependency ( *this->mParent );
-	}
-
-	this->mParent = parent;
-	
-	if ( parent ) {
-		this->SetDependency ( *parent );
-	}
-
-	this->ScheduleUpdate ();
+	this->SetDependentMember < MOAITransformBase >( this->mParent, parent );
 }
 
 //----------------------------------------------------------------//

@@ -64,8 +64,9 @@ bool MOAIMesh::Bind () {
 }
 
 //----------------------------------------------------------------//
-void MOAIMesh::Draw ( const USAffine2D& transform, u32 idx ) {
+void MOAIMesh::Draw ( const USAffine2D& transform, u32 idx, MOAIDeckRemapper* remapper ) {
 	UNUSED ( idx );
+	UNUSED ( remapper );
 	
 	USDrawBuffer& drawBuffer = USDrawBuffer::Get ();
 	
@@ -76,16 +77,19 @@ void MOAIMesh::Draw ( const USAffine2D& transform, u32 idx ) {
 }
 
 //----------------------------------------------------------------//
-void MOAIMesh::Draw ( const USAffine2D& transform, MOAIGrid& grid, USTileCoord& c0, USTileCoord& c1 ) {
+void MOAIMesh::Draw ( const USAffine2D& transform, MOAIGrid& grid, MOAIDeckRemapper* remapper, USVec2D& gridScale, USCellCoord& c0, USCellCoord& c1 ) {
 	UNUSED ( transform );
 	UNUSED ( grid );
+	UNUSED ( remapper );
+	UNUSED ( gridScale );
 	UNUSED ( c0 );
 	UNUSED ( c1 );
 }
 
 //----------------------------------------------------------------//
-USRect MOAIMesh::GetBounds ( u32 idx ) {
+USRect MOAIMesh::GetBounds ( u32 idx, MOAIDeckRemapper* remapper ) {
 	UNUSED ( idx );
+	UNUSED ( remapper );
 	
 	if ( this->mVertexBuffer ) {
 		return this->mVertexBuffer->GetBounds ();
