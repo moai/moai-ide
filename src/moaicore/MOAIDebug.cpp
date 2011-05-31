@@ -3,6 +3,7 @@
 
 #include "pch.h"
 #include <moaicore/MOAIDebug.h>
+#include <libjson.h>
 #ifdef WIN32
 #include <winsock.h>
 #endif
@@ -13,6 +14,8 @@
 
 //----------------------------------------------------------------//
 int MOAIDebug::mSocketID = -1;
+bool MOAIDebug::mEnginePaused = false;
+struct sockaddr_in MOAIDebug::mSocketAddr;
 
 //----------------------------------------------------------------//
 void MOAIDebug::Callback(lua_State *L, lua_Debug *ar)
@@ -38,6 +41,7 @@ void MOAIDebug::Callback(lua_State *L, lua_Debug *ar)
 void MOAIDebug::HookLua(lua_State* L, const char* target, int port)
 {
 	MOAIDebug::mSocketID = -1;
+	MOAIDebug::mEnginePaused = false;
 
 #ifdef WIN32
 	// Initalize WinSock if required.
@@ -63,11 +67,10 @@ void MOAIDebug::HookLua(lua_State* L, const char* target, int port)
 	}
 
 	// Resolve the port and target name into a socket address.
-	struct sockaddr_in addr;
-	memset(&addr, 0, sizeof(addr));
-    addr.sin_family = AF_INET;
-    addr.sin_port = htons(port);
-    int res = inet_pton(AF_INET, target, &addr.sin_addr);
+	memset(&MOAIDebug::mSocketAddr, 0, sizeof(MOAIDebug::mSocketAddr));
+    MOAIDebug::mSocketAddr.sin_family = AF_INET;
+    MOAIDebug::mSocketAddr.sin_port = htons(port);
+    int res = inet_pton(AF_INET, target, &MOAIDebug::mSocketAddr.sin_addr);
 	if (res < 0)
 	{
 		printf("debug: Unable to connect socket for debugging (invalid address family)! [winsock error %i]", WSAGetLastError());
@@ -84,7 +87,7 @@ void MOAIDebug::HookLua(lua_State* L, const char* target, int port)
 	}
 
 	// Connect to the actual IDE.
-	if (connect(MOAIDebug::mSocketID, (struct sockaddr *)&addr, sizeof(addr)) == -1)
+	if (connect(MOAIDebug::mSocketID, (struct sockaddr *)&MOAIDebug::mSocketAddr, sizeof(MOAIDebug::mSocketAddr)) == -1)
 	{
 		printf("debug: Unable to connect socket to requested endpoint! [winsock error %i]", WSAGetLastError());
 		closesocket(MOAIDebug::mSocketID);
@@ -92,14 +95,96 @@ void MOAIDebug::HookLua(lua_State* L, const char* target, int port)
 		return;
 	}
 
-	// Send an attachment call to the IDE (for testing).
-	char buffer[256];
-	memset(&buffer, 0, sizeof(buffer));
-	strcpy(buffer, "{\"ID\":\"excp_internal\",\"ExceptionMessage\":\"This is a test message.\",\"FunctionName\":\"Main\",\"LineNumber\":12,\"FileName\":\"Main.lua\"}\0\0");
-	sendto(MOAIDebug::mSocketID, buffer, 129, 0, (struct sockaddr *)&addr, sizeof(addr));
-
 	// Initalize the Lua hooks.
-	//lua_sethook(L, MOAIDebug::Callback, LUA_MASKCALL | LUA_MASKRET | LUA_MASKLINE | LUA_MASKCOUNT, 1);
+	lua_sethook(L, MOAIDebug::Callback, LUA_MASKCALL | LUA_MASKRET | LUA_MASKLINE | LUA_MASKCOUNT, 1);
 
+	// At this point the debug hooks are initalized, but we don't want to proceed until the IDE tells
+	// us to continue (in case it wants to set up initial breakpoints).
+	MOAIDebug::SendWait();
+	MOAIDebug::Pause();
+
+	// After we have done the wait-and-pause cycle, we are ready to give control back to the engine.
 	return;
+}
+
+//----------------------------------------------------------------//
+void MOAIDebug::Pause()
+{
+	MOAIDebug::mEnginePaused = true;
+	while (MOAIDebug::mEnginePaused)
+	{
+		// Receive and handle IDE messages until we get either continue
+		// or break.
+		MOAIDebug::ReceiveMessage();
+	}
+}
+
+//----------------------------------------------------------------//
+void MOAIDebug::SendWait()
+{
+	// Sends a wait signal to the IDE.
+	std::string wait;
+	wait = "{\"ID\":\"wait\"}";
+	MOAIDebug::SendMessage(wait);
+}
+
+//----------------------------------------------------------------//
+void MOAIDebug::SendMessage(std::string data)
+{
+	// Add the terminators.
+	data += "\0\0";
+
+	// Send the data in 256-byte chunks.
+	for (int i = 0; i < data.length(); i += 256)
+	{
+		// Create a buffer.
+		char buffer[256];
+		const char* raw = data.c_str();
+		memset(&buffer, 0, sizeof(buffer));
+
+		// Copy our data.
+		int size = 0;
+		int a = 0;
+		for (a = 0; a < 256; a++)
+		{
+			buffer[a] = raw[i + a];
+			if (raw[i + a] == '\0')
+				break; // NULL terminator.
+		}
+		size = (a == 256) ? 256 : a + 1;
+		size = (size < 2) ? 2 : size;
+
+		// Send the burst of data.
+		sendto(MOAIDebug::mSocketID, buffer, size, 0, (struct sockaddr *)&MOAIDebug::mSocketAddr, sizeof(MOAIDebug::mSocketAddr));
+	}
+}
+
+//----------------------------------------------------------------//
+void MOAIDebug::ReceiveMessage()
+{
+	// Receive a single message from the TCP socket and then
+	// delegate the data to one of the ReceiveX functions.
+	std::string json = "";
+	while (true)
+	{
+		// Get the data.
+		char buffer[256];
+		memset(&buffer, 0, sizeof(buffer));
+		int bytes = recv(MOAIDebug::mSocketID, &buffer[0], 256, 0);
+		if (bytes == 0 || bytes == SOCKET_ERROR)
+			break;
+
+		// Add to the std::string buffer.
+		for (int i = 0; i < bytes; i += 1)
+			json += buffer[i];
+
+		// Check to see if the last two bytes received were NULL terminators.
+		if (json[json.length() - 1] == '\0' &&
+			json[json.length() - 2] == '\0')
+			break;
+	}
+
+	// We have received a message.  Parse the JSON to work out
+	// exactly what type of message it is.
+	JSONNode node = libjson::parse(json);
 }

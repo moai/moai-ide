@@ -12,7 +12,7 @@ namespace MOAI.Management
     {
         private bool p_Initalized = false;
         private FileInfo p_ProjectInfo = null;
-        private List<File> p_Files = null;
+        private List<File> p_Files = new List<File>();
 
         /// <summary>
         /// Creates a new instance of the Project class that is not associated
@@ -84,8 +84,31 @@ namespace MOAI.Management
             writer.WriteStartElement("Project");
             writer.WriteAttributeString("ToolsVersion", "1.0");
             writer.WriteString(""); // Force the root element to not be self-closing.
+            this.WriteFiles(writer, this.p_Files.AsReadOnly(), "");
             writer.WriteEndElement();
             writer.Close();
+        }
+
+        /// <summary>
+        /// Recursively writes all the files owned by this project to the XmlWriter.
+        /// </summary>
+        /// <param name="writer">The XmlWriter to write to.</param>
+        /// <param name="files">The file collection.</param>
+        /// <param name="path">The current path that this call is made under ("" for root).</param>
+        private void WriteFiles(XmlWriter writer, System.Collections.ObjectModel.ReadOnlyCollection<File> files, string path)
+        {
+            foreach (File f in files)
+            {
+                if (f is Folder)
+                    this.WriteFiles(writer, (f as Folder).Files, (f as Folder).FolderInfo.Name);
+                else
+                {
+                    writer.WriteStartElement("File");
+                    writer.WriteAttributeString("Include", path + f.FileInfo.Name);
+                    writer.WriteString("");
+                    writer.WriteEndElement();
+                }
+            }
         }
 
         #endregion
@@ -224,6 +247,24 @@ namespace MOAI.Management
             foreach (File f in this.p_Files)
                 f.Associate(node);
             return node;
+        }
+
+        /// <summary>
+        /// Adds a file to the project.
+        /// </summary>
+        /// <param name="f">The file to add.</param>
+        public void AddFile(File f)
+        {
+            this.p_Files.Add(f);
+        }
+
+        /// <summary>
+        /// Removes a file from the project.
+        /// </summary>
+        /// <param name="f">The file to remove.</param>
+        public void RemoveFile(File f)
+        {
+            this.p_Files.Remove(f);
         }
 
         /// <summary>

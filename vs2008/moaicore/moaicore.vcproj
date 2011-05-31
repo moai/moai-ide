@@ -45,8 +45,8 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/vmg"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\src;..\..\3rdparty;&quot;..\..\3rdparty\lua-5.1.3\src&quot;;&quot;..\..\3rdparty\glew-1.5.6\include&quot;;&quot;..\..\3rdparty\zlib-1.2.3&quot;;&quot;..\..\3rdparty\sqlite-3.6.16&quot;;..\..\3rdparty\tinyxml;&quot;..\..\3rdparty\curl-7.19.7\include&quot;;..\..\3rdparty\lpng140;&quot;..\..\3rdparty\expat-2.0.1\lib&quot;;&quot;..\..\3rdparty\freetype-2.4.4\include&quot;;&quot;..\..\3rdparty\box2d-2.1.2\Box2D&quot;;&quot;..\..\3rdparty\chipmunk-5.3.4\include&quot;;&quot;$(FMOD_API)\inc&quot;"
-				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;AKU_STATIC;XML_STATIC"
+				AdditionalIncludeDirectories="..\..\src;..\..\3rdparty;&quot;..\..\3rdparty\lua-5.1.3\src&quot;;&quot;..\..\3rdparty\glew-1.5.6\include&quot;;&quot;..\..\3rdparty\zlib-1.2.3&quot;;&quot;..\..\3rdparty\sqlite-3.6.16&quot;;..\..\3rdparty\tinyxml;&quot;..\..\3rdparty\curl-7.19.7\include&quot;;..\..\3rdparty\lpng140;&quot;..\..\3rdparty\expat-2.0.1\lib&quot;;&quot;..\..\3rdparty\freetype-2.4.4\include&quot;;&quot;..\..\3rdparty\box2d-2.1.2\Box2D&quot;;&quot;..\..\3rdparty\chipmunk-5.3.4\include&quot;;&quot;..\..\3rdparty\libjson-7.1.1&quot;;&quot;$(FMOD_API)\inc&quot;"
+				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;AKU_STATIC;XML_STATIC;JSON_DEBUG"
 				StringPooling="true"
 				MinimalRebuild="true"
 				ExceptionHandling="1"
@@ -1129,10 +1129,10 @@
 			</File>
 		</Filter>
 		<Filter
-<<<<<<< HEAD
 			Name="json"
 			>
-=======
+		</Filter>
+		<Filter
 			Name="camera"
 			>
 			<File
@@ -1151,7 +1151,6 @@
 				RelativePath="..\..\src\moaicore\MOAICameraFitter2D.h"
 				>
 			</File>
->>>>>>> d7f88595244a949806b71a1597441f7522666efb
 		</Filter>
 		<File
 			RelativePath="..\..\src\moaicore\moaiconf.h"

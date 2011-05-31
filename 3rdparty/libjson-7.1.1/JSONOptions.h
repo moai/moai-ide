@@ -11,7 +11,7 @@
  *  JSON_LIBRARY must be declared if libjson is compiled as a static or dynamic 
  *  library.  This exposes a C-style interface, but none of the inner workings of libjson
  */
-#define JSON_LIBRARY
+//#define JSON_LIBRARY
 
 
 /*

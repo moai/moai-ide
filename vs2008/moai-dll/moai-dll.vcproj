@@ -364,6 +364,14 @@
 		</Configuration>
 	</Configurations>
 	<References>
+		<ProjectReference
+			ReferencedProjectIdentifier="{D0F1C892-57F4-4758-A2EE-BFB58DB20987}"
+			RelativePathToProject=".\libssl\libssl.vcproj"
+		/>
+		<ProjectReference
+			ReferencedProjectIdentifier="{153A6FE5-40A9-4C31-B0C2-1C68D2E37BEA}"
+			RelativePathToProject="..\3rdparty\libjson-7.1.1\libjson.vcproj"
+		/>
 	</References>
 	<Files>
 		<File

@@ -343,6 +343,14 @@
 		</Configuration>
 	</Configurations>
 	<References>
+		<ProjectReference
+			ReferencedProjectIdentifier="{D0F1C892-57F4-4758-A2EE-BFB58DB20987}"
+			RelativePathToProject=".\libssl\libssl.vcproj"
+		/>
+		<ProjectReference
+			ReferencedProjectIdentifier="{956FFE71-66F4-457C-8C88-9F075E4FDE27}"
+			RelativePathToProject=".\libcrypto\libcrypto.vcproj"
+		/>
 	</References>
 	<Files>
 		<Filter
