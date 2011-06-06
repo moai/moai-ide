@@ -20,8 +20,8 @@ namespace MOAI
 
             Program.Manager = new Manager();
             Program.Manager.Initalize();
-            Program.Manager.Start();
-            Application.Run();
+            if (Program.Manager.Start())
+                Application.Run();
         }
     }
 }

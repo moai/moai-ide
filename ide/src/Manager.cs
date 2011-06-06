@@ -219,18 +219,26 @@ namespace MOAI
         /// <summary>
         /// Starts the MOAI IDE.
         /// </summary>
-        public void Start()
+        public bool Start()
         {
             SplashScreen splash = new SplashScreen();
 
             // Preload some scintilla objects.
             splash.SetProgress(0, "Loading Scintilla...");
-            this.p_CacheManager.ScintillaCache.InitialCache(5, (progress) =>
+            bool result = this.p_CacheManager.ScintillaCache.InitialCache(5, (progress) =>
                 {
                     splash.SetProgress(100 / 5 * progress, "Preloading editors ( " + progress.ToString() + " / 5 )...");
                 }
             );
             splash.SetProgress(100, "Starting IDE...");
+
+            // Check to see whether we should actually quit because
+            // we failed to load one of our components.
+            if (!result)
+            {
+                this.Stop();
+                return false;
+            }
 
             // Now open and display the IDE.
             this.p_IDEWindow.Load += (sender, e) =>
@@ -242,6 +250,7 @@ namespace MOAI
                     this.Stop();
                 };
             this.p_IDEWindow.Show();
+            return true;
         }
 
         /// <summary>

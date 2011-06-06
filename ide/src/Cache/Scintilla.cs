@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Windows.Forms;
+using System.ComponentModel;
 
 namespace MOAI.Cache
 {
@@ -23,13 +25,28 @@ namespace MOAI.Cache
         /// </summary>
         /// <param name="amount"></param>
         /// <param name="onProgress"></param>
-        public void InitialCache(int amount, ProgressCallback onProgress)
+        public bool InitialCache(int amount, ProgressCallback onProgress)
         {
-            for (int i = 0; i < amount; i += 1)
+            try
             {
-                this.p_Scintillas.Push(new ScintillaNet.Scintilla());
-                onProgress(i + 1);
+                for (int i = 0; i < amount; i += 1)
+                {
+                    this.p_Scintillas.Push(new ScintillaNet.Scintilla());
+                    onProgress(i + 1);
+                }
+                return true;
             }
+            catch (Win32Exception)
+            {
+                MessageBox.Show(
+@"The 32-bit version of the MOAI IDE can not be run under a
+64-bit version of Windows due to external components. Download
+the 64-bit version of the MOAI IDE from http://getmoai.com.
+
+The MOAI IDE will now exit.", "64-bit Compatibility", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+
+            return false;
         }
 
         /// <summary>
