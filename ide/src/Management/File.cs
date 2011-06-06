@@ -51,6 +51,26 @@ namespace MOAI.Management
         }
 
         /// <summary>
+        /// Informs the developer that the Name property would actually provide the control's name, not
+        /// the name of the file or the folder.
+        /// </summary>
+        public new string Name
+        {
+            get { throw new InvalidOperationException("The name property should not be used as it indicates the control's name, not the name of " +
+"the file or folder.  Use the FileInfo property to access the file information, or ControlName to access " +
+"the control's name."); }
+        }
+
+        /// <summary>
+        /// Provides access to the Name property if desired.
+        /// </summary>
+        public string ControlName
+        {
+            get { return base.Name; }
+            set { base.Name = value; }
+        }
+
+        /// <summary>
         /// The FileInfo object that represents this file on-disk.
         /// </summary>
         public FileInfo FileInfo

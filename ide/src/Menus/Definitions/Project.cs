@@ -41,7 +41,7 @@ namespace MOAI.Menus.Definitions.Project
         }
 
         public override void OnActivate()
-        {
+        { 
             /*FileTreeNode ftn = new FileTreeNode();
             if (TargetDirectory != null)
                 ftn.fileRef = TargetDirectory;

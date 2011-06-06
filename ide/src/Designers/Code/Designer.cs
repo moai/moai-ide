@@ -53,6 +53,16 @@ namespace MOAI.Designers.Code
         }
 
         /// <summary>
+        /// Highlights the specified line according to the specified style.
+        /// </summary>
+        /// <param name="line">The line number.</param>
+        public void HighlightLine(int line)
+        {
+            this.c_CodeEditor.GoTo.Line(line);
+            this.c_CodeEditor.GetRange(this.c_CodeEditor.Lines[line - 1].StartPosition, this.c_CodeEditor.Lines[line - 1].EndPosition).SetIndicator(0);
+        }
+
+        /// <summary>
         /// This event is raised when the user has placed their mouse in the same position
         /// for a specified amount of time.
         /// </summary>

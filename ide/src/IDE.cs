@@ -39,6 +39,14 @@ namespace MOAI
         }
 
         /// <summary>
+        /// The manager that owns this IDE instance.
+        /// </summary>
+        public Manager Manager
+        {
+            get { return this.p_Manager; }
+        }
+
+        /// <summary>
         /// This function allows DockContents to place themselves within the
         /// DockPanel of the main IDE.
         /// </summary>

@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Windows.Forms;
 using MOAI.Tools;
+using MOAI.Debug.Messages;
 
 namespace MOAI.Debug
 {
@@ -42,10 +43,7 @@ namespace MOAI.Debug
 
             // Start the debug listening service.
             Communicator communicator = new Communicator(7018);
-            communicator.MessageArrived += new EventHandler<MessageEventArgs>((sender, e) =>
-            {
-                MessageBox.Show(e.Message.ID);
-            });
+            communicator.MessageArrived += new EventHandler<MessageEventArgs>(communicator_MessageArrived);
 
             Process proc = new Process();
             /*if (File.Exists("C:\\Windows\\system32\\vsjitdebugger.exe"))
@@ -54,7 +52,7 @@ namespace MOAI.Debug
                 proc.StartInfo.Arguments = '"' + Path.Combine(Program.Manager.Settings["RootPath"], "Engines\\Win32\\Debug\\moai.exe") + '"';
             }
             else*/
-            proc.StartInfo.FileName = Path.Combine(Program.Manager.Settings["RootPath"], "Engines\\Win32\\Debug\\moai.exe");
+                proc.StartInfo.FileName = Path.Combine(Program.Manager.Settings["RootPath"], "Engines\\Win32\\Debug\\moai.exe");
 
             proc.StartInfo.WorkingDirectory = project.ProjectInfo.Directory.FullName;
             proc.StartInfo.UseShellExecute = false;
@@ -68,6 +66,48 @@ namespace MOAI.Debug
             proc.BeginOutputReadLine();
             this.m_Running = true;
             return true;
+        }
+
+        /// <summary>
+        /// This event is raised when the game sends a debugging message to the IDE.
+        /// </summary>
+        /// <param name="sender">The sender of the event.</param>
+        /// <param name="e">The event information.</param>
+        private void communicator_MessageArrived(object sender, MessageEventArgs e)
+        {
+            // Invoke the message handling on the IDE's thread.
+            this.p_Parent.IDEWindow.Invoke(new Action(() =>
+            {
+                if (e.Message is ExcpInternalMessage)
+                {
+                    ExcpInternalMessage m = e.Message as ExcpInternalMessage;
+                    ExceptionDialog d = new ExceptionDialog();
+                    d.IDEWindow = this.p_Parent.IDEWindow;
+                    d.MessageInternal = m;
+                    d.Show();
+                    // TODO: Indicate to the UI that the game is now paused.
+                }
+                else if (e.Message is ExcpUserMessage)
+                {
+                    ExcpUserMessage m = e.Message as ExcpUserMessage;
+                    ExceptionDialog d = new ExceptionDialog();
+                    d.IDEWindow = this.p_Parent.IDEWindow;
+                    d.MessageUser = m;
+                    d.Show();
+                    // TODO: Indicate to the UI that the game is now paused.
+                }
+                else if (e.Message is ResultMessage)
+                {
+                    ResultMessage m = e.Message as ResultMessage;
+                    // TODO: Use a queue to track messages sent to the engine and match them up with the result messages.
+                }
+                else
+                {
+                    // Unknown message!
+                    // TODO: Handle this properly?
+                    MessageBox.Show(e.Message.ID);
+                }
+            }));
         }
 
         /// <summary>

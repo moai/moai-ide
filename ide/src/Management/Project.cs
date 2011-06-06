@@ -35,6 +35,29 @@ namespace MOAI.Management
             this.LoadFromXml(this.p_ProjectInfo);
         }
 
+        /// <summary>
+        /// Gets the File object based on the relative path provided.  The specified path must
+        /// be a file that is included in the project.
+        /// </summary>
+        /// <param name="path">The relative path to the file from the project file.</param>
+        /// <returns>The File object that represents this path, or null if not found.</returns>
+        public File GetByPath(string path)
+        {
+            string[] parts = path.Split(Path.DirectorySeparatorChar);
+            File f = this.p_Files.Find(a => a.FileInfo.Name == parts[0]);
+            for (int i = 1; i < parts.Length; i++)
+            {
+                if (f is Folder)
+                {
+                    Folder ff = f as Folder;
+                    f = ff.Files.ToList().Find(a => a.FileInfo.Name == parts[i]);
+                }
+                else
+                    return null;
+            }
+            return f;
+        }
+
         #region Disk Operations
 
         /// <summary>
