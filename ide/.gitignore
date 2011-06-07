@@ -1,0 +1,13 @@
+/bin
+/obj
+
+/libraries/*/bin
+/libraries/*/obj
+/src/Deployment/Engines/*
+/src/Deployment/Framework/*
+/src/bin/*
+/src/obj/*
+
+*.ncb
+*.suo
+*.user
