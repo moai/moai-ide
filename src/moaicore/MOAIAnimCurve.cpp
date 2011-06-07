@@ -75,16 +75,20 @@ int MOAIAnimCurve::_setKey ( lua_State* L ) {
 //================================================================//
 
 //----------------------------------------------------------------//
-void MOAIAnimCurve::ApplyAttrOp ( u32 attrID, USAttrOp& attrOp ) {
+bool MOAIAnimCurve::ApplyAttrOp ( u32 attrID, USAttrOp& attrOp ) {
 
-	switch ( attrID ) {
-		case ATTR_TIME:
-			this->mTime = attrOp.Op ( this->mTime );
-			return;
-		case ATTR_VALUE:
-			attrOp.Op ( this->mValue );
-			return;
+	if ( MOAIAnimCurveAttr::Check ( attrID )) {
+
+		switch ( UNPACK_ATTR ( attrID )) {
+			case ATTR_TIME:
+				this->mTime = attrOp.Op ( this->mTime );
+				return true;
+			case ATTR_VALUE:
+				attrOp.Op ( this->mValue );
+				return true;
+		}
 	}
+	return false;
 }
 
 //----------------------------------------------------------------//
@@ -108,8 +112,8 @@ void MOAIAnimCurve::OnDepNodeUpdate () {
 //----------------------------------------------------------------//
 void MOAIAnimCurve::RegisterLuaClass ( USLuaState& state ) {
 
-	state.SetField ( -1, "ATTR_TIME", ( u32 )ATTR_TIME );
-	state.SetField ( -1, "ATTR_VALUE", ( u32 )ATTR_VALUE );
+	state.SetField ( -1, "ATTR_TIME", MOAIAnimCurveAttr::Pack ( ATTR_TIME ));
+	state.SetField ( -1, "ATTR_VALUE", MOAIAnimCurveAttr::Pack ( ATTR_VALUE ));
 }
 
 //----------------------------------------------------------------//

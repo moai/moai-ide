@@ -5,7 +5,6 @@
 #define	MOAITRANSFORM_H
 
 #include <moaicore/MOAIEaseDriver.h>
-
 #include <moaicore/MOAITransformBase.h>
 
 //================================================================//
@@ -27,10 +26,6 @@ protected:
 	USVec2D			mLoc;
 	USVec2D			mScale;
 	float			mDegrees;
-	
-	USWeak < MOAITransformBase >	mParent;
-	
-	u32 mFilter;
 
 	//----------------------------------------------------------------//
 	static int	_addLoc			( lua_State* L );
@@ -60,6 +55,9 @@ protected:
 
 public:
 
+	DECL_LUA_FACTORY ( MOAITransform )
+	DECL_ATTR_HELPER ( MOAITransform )
+
 	enum {
 		ATTR_X_LOC,
 		ATTR_Y_LOC,
@@ -69,24 +67,16 @@ public:
 		TOTAL_ATTR,
 	};
 	
-	enum {
-		INHERIT_LOC,
-	};
-	
-	static const u32 INHERIT_ALL = 0xffffffff;
-	
-	DECL_LUA_FACTORY ( MOAITransform )
-	
 	GET_SET ( USVec2D, Loc, mLoc )
 	GET_SET ( USVec2D, Scl, mScale )
 	GET_SET ( float, Rot, mDegrees )
 	
 	//----------------------------------------------------------------//
-	void				ApplyAttrOp						( u32 attrID, USAttrOp& attrOp );
+	bool				ApplyAttrOp						( u32 attrID, USAttrOp& attrOp );
 	const USAffine2D&	GetLocalToWorldMtx				();
 	const USAffine2D&	GetWorldToLocalMtx				();
 						MOAITransform					();
-						~MOAITransform				();
+						~MOAITransform					();
 	void				RegisterLuaClass				( USLuaState& state );
 	void				RegisterLuaFuncs				( USLuaState& state );
 	void				SetLoc							( float x, float y );

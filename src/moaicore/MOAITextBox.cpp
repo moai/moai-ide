@@ -373,12 +373,6 @@ int MOAITextBox::_spool ( lua_State* L ) {
 const float MOAITextBox::DEFAULT_SPOOL_SPEED = 24.0f;
 
 //----------------------------------------------------------------//
-void MOAITextBox::ApplyAttrOp ( u32 attrID, USAttrOp& attrOp ) {
-
-	MOAITransform::ApplyAttrOp ( attrID, attrOp );
-}
-
-//----------------------------------------------------------------//
 void MOAITextBox::ClearCurves () {
 
 	for ( u32 i = 0; i < this->mMOAICurves.Size (); ++i ) {

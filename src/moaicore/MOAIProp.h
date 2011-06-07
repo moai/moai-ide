@@ -70,6 +70,7 @@ public:
 	virtual void	Draw				();
 	virtual void	DrawDebug			();
 	virtual void	GatherSurfaces		( MOAISurfaceSampler2D& sampler );
+	MOAIPartition*	GetPartitionTrait	();
 	USRect			GetBounds			();
 	bool			GetCellRect			( USRect* cellRect, USRect* paddedRect = 0 );
 					MOAIProp			();

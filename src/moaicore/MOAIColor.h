@@ -4,7 +4,7 @@
 #ifndef	MOAICOLOR_H
 #define	MOAICOLOR_H
 
-#include <moaicore/MOAIShader.h>
+#include <moaicore/MOAINode.h>
 
 class MOAIDeck;
 class MOAILayer2D;
@@ -16,7 +16,7 @@ class MOAILayer2D;
 	@text	Color vector with animation helper methods.
 */
 class MOAIColor :
-	public virtual MOAIShader,
+	public virtual MOAINode,
 	public USColorVec {
 protected:
 	
@@ -27,6 +27,9 @@ protected:
 
 public:
 	
+	DECL_LUA_FACTORY ( MOAIColor )
+	DECL_ATTR_HELPER ( MOAIColor )
+	
 	enum {
 		ATTR_R_COL,
 		ATTR_G_COL,
@@ -35,11 +38,8 @@ public:
 		TOTAL_ATTR,
 	};
 	
-	DECL_LUA_FACTORY ( MOAIColor )
-	
 	//----------------------------------------------------------------//
-	void			ApplyAttrOp			( u32 attrID, USAttrOp& attrOp );
-	void			Bind				();
+	bool			ApplyAttrOp			( u32 attrID, USAttrOp& attrOp );
 					MOAIColor			();
 					~MOAIColor			();
 	void			RegisterLuaClass	( USLuaState& state );

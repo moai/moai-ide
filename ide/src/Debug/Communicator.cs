@@ -50,6 +50,14 @@ namespace MOAI.Debug
             byte[] bytes = new byte[256];
             string data = null;
 
+            MOAI.Debug.Messages.ExcpInternalMessage eim = new MOAI.Debug.Messages.ExcpInternalMessage();
+            eim.ExceptionMessage = "The variable 'viewport' is nil.";
+            eim.FileName = "Main.lua";
+            eim.LineNumber = 10;
+            eim.FunctionName = "@main";
+            if (this.MessageArrived != null)
+                this.MessageArrived(this, new MessageEventArgs(eim));
+
             while (true)
             {
                 // Accept a connection from the engine debugger.

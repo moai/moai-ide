@@ -44,6 +44,7 @@ void moaicore::InitGlobals ( USGlobals* globals ) {
 	REGISTER_LUA_CLASS ( MOAIEaseDriver )
 	REGISTER_LUA_CLASS ( MOAIEaseType )
 	REGISTER_LUA_CLASS ( MOAIEventSource )
+	REGISTER_LUA_CLASS ( MOAIFileSystem )
 	REGISTER_LUA_CLASS ( MOAIFont )
 	REGISTER_LUA_CLASS ( MOAIGfxQuad2D )
 	REGISTER_LUA_CLASS ( MOAIGfxQuadDeck2D )
@@ -58,7 +59,7 @@ void moaicore::InitGlobals ( USGlobals* globals ) {
 	REGISTER_LUA_CLASS ( MOAIKeyboardSensor )
 	REGISTER_LUA_CLASS ( MOAILayer2D )
 	REGISTER_LUA_CLASS ( MOAILayerBridge2D )
-	REGISTER_LUA_CLASS ( MOAILayoutFrame )
+	//REGISTER_LUA_CLASS ( MOAILayoutFrame )
 	REGISTER_LUA_CLASS ( MOAILevelSensor )
 	REGISTER_LUA_CLASS ( MOAILocationSensor )
 	REGISTER_LUA_CLASS ( MOAILogMgr )
@@ -85,6 +86,7 @@ void moaicore::InitGlobals ( USGlobals* globals ) {
 	REGISTER_LUA_CLASS ( MOAITileDeck2D )
 	REGISTER_LUA_CLASS ( MOAITimer )
 	REGISTER_LUA_CLASS ( MOAITouchSensor )
+	REGISTER_LUA_CLASS ( MOAITraits )
 	REGISTER_LUA_CLASS ( MOAITransform )
 	REGISTER_LUA_CLASS ( MOAIVertexBuffer )
 	REGISTER_LUA_CLASS ( MOAIVertexFormat )
@@ -108,14 +110,5 @@ void moaicore::InitGlobals ( USGlobals* globals ) {
 		REGISTER_LUA_CLASS ( MOAICpConstraint )
 		REGISTER_LUA_CLASS ( MOAICpShape )
 		REGISTER_LUA_CLASS ( MOAICpSpace )
-	#endif
-	
-	#if USE_FMOD
-		
-		MOAIFmod::Get ();
-		
-		REGISTER_LUA_CLASS ( MOAIFmod )
-		REGISTER_LUA_CLASS ( MOAIFmodChannel )
-		REGISTER_LUA_CLASS ( MOAIFmodSound )
 	#endif
 }

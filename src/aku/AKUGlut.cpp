@@ -4,6 +4,18 @@
 #include <stdio.h>
 #include <aku/AKUGlut.h>
 
+#ifdef AKUGLUT_USE_FMOD
+	#include <aku/AKU-fmod.h>
+#endif
+
+#ifdef AKUGLUT_USE_HARNESS
+	#include <aku/AKU-harness.h>
+#endif
+
+#ifdef AKUGLUT_USE_LUAEXT
+	#include <aku/AKU-luaext.h>
+#endif
+
 #ifdef _WIN32
 	#include <glut.h>
 #else
@@ -211,7 +223,20 @@ int AKUGlut ( int argc, char** argv ) {
 	glutInit ( &argc, argv );
 
 	AKUCreateContext ();
-
+	
+	#ifdef AKUGLUT_USE_FMOD
+		AKUExtLoadFmod ();
+	#endif
+	
+	#ifdef AKUGLUT_USE_HARNESS
+		AKUExtLoadHarness ();
+	#endif
+	
+	#ifdef AKUGLUT_USE_LUAEXT
+		AKUExtLoadLuacrypto ();
+		AKUExtLoadLuasocket ();
+	#endif
+	
 	AKUSetInputConfigurationName ( "AKUGlut" );
 
 	AKUReserveInputDevices			( GlutInputDeviceID::TOTAL );

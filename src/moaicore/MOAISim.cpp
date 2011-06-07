@@ -8,15 +8,7 @@
 #include <moaicore/MOAINodeMgr.h>
 #include <moaicore/MOAIProp2D.h>
 #include <moaicore/MOAISim.h>
-#include <moaicore/MOAIDebug.h>
-#include <moaicore/MOAIFmod.h>
 #include <aku/AKU.h>
-
-#if USE_LUA_SOCKET
-	//extern "C" {
-		#include <luasocket.h>
-	//}
-#endif
 
 //================================================================//
 // local
@@ -419,11 +411,6 @@ MOAISim::MOAISim () :
 
 	luaRuntime.Open ();
 	luaRuntime.LoadLibs ( "moai" );
-	
-	#if USE_LUA_SOCKET
-		USLuaStateHandle state = luaRuntime.State ();
-		luaopen_socket_core ( state );
-	#endif
 	
 	for ( u32 i = 0; i < FPS_BUFFER_SIZE; ++i ) {
 		this->mFrameRateBuffer [ i ] = 0.0f;

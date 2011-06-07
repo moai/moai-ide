@@ -23,6 +23,7 @@
 #include <moaicore/MOAIEaseDriver.h>
 #include <moaicore/MOAIEaseType.h>
 #include <moaicore/MOAIEventSource.h>
+#include <moaicore/MOAIFileSystem.h>
 #include <moaicore/MOAIFont.h>
 #include <moaicore/MOAIGfxQuad2D.h>
 #include <moaicore/MOAIGfxQuadDeck2D.h>
@@ -72,6 +73,7 @@
 #include <moaicore/MOAITileDeck2D.h>
 #include <moaicore/MOAITimer.h>
 #include <moaicore/MOAITouchSensor.h>
+#include <moaicore/MOAITraits.h>
 #include <moaicore/MOAITransform.h>
 #include <moaicore/MOAITransformBase.h>
 #include <moaicore/MOAIVertexBuffer.h>
@@ -95,12 +97,6 @@
 	#include <moaicore/MOAICpDebugDraw.h>
 	#include <moaicore/MOAICpShape.h>
 	#include <moaicore/MOAICpSpace.h>
-#endif
-
-#if USE_FMOD
-	#include <moaicore/MOAIFmod.h>
-	#include <moaicore/MOAIFmodChannel.h>
-	#include <moaicore/MOAIFmodSound.h>
 #endif
 
 //================================================================//

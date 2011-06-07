@@ -10,6 +10,7 @@
 // MOAILayoutFrame
 //================================================================//
 /**	@brief	Frame object for hierarchical, resizable layouts and auto-fitting.
+			(Temporarily disabled).
 */
 class MOAILayoutFrame :
 	public MOAITransform {
@@ -82,8 +83,8 @@ public:
 	//----------------------------------------------------------------//
 	USRect			GetFrame				();
 	USRect			GetScissorRect			();
-					MOAILayoutFrame				();
-					~MOAILayoutFrame				();
+					MOAILayoutFrame			();
+					~MOAILayoutFrame		();
 	void			RegisterLuaClass		( USLuaState& state );
 	void			RegisterLuaFuncs		( USLuaState& state );
 	void			SetParent				( MOAITransformBase* parent );

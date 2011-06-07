@@ -4,6 +4,7 @@
 #include "pch.h"
 #include <uslsext/USData.h>
 #include <uslsext/USGfxDevice.h>
+#include <uslsext/USPvrHeader.h>
 #include <uslsext/USTexture.h>
 
 //================================================================//
@@ -12,51 +13,82 @@
 class USTextureLoader {
 public:
 
-	STLString	mFilename;
-	void*		mFileData;
-	u32			mFileDataSize;
-	USImage		mImage;
-	u32			mTransform;
-	bool		mDone;
+	enum {
+		TYPE_MOAI_IMAGE,
+		TYPE_PVR,
+		TYPE_UNKNOWN,
+		TYPE_FAIL,
+	};
+
+	STLString		mFilename;
+	void*			mFileData;
+	size_t			mFileDataSize;
+	USImage			mImage;
+	u32				mTransform;
+	u32				mType;
 	
 	//----------------------------------------------------------------//
-	USImage* Load ( u32 transform = 0 ) {
+	void Load ( u32 transform = 0 ) {
 	
-		if ( this->mDone ) {
-			if ( this->mImage.IsOK ()) {
-				return &this->mImage;
-			}
-			return 0;
+		if ( this->mType != TYPE_UNKNOWN ) {
+			return;
 		}
-	
-		this->mDone = true;
+		
 		this->mTransform |= transform;
-	
+		
 		if ( !this->mImage.IsOK ()) {
 	
 			if ( this->mFileData ) {
-				this->mImage.Load ( this->mFileData, this->mFileDataSize, this->mTransform );
+				this->mImage.Load ( this->mFileData, ( u32 )this->mFileDataSize, this->mTransform );
 				free ( this->mFileData );
 				this->mFileData = 0;
 			}
 			else if ( mFilename.size ()) {
 				this->mImage.Load ( this->mFilename, this->mTransform );
 			}
-			
-			
 		}
 		
 		if ( this->mImage.IsOK ()) {
-			return &this->mImage;
+			this->mType = TYPE_MOAI_IMAGE;
 		}
-		return 0;
+		#ifdef MOAI_TEST_PVR
+			else {
+				// get file data, check if PVR
+				USFileStream stream;
+				stream.OpenRead ( this->mFilename );
+	
+				if ( this->mFileData ) {
+					free ( this->mFileData );
+					this->mFileData = 0;
+				}
+				
+				this->mFileDataSize = stream.GetLength ();
+				this->mFileData = malloc ( this->mFileDataSize );
+				stream.ReadBytes ( this->mFileData, this->mFileDataSize );
+	
+				stream.Close ();
+				
+				if ( USPvrHeader::GetHeader( this->mFileData, this->mFileDataSize )) {				
+					this->mType = TYPE_PVR;
+				}
+			}
+		#endif
+		
+		if ( this->mType == TYPE_UNKNOWN ) {
+			this->mType = TYPE_FAIL;
+			
+			if ( this->mFileData ) {
+				free ( this->mFileData );
+				this->mFileData = 0;
+			}
+		}
 	}
 	
 	//----------------------------------------------------------------//
 	USTextureLoader () :
 		mFileData ( 0 ),
 		mFileDataSize ( 0 ),
-		mDone ( false ) {
+		mType ( TYPE_UNKNOWN ) {
 	}
 	
 	//----------------------------------------------------------------//
@@ -85,10 +117,22 @@ void USTexture::AffirmTexture () {
 	//	transform.ConvertToTrueColor ();
 	//}
 	
-	USImage* image = this->mLoader->Load ();
+	this->mLoader->Load ();
 	
-	if ( image ) {
-		this->CreateTexture ( *image );
+	switch ( this->mLoader->mType ) {
+		
+		case USTextureLoader::TYPE_MOAI_IMAGE: {
+			this->CreateTextureFromImage ( this->mLoader->mImage );
+			break;
+		}
+		
+		case USTextureLoader::TYPE_PVR: {
+			this->CreateTextureFromPVR ( this->mLoader->mFileData, this->mLoader->mFileDataSize );
+			break;
+		}
+		default:
+			delete this->mLoader;
+			this->mLoader = 0;
 	}
 
 	if ( this->mGLTexID ) {
@@ -135,7 +179,7 @@ bool USTexture::Bind () {
 }
 
 //----------------------------------------------------------------//
-void USTexture::CreateTexture ( USImage& image ) {
+void USTexture::CreateTextureFromImage ( USImage& image ) {
 
 	if ( !image.IsOK ()) return;
 
@@ -276,6 +320,117 @@ void USTexture::CreateTexture ( USImage& image ) {
 }
 
 //----------------------------------------------------------------//
+void USTexture::CreateTextureFromPVR ( void* data, size_t size ) {
+	UNUSED ( data );
+	UNUSED ( size );
+
+	#ifdef MOAI_TEST_PVR
+
+		USPvrHeader* header = USPvrHeader::GetHeader ( data, size );
+		if ( !header ) return;
+		
+		bool compressed = false;
+		bool hasAlpha = header->mAlphaBitMask ? true : false;
+		
+		switch ( header->mPFFlags & USPvrHeader::PF_MASK ) {
+			
+			case USPvrHeader::OGL_RGBA_4444:
+				compressed = false;
+				this->mGLInternalFormat = GL_RGBA;
+				this->mGLPixelType = GL_UNSIGNED_SHORT_4_4_4_4;
+				break;
+		
+			case USPvrHeader::OGL_RGBA_5551:
+				compressed = false;
+				this->mGLInternalFormat = GL_RGBA;
+				this->mGLPixelType = GL_UNSIGNED_SHORT_5_5_5_1;
+				break;
+			
+			case USPvrHeader::OGL_RGBA_8888:
+				compressed = false;
+				this->mGLInternalFormat = GL_RGBA;
+				this->mGLPixelType = GL_UNSIGNED_BYTE;
+				break;
+			
+			case USPvrHeader::OGL_RGB_565:
+				compressed = false;
+				this->mGLInternalFormat = GL_RGB;
+				this->mGLPixelType = GL_UNSIGNED_SHORT_5_6_5;
+				break;
+			
+			// NO IMAGE FOR THIS
+//			case USPvrHeader::OGL_RGB_555:
+//				break;
+			
+			case USPvrHeader::OGL_RGB_888:
+				compressed = false;
+				this->mGLInternalFormat = GL_RGB;
+				this->mGLPixelType = GL_UNSIGNED_BYTE;
+				break;
+			
+			case USPvrHeader::OGL_I_8:
+				compressed = false;
+				this->mGLInternalFormat = GL_LUMINANCE;
+				this->mGLPixelType = GL_UNSIGNED_BYTE;
+				break;
+			
+			case USPvrHeader::OGL_AI_88:
+				compressed = false;
+				this->mGLInternalFormat = GL_LUMINANCE_ALPHA;
+				this->mGLPixelType = GL_UNSIGNED_BYTE;
+				break;
+			
+			case USPvrHeader::OGL_PVRTC2:
+				compressed = true;
+				this->mGLInternalFormat = hasAlpha ? GL_COMPRESSED_RGBA_PVRTC_2BPPV1_IMG : GL_COMPRESSED_RGB_PVRTC_2BPPV1_IMG;
+				break;
+			
+			case USPvrHeader::OGL_PVRTC4:
+				compressed = true;
+				this->mGLInternalFormat = hasAlpha ? GL_COMPRESSED_RGBA_PVRTC_4BPPV1_IMG : GL_COMPRESSED_RGB_PVRTC_4BPPV1_IMG;
+				break;
+			
+			case USPvrHeader::OGL_BGRA_8888:
+				compressed = false;
+				this->mGLInternalFormat = GL_BGRA;
+				this->mGLPixelType = GL_UNSIGNED_BYTE;
+				break;
+			
+			case USPvrHeader::OGL_A_8:
+				compressed = false;
+				this->mGLInternalFormat = GL_ALPHA;
+				this->mGLPixelType = GL_UNSIGNED_BYTE;
+				break;
+		}
+		
+		
+		glGenTextures ( 1, &this->mGLTexID );
+		if ( !this->mGLTexID ) return;
+
+		glBindTexture ( GL_TEXTURE_2D, this->mGLTexID );
+		
+		int width = header->mWidth;
+		int height = header->mHeight;		
+		char* imageData = (char*)(header->GetFileData ( data, size));
+		for ( int level = 0; width > 0 && height > 0; ++level ) {
+			GLsizei currentSize = (GLsizei) USFloat::Max ( (float)(32), (float)(width * height * header->mBitCount / 8) );
+			
+			if ( compressed ) {
+				glCompressedTexImage2D ( GL_TEXTURE_2D, level, this->mGLInternalFormat, width, height, 0, currentSize, imageData );
+			}
+			else {
+				glTexImage2D( GL_TEXTURE_2D, level, this->mGLInternalFormat, width, height, 0, this->mGLInternalFormat, this->mGLPixelType, imageData);
+			}
+			
+			imageData += currentSize;
+			width >>= 1;
+			height >>= 1;
+		}				
+
+	#endif
+}
+
+//----------------------------------------------------------------//
 u32 USTexture::GetHeight () {
 	return this->mHeight;
 }
@@ -386,7 +541,7 @@ USTexture::USTexture () :
 	mHeight ( 0 ),
 	mMinFilter ( GL_LINEAR ),
 	mMagFilter ( GL_NEAREST ),
-	mWrap ( GL_CLAMP ),
+	mWrap ( GL_CLAMP_TO_EDGE ),
 	mLoader ( 0 ) {
 }
 

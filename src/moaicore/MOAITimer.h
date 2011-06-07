@@ -60,6 +60,7 @@ protected:
 public:
 	
 	DECL_LUA_FACTORY ( MOAITimer )
+	DECL_ATTR_HELPER ( MOAITimer )
 	
 	enum {
 		ATTR_TIME,
@@ -81,7 +82,7 @@ public:
 	};
 	
 	//----------------------------------------------------------------//
-	void			ApplyAttrOp			( u32 attrID, USAttrOp& attrOp );
+	bool			ApplyAttrOp			( u32 attrID, USAttrOp& attrOp );
 	bool			IsDone				();
 					MOAITimer			();
 					~MOAITimer			();

@@ -5,6 +5,7 @@
 #define	MOAISIMPLESHADER_H
 
 #include <moaicore/MOAIColor.h>
+#include <moaicore/MOAIShader.h>
 
 //================================================================//
 // MOAISimpleShader
@@ -29,6 +30,7 @@
 	@const	GL_SRC_ALPHA_SATURATE
 */
 class MOAISimpleShader :
+	public virtual MOAIShader,
 	public virtual MOAIColor {
 protected:
 	
@@ -44,13 +46,8 @@ public:
 	
 	DECL_LUA_FACTORY ( MOAISimpleShader )
 	
-	enum {
-		ATTR_PARENT,
-		TOTAL_ATTR,
-	};
-	
 	//----------------------------------------------------------------//
-	void			ApplyAttrOp				( u32 attrID, USAttrOp& attrOp );
+	bool			ApplyAttrOp				( u32 attrID, USAttrOp& attrOp );
 	void			Bind					();
 					MOAISimpleShader		();
 					~MOAISimpleShader		();
