@@ -6,7 +6,6 @@
 #include <uslsext/USDataIOTask.h>
 #include <uslsext/USHttpTask.h>
 #include <uslsext/USHttpTask_impl.h>
-#include <uslsext/USLog.h>
 #include <uslsext/USUrlMgr.h>
 
 //================================================================//
@@ -39,6 +38,7 @@ void USHttpTask::Finish () {
 	
 	this->mBytes = this->mInfo->mData;
 	this->mSize = this->mInfo->mData.Size ();
+	this->mResponseCode = this->mInfo->mResponseCode;
 
 	this->mCallback.Call ( this );
 
@@ -69,22 +69,22 @@ u32 USHttpTask::GetSize () {
 }
 
 //----------------------------------------------------------------//
-void USHttpTask::HttpGet ( cc8* url ) {
+void USHttpTask::HttpGet ( cc8* url, cc8* useragent, bool verbose ) {
 
 	this->Clear ();
 	this->mInfo = new USHttpTaskInfo ();
-	this->mInfo->InitForGet ( url );
+	this->mInfo->InitForGet ( url, useragent, verbose );
 	
 	this->Retain ();
 	USUrlMgr::Get ().AddHandle ( *this );
 }
 
 //----------------------------------------------------------------//
-void USHttpTask::HttpPost ( cc8* url, const void* buffer, u32 size ) {
+void USHttpTask::HttpPost ( cc8* url, cc8* useragent, const void* buffer, u32 size, bool verbose ) {
 
 	this->Clear ();
 	this->mInfo = new USHttpTaskInfo ();
-	this->mInfo->InitForPost ( url, buffer, size );
+	this->mInfo->InitForPost ( url, useragent, buffer, size, verbose );
 	
 	this->Retain ();
 	USUrlMgr::Get ().AddHandle ( *this );
@@ -94,7 +94,9 @@ void USHttpTask::HttpPost ( cc8* url, const void* buffer, u32 size ) {
 USHttpTask::USHttpTask () :
 	mInfo ( 0 ),
 	mBytes ( 0 ),
-	mSize ( 0 ) {
+	mSize ( 0 ),
+	mVerbose ( false ),
+	mResponseCode ( 0 ) {
 }
 
 //----------------------------------------------------------------//

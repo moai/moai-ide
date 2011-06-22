@@ -20,6 +20,7 @@
 #include <moaicore/MOAIDeck.h>
 #include <moaicore/MOAIDeck2D.h>
 #include <moaicore/MOAIDeckRemapper.h>
+#include <moaicore/MOAIDeviceInfo.h>
 #include <moaicore/MOAIEaseDriver.h>
 #include <moaicore/MOAIEaseType.h>
 #include <moaicore/MOAIEventSource.h>
@@ -35,6 +36,7 @@
 #include <moaicore/MOAIInputDevice.h>
 #include <moaicore/MOAIInputMgr.h>
 #include <moaicore/MOAIJoystickSensor.h>
+#include <moaicore/MOAIJsonParser.h>
 #include <moaicore/MOAIKeyboardSensor.h>
 #include <moaicore/MOAILayer2D.h>
 #include <moaicore/MOAILayerBridge2D.h>

@@ -24,6 +24,7 @@ $(SRC_PATH)/3rdparty/freetype-2.4.4/include/freetype2 \
 $(SRC_PATH)/3rdparty/freetype-2.4.4/builds \
 $(SRC_PATH)/3rdparty/freetype-2.4.4/src \
 $(SRC_PATH)/3rdparty/freetype-2.4.4/config \
+$(SRC_PATH)/3rdparty/jansson-2.1/src \
 $(SRC_PATH)/3rdparty/lua-5.1.3/src \
 $(SRC_PATH)/3rdparty/lpng140 \
 $(SRC_PATH)/3rdparty/curl-7.19.7/include-android\
@@ -74,12 +75,11 @@ $(SRC_PATH)/src/moaicore/MOAIDeck.cpp \
 $(SRC_PATH)/src/moaicore/MOAIDeck2D.cpp \
 $(SRC_PATH)/src/moaicore/MOAIDeckRemapper.cpp \
 $(SRC_PATH)/src/moaicore/MOAIDebugLines.cpp \
+$(SRC_PATH)/src/moaicore/MOAIDeviceInfo.cpp \
 $(SRC_PATH)/src/moaicore/MOAIEaseDriver.cpp \
 $(SRC_PATH)/src/moaicore/MOAIEaseType.cpp \
 $(SRC_PATH)/src/moaicore/MOAIEventSource.cpp \
-$(SRC_PATH)/src/moaicore/MOAIFmod.cpp \
-$(SRC_PATH)/src/moaicore/MOAIFmodChannel.cpp \
-$(SRC_PATH)/src/moaicore/MOAIFmodSound.cpp \
+$(SRC_PATH)/src/moaicore/MOAIFileSystem.cpp \
 $(SRC_PATH)/src/moaicore/MOAIFont.cpp \
 $(SRC_PATH)/src/moaicore/MOAIFtFontRipper.cpp \
 $(SRC_PATH)/src/moaicore/MOAIGfxQuad2D.cpp \
@@ -92,6 +92,7 @@ $(SRC_PATH)/src/moaicore/MOAIIndexBuffer.cpp \
 $(SRC_PATH)/src/moaicore/MOAIInputDevice.cpp \
 $(SRC_PATH)/src/moaicore/MOAIInputMgr.cpp \
 $(SRC_PATH)/src/moaicore/MOAIJoystickSensor.cpp \
+$(SRC_PATH)/src/moaicore/MOAIJsonParser.cpp \
 $(SRC_PATH)/src/moaicore/MOAIKeyboardSensor.cpp \
 $(SRC_PATH)/src/moaicore/MOAILayer2D.cpp \
 $(SRC_PATH)/src/moaicore/MOAILayerBridge2D.cpp \

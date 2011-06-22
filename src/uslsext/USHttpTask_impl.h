@@ -6,7 +6,10 @@
 
 #define  CURL_STATICLIB
 #define  CURL_DISABLE_LDAP
-#include <curl/curl.h>
+
+extern "C" {
+	#include <curl/curl.h>
+}
 
 //================================================================//
 // USHttpTaskInfo
@@ -23,6 +26,8 @@ private:
 	
 	USStream*			mStream;
 
+	u32					mResponseCode;
+
 	friend class USHttpTask;
 	friend class USUrlMgr;
 
@@ -34,8 +39,8 @@ private:
 	//----------------------------------------------------------------//
 	void			Clear					();
 	void			Finish					();
-	void			InitForGet				( cc8* url );
-	void			InitForPost				( cc8* url, const void* buffer, u32 size );
+	void			InitForGet				( cc8* url, cc8* useragent, bool verbose );
+	void			InitForPost				( cc8* url, cc8* useragent, const void* buffer, u32 size, bool verbose );
 					USHttpTaskInfo			();
 					~USHttpTaskInfo			();
 };

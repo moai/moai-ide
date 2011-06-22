@@ -8,6 +8,8 @@
 #include <moaicore/MOAIXmlParser.h>
 #include <moaicore/MOAIDataBuffer.h>
 
+#define DEFAULT_MOAI_HTTP_USERAGENT "Moai SDK beta; support@getmoai.com"
+
 //================================================================//
 // local
 //================================================================//
@@ -50,16 +52,22 @@ int MOAIHttpTask::_getString ( lua_State* L ) {
 
 	@in		MOAIHttpTask self
 	@in		string url				The URL on which to perform the GET request.
+	@opt	string useragent
+	@opt	boolean verbose
 	@out	nil
 */
 int MOAIHttpTask::_httpGet ( lua_State* L ) {
 	MOAI_LUA_SETUP ( MOAIHttpTask, "US" )
 	
-	cc8* url = lua_tostring ( state, 2 );
+	cc8* url		= state.GetValue < cc8* >( 2, "" );
+	cc8* useragent	= state.GetValue < cc8* >( 3, DEFAULT_MOAI_HTTP_USERAGENT );
+	bool verbose	= state.GetValue < bool >( 4, false );
+	
+	self->Retain ();
 	
 	USHttpTask* task = new USHttpTask ();
 	task->SetDelegate < MOAIHttpTask >( self, &MOAIHttpTask::OnHttpFinish );
-	task->HttpGet ( url );
+	task->HttpGet ( url, useragent, verbose );
 
 	return 0;
 }
@@ -68,18 +76,34 @@ int MOAIHttpTask::_httpGet ( lua_State* L ) {
 /**	@name	httpPost
 	@text	Sends an API call to the server for downloading data.  The callback function (from setCallback) will run when the call is complete, i.e. this action is asynchronous and returns almost instantly.
 
-	@in		MOAIHttpTask self
-	@in		string url				The URL on which to perform the GET request.
-	@opt	string data				The string containing text to send as POST data.
-	@opt	MOAIDataBuffer data		A MOAIDataBuffer object to send as POST data.  You must either provide a MOAIDataBuffer or a string for data, but not both.
-	@out	nil
+	@overload
+
+		@in		MOAIHttpTask self
+		@in		string url				The URL on which to perform the GET request.
+		@opt	string data				The string containing text to send as POST data.
+		@opt	string useragent
+		@opt	boolean verbose
+		@out	nil
+	
+	@overload
+
+		@in		MOAIHttpTask self
+		@in		string url				The URL on which to perform the GET request.
+		@opt	MOAIDataBuffer data		A MOAIDataBuffer object to send as POST data.
+		@opt	string useragent
+		@opt	boolean verbose
+		@out	nil
 */
 int MOAIHttpTask::_httpPost ( lua_State* L ) {
 	MOAI_LUA_SETUP ( MOAIHttpTask, "US" )
 	
-	cc8* url = lua_tostring ( state, 2 );
+	cc8* url		= state.GetValue < cc8* >( 2, "" );
+	cc8* useragent	= state.GetValue < cc8* >( 4, DEFAULT_MOAI_HTTP_USERAGENT );
+	bool verbose	= state.GetValue < bool >( 5, false );
 
 	if ( state.IsType (3, LUA_TUSERDATA) ) {
+		
+		self->Retain ();
 		
 		self->mPostData = state.GetLuaObject < MOAIDataBuffer >( 3 );
 		
@@ -89,19 +113,19 @@ int MOAIHttpTask::_httpPost ( lua_State* L ) {
 		
 		USHttpTask* task = new USHttpTask ();
 		task->SetDelegate < MOAIHttpTask >( self, &MOAIHttpTask::OnHttpFinish );
-		task->HttpPost ( url, bytes, size );
+		task->HttpPost ( url, useragent, bytes, size, verbose );
 		
 		self->mPostData->Unlock ();
 	}
-	else {
+	else if ( state.IsType (3, LUA_TSTRING )) {
 		
-		if ( !state.IsType (3, LUA_TSTRING ) ) return 0;
+		self->Retain ();
 		
 		self->mPostString = lua_tostring ( state, 3 );
 		
 		USHttpTask* task = new USHttpTask ();
 		task->SetDelegate < MOAIHttpTask >( self, &MOAIHttpTask::OnHttpFinish );
-		task->HttpPost ( url, self->mPostString.str (), ( u32 )self->mPostString.size ());
+		task->HttpPost ( url, useragent, self->mPostString.str (), ( u32 )self->mPostString.size (), verbose );
 	}
 
 	return 0;
@@ -199,12 +223,14 @@ void MOAIHttpTask::OnHttpFinish ( USHttpTask* task ) {
 	
 		USLuaStateHandle state = this->mOnFinish.GetSelf ();
 		this->PushLuaUserdata ( state );
-		state.DebugCall ( 1, 0 );
-		
+		state.Push ( task->GetResponseCode ());
+		state.DebugCall ( 2, 0 );
 	}
 	
 	this->mPostData = 0;
 	this->mPostString.clear ();
+	
+	this->Release ();
 }
 
 //----------------------------------------------------------------//

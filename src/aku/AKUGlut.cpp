@@ -16,6 +16,10 @@
 	#include <aku/AKU-luaext.h>
 #endif
 
+#ifdef AKUGLUT_USE_UNTZ
+	#include <aku/AKU-untz.h>
+#endif
+
 #ifdef _WIN32
 	#include <glut.h>
 #else
@@ -124,6 +128,11 @@ static void _onReshape( int w, int h ) {
 static void _onUpdate () {
 
 	AKUUpdate ();
+	
+	#ifdef AKUGLUT_USE_FMOD
+		AKUFmodUpdate ();
+	#endif
+	
 	glutPostRedisplay ();
 }
 
@@ -133,11 +142,7 @@ static void _onUpdate () {
 
 void	_AKUEnterFullscreenModeFunc		();
 void	_AKUExitFullscreenModeFunc		();
-void	_AKUHideLoadingScreenFunc		();
-void	_AKUHideLoadingScreenFunc		();
 void	_AKUOpenWindowFunc				( const char* title, int width, int height );
-void	_AKUShowLoadingScreenFunc		();
-void	_AKUShowSoftwareKeyboardFunc	();
 void	_AKUStartGameLoopFunc			();
 
 //----------------------------------------------------------------//
@@ -159,10 +164,6 @@ void _AKUExitFullscreenModeFunc () {
 		glutPositionWindow ( sWinX, sWinY );
 		glutReshapeWindow ( sWinWidth, sWinHeight );
 	}
-}
-
-//----------------------------------------------------------------//
-void _AKUHideLoadingScreenFunc () {
 }
 
 //----------------------------------------------------------------//
@@ -225,7 +226,7 @@ int AKUGlut ( int argc, char** argv ) {
 	AKUCreateContext ();
 	
 	#ifdef AKUGLUT_USE_FMOD
-		AKUExtLoadFmod ();
+		AKUFmodLoad ();
 	#endif
 	
 	#ifdef AKUGLUT_USE_HARNESS
@@ -234,7 +235,13 @@ int AKUGlut ( int argc, char** argv ) {
 	
 	#ifdef AKUGLUT_USE_LUAEXT
 		AKUExtLoadLuacrypto ();
+		AKUExtLoadLuacurl ();
 		AKUExtLoadLuasocket ();
+		AKUExtLoadLuasql ();
+	#endif
+	
+	#ifdef AKUGLUT_USE_UNTZ
+		AKUUntzInit ();
 	#endif
 	
 	AKUSetInputConfigurationName ( "AKUGlut" );

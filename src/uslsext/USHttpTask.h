@@ -23,6 +23,9 @@ private:
 	void*				mBytes;
 	u32					mSize;
 
+	bool				mVerbose;
+	u32					mResponseCode;
+
 	USCallback < USHttpTask* > mCallback;
 
 	//----------------------------------------------------------------//
@@ -38,13 +41,15 @@ public:
 
 	friend class USUrlMgr;
 	
+	GET ( u32, ResponseCode, mResponseCode )
+	
 	//----------------------------------------------------------------//
 	void		Cancel				();
 	void*		GetData				();
 	void		GetData				( void* buffer, u32 size );
 	u32			GetSize				();
-	void		HttpGet				( cc8* url );
-	void		HttpPost			( cc8* url, const void* buffer, u32 size );
+	void		HttpGet				( cc8* url, cc8* useragent, bool verbose );
+	void		HttpPost			( cc8* url, cc8* useragent, const void* buffer, u32 size, bool verbose );
 				USHttpTask			();
 				~USHttpTask			();
 	

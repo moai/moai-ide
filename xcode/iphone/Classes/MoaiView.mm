@@ -13,9 +13,8 @@ extern "C" {
 	#include <lualib.h>
 }
 
-#ifdef AKU_IPHONE_USE_LUAEXT
-	#include <aku/AKU-luaext.h>
-#endif
+#include <aku/AKU-luaext.h>
+#include <aku/AKU-untz.h>
 
 #import "LocationObserver.h"
 #import "MoaiView.h"
@@ -48,6 +47,7 @@ namespace MoaiInputDeviceSensorID {
 	-( void )	onUpdateAnim;
 	-( void )	onUpdateHeading		:( LocationObserver* )observer;
 	-( void )	onUpdateLocation	:( LocationObserver* )observer;
+	-( void )	openContext;
 	-( void )	setGlobalPaths;
 	-( void )	startAnimation;
 	-( void )	stopAnimation;
@@ -194,10 +194,10 @@ void _AKUStartGameLoopFunc () {
 	
 		mAku = AKUCreateContext ( self );
 		
-		#ifdef AKU_IPHONE_USE_LUAEXT
-			AKUExtLoadLuacrypto ();
-			AKUExtLoadLuasocket ();
-		#endif
+		AKUExtLoadLuacrypto ();
+		AKUExtLoadLuasocket ();
+		
+		AKUUntzInit ();
 		
 		AKUSetInputConfigurationName ( "iPhone" );
 
@@ -232,6 +232,7 @@ void _AKUStartGameLoopFunc () {
 	//----------------------------------------------------------------//
 	-( void ) onUpdateAnim {
 		
+		[ self openContext ];
 		AKUSetContext ( mAku );
 		AKUUpdate ();
 		
@@ -261,6 +262,14 @@ void _AKUStartGameLoopFunc () {
 			( float )[ observer vAccuracy ],
 			( float )[ observer speed ]
 		);
+	}
+	
+	//----------------------------------------------------------------//
+	-( void ) openContext {
+		
+		if ([ EAGLContext currentContext ] != mContext ) {
+			[ EAGLContext setCurrentContext:mContext ];
+		}
 	}
 	
 	//----------------------------------------------------------------//

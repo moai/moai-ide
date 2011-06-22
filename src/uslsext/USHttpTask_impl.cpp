@@ -4,7 +4,6 @@
 #include "pch.h"
 
 #include <uslsext/USData.h>
-#include <uslsext/USLog.h>
 #include <uslsext/USHttpTask.h>
 #include <uslsext/USHttpTask_impl.h>
 #include <uslsext/USUrlMgr.h>
@@ -13,7 +12,7 @@
 void USHttpTaskInfo::_printError ( CURLcode error ) {
 
 	if ( error ) {
-		printf ( "%s\n", curl_easy_strerror ( error ));
+		USLog::Print ( "%s\n", curl_easy_strerror ( error ));
 	}
 }
 
@@ -60,6 +59,8 @@ void USHttpTaskInfo::Clear () {
 	this->mUrl.clear ();
 	this->mData.Clear ();
 	
+	this->mResponseCode = 0;
+	
 	if ( this->mEasyHandle ) {
 		curl_easy_cleanup ( this->mEasyHandle );
 		this->mEasyHandle = 0;
@@ -68,6 +69,12 @@ void USHttpTaskInfo::Clear () {
 
 //----------------------------------------------------------------//
 void USHttpTaskInfo::Finish () {
+
+	if ( this->mEasyHandle ) {
+		long response;
+		curl_easy_getinfo ( this->mEasyHandle, CURLINFO_RESPONSE_CODE, &response );
+		this->mResponseCode = ( u32 )response;
+	}
 
 	if ( this->mStream == &this->mMemStream ) {
 	
@@ -83,7 +90,7 @@ void USHttpTaskInfo::Finish () {
 }
 
 //----------------------------------------------------------------//
-void USHttpTaskInfo::InitForGet ( cc8* url ) {
+void USHttpTaskInfo::InitForGet ( cc8* url, cc8* useragent, bool verbose ) {
 
 	this->Clear ();
 	
@@ -116,13 +123,23 @@ void USHttpTaskInfo::InitForGet ( cc8* url ) {
 	
 	result = curl_easy_setopt ( easyHandle, CURLOPT_SSL_VERIFYHOST, 0 );
 	_printError ( result );
+
+	if ( useragent ) {
+		result = curl_easy_setopt ( easyHandle, CURLOPT_USERAGENT, useragent );
+		_printError ( result );
+	}
+	
+	if ( verbose ) {
+		result = curl_easy_setopt ( easyHandle, CURLOPT_VERBOSE, 1 );
+		_printError ( result );
+	}
 	
 	this->mEasyHandle = easyHandle;
 	this->mUrl = url;
 }
 
 //----------------------------------------------------------------//
-void USHttpTaskInfo::InitForPost ( cc8* url, const void* buffer, u32 size ) {
+void USHttpTaskInfo::InitForPost ( cc8* url, cc8* useragent, const void* buffer, u32 size, bool verbose ) {
 
 	this->Clear ();
 	
@@ -174,6 +191,16 @@ void USHttpTaskInfo::InitForPost ( cc8* url, const void* buffer, u32 size ) {
 	
 	result = curl_easy_setopt ( easyHandle, CURLOPT_SSL_VERIFYHOST, 0 );
 	_printError ( result );
+	
+	if ( useragent ) {
+		result = curl_easy_setopt ( easyHandle, CURLOPT_USERAGENT, useragent );
+		_printError ( result );
+	}
+	
+	if ( verbose ) {
+		result = curl_easy_setopt ( easyHandle, CURLOPT_VERBOSE, 1 );
+		_printError ( result );
+	}
 	
 	this->mEasyHandle = easyHandle;
 	this->mUrl = url;
