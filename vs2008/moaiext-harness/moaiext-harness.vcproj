@@ -339,6 +339,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\src\moaiext-harness\MOAIHarness.cpp"
+			>
+		</File>
+		<File
 			RelativePath="..\..\src\moaiext-harness\MOAIHarness.h"
 			>
 		</File>

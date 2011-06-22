@@ -109,7 +109,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;..\..\3rdparty\lua-3.1.5\src&quot;"
+				AdditionalIncludeDirectories="&quot;..\..\3rdparty\lua-3.1.5\src&quot;;&quot;C:\Server Storage\Projects\MOAI (Zipline)\moai-dev\3rdparty\chipmunk-5.3.4\include\chipmunk&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -246,7 +246,7 @@
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="2"
 				OmitFramePointers="true"
-				AdditionalIncludeDirectories="&quot;..\..\3rdparty\lua-3.1.5\src&quot;"
+				AdditionalIncludeDirectories="&quot;..\..\3rdparty\lua-3.1.5\src&quot;;&quot;C:\Server Storage\Projects\MOAI (Zipline)\moai-dev\3rdparty\chipmunk-5.3.4\include\chipmunk&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"

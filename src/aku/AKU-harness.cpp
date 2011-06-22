@@ -7,12 +7,12 @@
 #include <moaiext-harness/MOAIHarness.h>
 
 //================================================================//
-// AKU-fmod
+// AKU-harness
 //================================================================//
 
 //----------------------------------------------------------------//
 void AKUExtLoadHarness () {
 
-	//lua_State* state = AKUGetLuaState ();
 	//... bind harness to lua state
+	MOAIHarness::HookLua(AKUGetLuaState(), "127.0.0.1", 7018);
 }
