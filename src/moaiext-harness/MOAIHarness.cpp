@@ -2,8 +2,8 @@
 // http://getmoai.com
 
 #include "pch.h"
-#include <MOAIHarness.h>
-#include <libjson.h>
+#include "MOAIHarness.h"
+#include <jansson.h>
 #ifdef WIN32
 #include <winsock.h>
 #endif
@@ -186,5 +186,5 @@ void MOAIHarness::ReceiveMessage()
 
 	// We have received a message.  Parse the JSON to work out
 	// exactly what type of message it is.
-	JSONNode node = libjson::parse(json);
+	json_t* node = json_loads(json.c_str(), 0, NULL);
 }

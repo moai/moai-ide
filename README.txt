@@ -12,7 +12,12 @@ xcode - Mac OSX and iPhone projects.
 
 Developing on Windows:
 
-Start with the vs2008 or 2010 reference solutions. The 'moai' project builds moai.exe, a command line Moai host based on GLUT.
+To build the moai project, you will need to add the MOAI_OPENSSL environment variable:
+
+MOAI_OPENSSL = <path to OpenSSL>
+
+where the OpenSSL path should contain the lib/ and include/ folders relevant to OpenSSL.  Start with the vs2008 or 2010 reference solutions.
+The 'moai' project builds moai.exe, a command line Moai host based on GLUT.
 
 Lua samples are located in samples/basics. To run, build moai.exe. Add the MOAI_BIN and MOAI_CONFIG environment variables:
 

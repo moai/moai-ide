@@ -661,6 +661,14 @@
 			Name="sim"
 			>
 			<File
+				RelativePath="..\..\src\moaicore\MOAIDeviceInfo.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\moaicore\MOAIDeviceInfo.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\moaicore\MOAISim.cpp"
 				>
 			</File>
