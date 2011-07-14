@@ -22,8 +22,6 @@ ExtAudioFileAudioSource::ExtAudioFileAudioSource()
 
 ExtAudioFileAudioSource::~ExtAudioFileAudioSource()
 {
-    ExtAudioFileDispose(mAudioFile);
-    free (mpBufferList);
 }
 
 double ExtAudioFileAudioSource::getLength() 
@@ -41,7 +39,7 @@ UInt32 ExtAudioFileAudioSource::getNumChannels()
     return mClientFormat.mChannelsPerFrame;
 }
 
-bool ExtAudioFileAudioSource::open(const RString& path, bool loadIntoMemory)
+bool ExtAudioFileAudioSource::init(const RString& path, bool loadIntoMemory)
 {
     // FIXME: query the file to find out how many channels instead of hardcoding.
     
@@ -78,7 +76,15 @@ bool ExtAudioFileAudioSource::open(const RString& path, bool loadIntoMemory)
     mpBufferList = (AudioBufferList *)malloc(sizeof(AudioBufferList) + (getNumChannels() - 1) * sizeof(AudioBuffer));
     mpBufferList->mNumberBuffers = getNumChannels();    
 
-    return BufferedAudioSource::open(path, loadIntoMemory);
+    return BufferedAudioSource::init(path, loadIntoMemory);
+}
+
+void ExtAudioFileAudioSource::close()
+{
+    BufferedAudioSource::close();
+    
+    ExtAudioFileDispose(mAudioFile);
+    free (mpBufferList);    
 }
  
 void ExtAudioFileAudioSource::setDecoderPosition(Int64 startFrame)

@@ -27,7 +27,10 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <CharacterSet>Unicode</CharacterSet>
+<<<<<<< HEAD
     <WholeProgramOptimization>true</WholeProgramOptimization>
+=======
+>>>>>>> bc5a132725617963b1f52e40ad5b56274d1d6d48
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
@@ -104,6 +107,13 @@
       <Command>
       </Command>
     </PostBuildEvent>
+<<<<<<< HEAD
+=======
+    <ProjectReference />
+    <ProjectReference>
+      <LinkLibraryDependencies>true</LinkLibraryDependencies>
+    </ProjectReference>
+>>>>>>> bc5a132725617963b1f52e40ad5b56274d1d6d48
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -126,6 +136,13 @@
       <Command>
       </Command>
     </PostBuildEvent>
+<<<<<<< HEAD
+=======
+    <ProjectReference />
+    <ProjectReference>
+      <LinkLibraryDependencies>true</LinkLibraryDependencies>
+    </ProjectReference>
+>>>>>>> bc5a132725617963b1f52e40ad5b56274d1d6d48
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Midl>
@@ -164,9 +181,15 @@
       <TargetMachine>MachineX64</TargetMachine>
     </Link>
     <PostBuildEvent>
+<<<<<<< HEAD
       <Command>xcopy /yr "$(OutDir)$(TargetFileName)" "..\..\bin\$(Platform)\$(Configuration)\"
 xcopy /yr "$(OutDir)$(TargetName).lib" "..\..\bin\$(Platform)\$(Configuration)\"
 xcopy /yr "$(OutDir)$(TargetName).pdb" "..\..\bin\$(Platform)\$(Configuration)\"
+=======
+      <Command>xcopy /yr "$(OutDir)$(TargetFileName)" "..\..\bin\$(Platform)\$(Configuration)\"
+xcopy /yr "$(OutDir)$(TargetName).lib" "..\..\bin\$(Platform)\$(Configuration)\"
+xcopy /yr "$(OutDir)$(TargetName).pdb" "..\..\bin\$(Platform)\$(Configuration)\"
+>>>>>>> bc5a132725617963b1f52e40ad5b56274d1d6d48
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -202,8 +225,13 @@ xcopy /yr "$(OutDir)$(TargetName).pdb" "..\..\bin\$(Platform)\$(Configuration)\"
       <TargetMachine>MachineX64</TargetMachine>
     </Link>
     <PostBuildEvent>
+<<<<<<< HEAD
       <Command>xcopy /yr "$(OutDir)$(TargetFileName)" "..\..\bin\win32\$(Configuration)\"
 xcopy /yr "$(OutDir)$(TargetName).lib" "..\..\bin\win32\$(Configuration)\"
+=======
+      <Command>xcopy /yr "$(OutDir)$(TargetFileName)" "..\..\bin\win32\$(Configuration)\"
+xcopy /yr "$(OutDir)$(TargetName).lib" "..\..\bin\win32\$(Configuration)\"
+>>>>>>> bc5a132725617963b1f52e40ad5b56274d1d6d48
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -213,6 +241,14 @@ xcopy /yr "$(OutDir)$(TargetName).lib" "..\..\bin\win32\$(Configuration)\"
   <ItemGroup>
     <ClInclude Include="..\..\src\aku\AKU-luaext.h" />
   </ItemGroup>
+<<<<<<< HEAD
+=======
+  <ItemGroup>
+    <ProjectReference Include="..\luaext\luaext.vcxproj">
+      <Project>{51007be8-c720-4a9f-a1bf-c2aa31179e02}</Project>
+    </ProjectReference>
+  </ItemGroup>
+>>>>>>> bc5a132725617963b1f52e40ad5b56274d1d6d48
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

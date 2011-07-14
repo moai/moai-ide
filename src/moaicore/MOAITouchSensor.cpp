@@ -14,6 +14,7 @@
 	@text	Checks to see if the screen was touched during the last iteration.
 
 	@in		MOAITouchSensor self
+	@opt	number idx				Index of touch to check.
 	@out	boolean wasPressed
 */
 int MOAITouchSensor::_down ( lua_State* L ) {
@@ -33,9 +34,9 @@ int MOAITouchSensor::_down ( lua_State* L ) {
 	@text	Returns the IDs of all of the touches currently occurring (for use with getTouch).
 
 	@in		MOAITouchSensor self
-	@out	number id1
+	@out	number idx1
 	@out	...
-	@out	number idn
+	@out	number idxN
 */
 int MOAITouchSensor::_getActiveTouches ( lua_State* L ) {
 	MOAI_LUA_SETUP ( MOAITouchSensor, "U" )
@@ -305,6 +306,8 @@ void MOAITouchSensor::PrintStacks () {
 
 //----------------------------------------------------------------//
 void MOAITouchSensor::RegisterLuaClass ( USLuaState& state ) {
+
+	MOAISensor::RegisterLuaClass ( state );
 
 	state.SetField ( -1, "TOUCH_DOWN", ( u32 )TOUCH_DOWN );
 	state.SetField ( -1, "TOUCH_MOVE", ( u32 )TOUCH_MOVE );

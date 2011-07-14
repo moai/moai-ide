@@ -11,13 +11,9 @@ OggAudioSource::OggAudioSource()
 
 OggAudioSource::~OggAudioSource()
 {
-	ov_clear(&mOggFile);
-
-	if(mInFile)
-		fclose(mInFile);
 }
 
-bool OggAudioSource::open(const RString& path, bool loadIntoMemory)
+bool OggAudioSource::init(const RString& path, bool loadIntoMemory)
 {
 	mPath = path;
 	mInFile = fopen(mPath.c_str(), "rb");
@@ -38,13 +34,23 @@ bool OggAudioSource::open(const RString& path, bool loadIntoMemory)
 	// Get some information about the OGG file
 	mpOggInfo = ov_info(&mOggFile, -1);
 
-	return BufferedAudioSource::open(path, loadIntoMemory);
+	return BufferedAudioSource::init(path, loadIntoMemory);
+}
+
+void OggAudioSource::close()
+{
+    BufferedAudioSource::close();
+    
+	ov_clear(&mOggFile);
+    
+	if(mInFile)
+		fclose(mInFile);    
 }
 
 void OggAudioSource::setDecoderPosition(Int64 startFrame)
 {
 //	ov_time_seek(&mOggFile, position);
-	ov_pcm_seek(&mOggFile, startFrame * getNumChannels());
+	int status = ov_pcm_seek(&mOggFile, startFrame * getNumChannels());
 	if(startFrame < getLength() * getSampleRate())
 		mEOF = false;
 }

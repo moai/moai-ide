@@ -3,7 +3,6 @@
 
 #include "pch.h"
 #include "MOAIHarness.h"
-#include <jansson.h>
 #ifdef WIN32
 #include <winsock.h>
 #endif
@@ -110,13 +109,14 @@ void MOAIHarness::HookLua(lua_State* L, const char* target, int port)
 //----------------------------------------------------------------//
 void MOAIHarness::Pause()
 {
+	printf("debug harness: Waiting to receive messages from debugging interface.");
 	MOAIHarness::mEnginePaused = true;
 	while (MOAIHarness::mEnginePaused)
 	{
-		// Receive and handle IDE messages until we get either continue
-		// or break.
+		// Receive and handle IDE messages until we get a continue.
 		MOAIHarness::ReceiveMessage();
 	}
+	printf("debug harness: Continuing execution of program.");
 }
 
 //----------------------------------------------------------------//
@@ -160,6 +160,47 @@ void MOAIHarness::SendMessage(std::string data)
 }
 
 //----------------------------------------------------------------//
+void MOAIHarness::ReceiveContinue(json_t* node)
+{
+	MOAIHarness::mEnginePaused = false;
+}
+
+//----------------------------------------------------------------//
+void MOAIHarness::ReceiveBreak(json_t* node)
+{
+}
+
+//----------------------------------------------------------------//
+void MOAIHarness::ReceiveBreakSetAlways(json_t* node)
+{
+}
+
+//----------------------------------------------------------------//
+void MOAIHarness::ReceiveBreakSetConditional(json_t* node)
+{
+}
+
+//----------------------------------------------------------------//
+void MOAIHarness::ReceiveBreakClear(json_t* node)
+{
+}
+
+//----------------------------------------------------------------//
+void MOAIHarness::ReceiveVariableGet(json_t* node)
+{
+}
+
+//----------------------------------------------------------------//
+void MOAIHarness::ReceiveVariableSet(json_t* node)
+{
+}
+
+//----------------------------------------------------------------//
+void MOAIHarness::ReceiveEvaluate(json_t* node)
+{
+}
+
+//----------------------------------------------------------------//
 void MOAIHarness::ReceiveMessage()
 {
 	// Receive a single message from the TCP socket and then
@@ -187,4 +228,28 @@ void MOAIHarness::ReceiveMessage()
 	// We have received a message.  Parse the JSON to work out
 	// exactly what type of message it is.
 	json_t* node = json_loads(json.c_str(), 0, NULL);
+	
+	// Get a reference to the ID value.
+	json_t* np_id = json_object_get(node, "ID");
+	if (np_id == NULL || json_typeof(np_id) == JSON_STRING)
+		return; // Unknown message type.
+	
+	// Check the type of message.
+	if (std::string(json_string_value(np_id)) == "continue")
+		MOAIHarness::ReceiveContinue(node);
+	else if (std::string(json_string_value(np_id)) == "break")
+		MOAIHarness::ReceiveBreak(node);
+	else if (std::string(json_string_value(np_id)) == "break_set_always")
+		MOAIHarness::ReceiveBreakSetAlways(node);
+	else if (std::string(json_string_value(np_id)) == "break_set_conditional")
+		MOAIHarness::ReceiveBreakSetConditional(node);
+	else if (std::string(json_string_value(np_id)) == "break_clear")
+		MOAIHarness::ReceiveBreakClear(node);
+	else if (std::string(json_string_value(np_id)) == "variable_get")
+		MOAIHarness::ReceiveVariableGet(node);
+	else if (std::string(json_string_value(np_id)) == "variable_set")
+		MOAIHarness::ReceiveVariableSet(node);
+	else if (std::string(json_string_value(np_id)) == "evaluate")
+		MOAIHarness::ReceiveEvaluate(node);
+	json_decref(node);
 }

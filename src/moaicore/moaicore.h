@@ -7,6 +7,7 @@
 #include <moaicore/pch.h>
 
 #include <moaicore/MOAIAction.h>
+#include <moaicore/MOAIActionMgr.h>
 #include <moaicore/MOAIAnim.h>
 #include <moaicore/MOAIAnimCurve.h>
 #include <moaicore/MOAIButtonSensor.h>
@@ -20,7 +21,7 @@
 #include <moaicore/MOAIDeck.h>
 #include <moaicore/MOAIDeck2D.h>
 #include <moaicore/MOAIDeckRemapper.h>
-#include <moaicore/MOAIDeviceInfo.h>
+#include <moaicore/MOAIEnvironment.h>
 #include <moaicore/MOAIEaseDriver.h>
 #include <moaicore/MOAIEaseType.h>
 #include <moaicore/MOAIEventSource.h>
@@ -41,20 +42,23 @@
 #include <moaicore/MOAILayer2D.h>
 #include <moaicore/MOAILayerBridge2D.h>
 #include <moaicore/MOAILayoutFrame.h>
-#include <moaicore/MOAILevelSensor.h>
 #include <moaicore/MOAILocationSensor.h>
 #include <moaicore/MOAILogMgr.h>
 #include <moaicore/MOAILogMessages.h>
 #include <moaicore/MOAIMesh.h>
+#include <moaicore/MOAIMotionSensor.h>
 #include <moaicore/MOAINode.h>
 #include <moaicore/MOAINodeMgr.h>
 #include <moaicore/MOAIParser.h>
 #include <moaicore/MOAIParticle.h>
+#include <moaicore/MOAIParticleDistanceEmitter.h>
 #include <moaicore/MOAIParticleEmitter.h>
 #include <moaicore/MOAIParticleForce.h>
+#include <moaicore/MOAIParticlePlugin.h>
 #include <moaicore/MOAIParticleScript.h>
 #include <moaicore/MOAIParticleState.h>
 #include <moaicore/MOAIParticleSystem.h>
+#include <moaicore/MOAIParticleTimedEmitter.h>
 #include <moaicore/MOAIPartition.h>
 #include <moaicore/MOAIPartitionCell.h>
 #include <moaicore/MOAIPartitionLayer.h>

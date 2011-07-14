@@ -15,17 +15,43 @@
 //================================================================//
 
 //----------------------------------------------------------------//
-int USLuaObject::_delete ( lua_State* L ) {
+int USLuaObject::_gc ( lua_State* L ) {
 
 	USLuaState state ( L );
-
+	
 	USLuaObject* data = ( USLuaObject* )state.GetPtrUserData ( 1 );
 
-	if ( data->mUserdata.IsWeak ()) {
+	bool cleanup = data->mUserdata.IsWeak ();
+	data->mUserdata.Clear ();
+	
+	if ( cleanup ) {
 		delete data;
 	}
-	else {
-		data->mUserdata.Clear ();
+	return 0;
+}
+
+//----------------------------------------------------------------//
+int USLuaObject::_getClass ( lua_State* L ) {
+
+	USLuaState state ( L );
+	USLuaObject* object = ( USLuaObject* )state.GetPtrUserData ( 1 );
+
+	if ( object ) {
+		object->PushLuaClassTable ( state );
+		return 1;
+	}
+	return 0;
+}
+
+//----------------------------------------------------------------//
+int USLuaObject::_getClassName ( lua_State* L ) {
+
+	USLuaState state ( L );
+	USLuaObject* object = ( USLuaObject* )state.GetPtrUserData ( 1 );
+
+	if ( object ) {
+		lua_pushstring ( L, object->TypeName ());
+		return 1;
 	}
 	return 0;
 }
@@ -100,21 +126,15 @@ void USLuaObject::LuaUnbind ( USLuaState& state ) {
 	if ( this->mUserdata ) {
 		
 		this->mUserdata.PushRef ( state );
+		assert ( lua_isuserdata ( state, -1 ));
 		
-		// push tombstone
-		lua_newtable ( state );
-			
-		lua_pushvalue ( state, -1 );
-		lua_setfield ( state, -2, "__index" );
-			
+		void* userdata = lua_touserdata ( state, -1 );
+		memset ( userdata, 0, sizeof ( void* ));
+		
 		lua_pushnil ( state );
-		lua_setfield ( state, -2, "__newindex" );
-	
 		lua_setmetatable ( state, -2 );
-		lua_pop ( state, 1 );
 
 		this->mUserdata.Clear ();
-		this->mInstanceTable.Clear ();
 	}
 }
 
@@ -235,9 +255,13 @@ USLuaObject::USLuaObject () {
 USLuaObject::~USLuaObject () {
 
 	// TODO: keep the tombstone idiom?
-	if (( !this->mUserdata.IsNil ()) && USLuaRuntime::IsValid ()) {
-		USLuaStateHandle state = USLuaRuntime::Get ().State ();
-		this->LuaUnbind ( state );
+	if ( USLuaRuntime::IsValid ()) {
+		
+		if ( this->mUserdata ) {
+
+			USLuaStateHandle state = USLuaRuntime::Get ().State ();
+			this->LuaUnbind ( state );
+		}
 	}
 }
 
@@ -256,6 +280,13 @@ void USLuaClass::InitLuaFactoryClass ( USLuaObject& data, USLuaState& state ) {
 	int top = lua_gettop ( state );
 
 	lua_newtable ( state );
+	
+	lua_pushcfunction ( state, USLuaObject::_getClass );
+	lua_setfield ( state, -2, "getClass" );
+	
+	lua_pushcfunction ( state, USLuaObject::_getClassName );
+	lua_setfield ( state, -2, "getClassName" );
+
 	data.RegisterLuaFuncs ( state );
 
 	lua_pushvalue ( state, -1 );
@@ -263,6 +294,9 @@ void USLuaClass::InitLuaFactoryClass ( USLuaObject& data, USLuaState& state ) {
 
 	lua_pushnil ( state );
 	lua_setfield ( state, -2, "__newindex" );
+
+	//lua_pushcfunction ( state, _tostring );
+	//lua_setfield ( state, -2, "__tostring" );
 
 	this->mMemberTable = state.GetStrongRef ( -1 );
 	
@@ -291,12 +325,9 @@ void USLuaClass::InitLuaInstanceTable ( USLuaObject* data, USLuaState& state, in
 	lua_pushvalue ( state, idx );
 	lua_setfield ( state, idx, "__newindex" );
 
-	lua_pushcfunction ( state, USLuaObject::_delete );
+	lua_pushcfunction ( state, USLuaObject::_gc );
 	lua_setfield ( state, idx, "__gc" );
 
-	//lua_pushcfunction ( state, _tostring );
-	//lua_setfield ( state, idx, "__tostring" );
-	
 	state.Push ( this->mMemberTable );
 	lua_setmetatable ( state, idx );
 }

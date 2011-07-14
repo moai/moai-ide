@@ -84,18 +84,8 @@ void USGLQuad::Draw ( float xOff, float yOff, float xScale, float yScale ) {
 void USGLQuad::Draw ( const USVec2D* vtx, const USVec2D* uv ) {
 
 	USDrawBuffer& drawBuffer = USDrawBuffer::Get ();
-	
-	drawBuffer.BeginPrim ();
-		USGLQuad::WriteVertex ( drawBuffer, vtx [ 3 ], uv [ 3 ]);
-		USGLQuad::WriteVertex ( drawBuffer, vtx [ 1 ], uv [ 1 ]);
-		USGLQuad::WriteVertex ( drawBuffer, vtx [ 0 ], uv [ 0 ]);
-	drawBuffer.EndPrim ();
-	
-	drawBuffer.BeginPrim ();
-		USGLQuad::WriteVertex ( drawBuffer, vtx [ 3 ], uv [ 3 ]);
-		USGLQuad::WriteVertex ( drawBuffer, vtx [ 2 ], uv [ 2 ]);
-		USGLQuad::WriteVertex ( drawBuffer, vtx [ 1 ], uv [ 1 ]);
-	drawBuffer.EndPrim ();
+		
+	drawBuffer.WriteQuad ( ( USVec2D* )vtx, ( USVec2D* )uv ); 
 }
 
 //----------------------------------------------------------------//

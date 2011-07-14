@@ -31,7 +31,13 @@ int MOAITransformBase::_getWorldDir ( lua_State* L ) {
 }
 
 //----------------------------------------------------------------//
-// TODO: doxygen
+/**	@name	getWorldLoc
+	@text	Get the transform's location in world space.
+	
+	@in		MOAITransformBase self
+	@out	number xLoc
+	@out	number yLoc
+*/
 int MOAITransformBase::_getWorldLoc ( lua_State* L ) {
 	MOAI_LUA_SETUP ( MOAITransformBase, "U" )
 
@@ -44,7 +50,12 @@ int MOAITransformBase::_getWorldLoc ( lua_State* L ) {
 }
 
 //----------------------------------------------------------------//
-// TODO: doxygen
+/**	@name	getWorldRot
+	@text	Get the transform's rotation in world space.
+	
+	@in		MOAITransformBase self
+	@out	number degrees
+*/
 int MOAITransformBase::_getWorldRot ( lua_State* L ) {
 	MOAI_LUA_SETUP ( MOAITransformBase, "U" )
 
@@ -56,7 +67,13 @@ int MOAITransformBase::_getWorldRot ( lua_State* L ) {
 }
 
 //----------------------------------------------------------------//
-// TODO: doxygen
+/**	@name	getWorldScl
+	@text	Get the transform's scale in world space.
+	
+	@in		MOAITransformBase self
+	@out	number xScale
+	@out	number yScale
+*/
 int MOAITransformBase::_getWorldScl ( lua_State* L ) {
 	MOAI_LUA_SETUP ( MOAITransformBase, "U" )
 
@@ -71,6 +88,52 @@ int MOAITransformBase::_getWorldScl ( lua_State* L ) {
 //================================================================//
 // MOAITransformBase
 //================================================================//
+
+//----------------------------------------------------------------//
+bool MOAITransformBase::ApplyAttrOp ( u32 attrID, USAttrOp& attrOp ) {
+
+	// TODO: these values may need to be cached for performance reasons
+	if ( MOAITransformBaseAttr::Check ( attrID )) {
+
+		switch ( UNPACK_ATTR ( attrID )) {
+			
+			case ATTR_WORLD_X_LOC:
+				attrOp.Op ( this->mLocalToWorldMtx.m [ USAffine2D::C2_R0 ]);
+				return true;
+			
+			case ATTR_WORLD_Y_LOC:
+				attrOp.Op ( this->mLocalToWorldMtx.m [ USAffine2D::C2_R1 ]);
+				return true;
+				
+			case ATTR_WORLD_Z_ROT:
+				attrOp.Op (( float )( atan2 ( this->mLocalToWorldMtx.m [ USAffine2D::C0_R0 ], this->mLocalToWorldMtx.m [ USAffine2D::C0_R1 ]) * R2D ));
+				return true;
+			
+			case ATTR_WORLD_X_SCL: {
+				
+				USVec2D axis;
+			
+				axis.mX =	this->mLocalToWorldMtx.m [ USAffine2D::C0_R0 ];
+				axis.mY =	this->mLocalToWorldMtx.m [ USAffine2D::C0_R1 ];
+			
+				attrOp.Op ( axis.Length ());
+				return true;
+			}
+			
+			case ATTR_WORLD_Y_SCL: {
+				
+				USVec2D axis;
+			
+				axis.mX =	this->mLocalToWorldMtx.m [ USAffine2D::C1_R0 ];
+				axis.mY =	this->mLocalToWorldMtx.m [ USAffine2D::C1_R1 ];
+				
+				attrOp.Op ( axis.Length ());
+				return true;
+			}
+		}
+	}
+	return false;
+}
 
 //----------------------------------------------------------------//
 const USAffine2D& MOAITransformBase::GetLocalToWorldMtx () {
@@ -107,6 +170,12 @@ MOAITransformBase::~MOAITransformBase () {
 void MOAITransformBase::RegisterLuaClass ( USLuaState& state ) {
 	
 	MOAITraits::RegisterLuaClass ( state );
+	
+	state.SetField ( -1, "ATTR_WORLD_X_LOC",	MOAITransformBaseAttr::Pack ( ATTR_WORLD_X_LOC ));
+	state.SetField ( -1, "ATTR_WORLD_Y_LOC",	MOAITransformBaseAttr::Pack ( ATTR_WORLD_Y_LOC ));
+	state.SetField ( -1, "ATTR_WORLD_Z_ROT",	MOAITransformBaseAttr::Pack ( ATTR_WORLD_Z_ROT ));
+	state.SetField ( -1, "ATTR_WORLD_X_SCL",	MOAITransformBaseAttr::Pack ( ATTR_WORLD_X_SCL ));
+	state.SetField ( -1, "ATTR_WORLD_Y_SCL",	MOAITransformBaseAttr::Pack ( ATTR_WORLD_Y_SCL ));
 }
 
 //----------------------------------------------------------------//

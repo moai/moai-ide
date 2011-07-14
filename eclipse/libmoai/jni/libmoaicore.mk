@@ -45,8 +45,9 @@ $(SRC_PATH)/3rdparty/box2d-2.1.2/Box2D/Box2D/Dynamics/Joints \
 #----------------------------------------------------------------#
 # included files
 #----------------------------------------------------------------#
-LOCAL_SRC_FILES := $(SRC_PATH)/src/moaicore/pch.cpp \
+LOCAL_SRC_FILES := $(SRC_PATH)/src/moaicore/moaicore-pch.cpp \
 $(SRC_PATH)/src/moaicore/MOAIAction.cpp \
+$(SRC_PATH)/src/moaicore/MOAIActionMgr.cpp \
 $(SRC_PATH)/src/moaicore/MOAIAnim.cpp \
 $(SRC_PATH)/src/moaicore/MOAIAnimCurve.cpp \
 $(SRC_PATH)/src/moaicore/MOAIBlocker.cpp \
@@ -75,9 +76,9 @@ $(SRC_PATH)/src/moaicore/MOAIDeck.cpp \
 $(SRC_PATH)/src/moaicore/MOAIDeck2D.cpp \
 $(SRC_PATH)/src/moaicore/MOAIDeckRemapper.cpp \
 $(SRC_PATH)/src/moaicore/MOAIDebugLines.cpp \
-$(SRC_PATH)/src/moaicore/MOAIDeviceInfo.cpp \
 $(SRC_PATH)/src/moaicore/MOAIEaseDriver.cpp \
 $(SRC_PATH)/src/moaicore/MOAIEaseType.cpp \
+$(SRC_PATH)/src/moaicore/MOAIEnvironment.cpp \
 $(SRC_PATH)/src/moaicore/MOAIEventSource.cpp \
 $(SRC_PATH)/src/moaicore/MOAIFileSystem.cpp \
 $(SRC_PATH)/src/moaicore/MOAIFont.cpp \
@@ -97,18 +98,20 @@ $(SRC_PATH)/src/moaicore/MOAIKeyboardSensor.cpp \
 $(SRC_PATH)/src/moaicore/MOAILayer2D.cpp \
 $(SRC_PATH)/src/moaicore/MOAILayerBridge2D.cpp \
 $(SRC_PATH)/src/moaicore/MOAILayoutFrame.cpp \
-$(SRC_PATH)/src/moaicore/MOAILevelSensor.cpp \
 $(SRC_PATH)/src/moaicore/MOAILocationSensor.cpp \
 $(SRC_PATH)/src/moaicore/MOAILogMgr.cpp \
 $(SRC_PATH)/src/moaicore/MOAIMesh.cpp \
+$(SRC_PATH)/src/moaicore/MOAIMotionSensor.cpp \
 $(SRC_PATH)/src/moaicore/MOAINode.cpp \
 $(SRC_PATH)/src/moaicore/MOAINodeMgr.cpp \
 $(SRC_PATH)/src/moaicore/MOAIParser.cpp \
+$(SRC_PATH)/src/moaicore/MOAIParticleDistanceEmitter.cpp \
 $(SRC_PATH)/src/moaicore/MOAIParticleEmitter.cpp \
 $(SRC_PATH)/src/moaicore/MOAIParticleForce.cpp \
 $(SRC_PATH)/src/moaicore/MOAIParticleScript.cpp \
 $(SRC_PATH)/src/moaicore/MOAIParticleState.cpp \
 $(SRC_PATH)/src/moaicore/MOAIParticleSystem.cpp \
+$(SRC_PATH)/src/moaicore/MOAIParticleTimedEmitter.cpp \
 $(SRC_PATH)/src/moaicore/MOAIPartition.cpp \
 $(SRC_PATH)/src/moaicore/MOAIPartitionCell.cpp \
 $(SRC_PATH)/src/moaicore/MOAIPartitionLayer.cpp \

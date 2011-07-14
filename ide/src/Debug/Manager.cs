@@ -52,7 +52,8 @@ namespace MOAI.Debug
                 proc.StartInfo.Arguments = '"' + Path.Combine(Program.Manager.Settings["RootPath"], "Engines\\Win32\\Debug\\moai.exe") + '"';
             }
             else*/
-                proc.StartInfo.FileName = Path.Combine(Program.Manager.Settings["RootPath"], "Engines\\Win32\\Debug\\moai.exe");
+                proc.StartInfo.FileName = "C:\\Server Storage\\Projects\\MOAI (Zipline)\\moai-dev\\vs2008\\bin\\Win32\\Debug\\moai.exe";
+                //proc.StartInfo.FileName = Path.Combine(Program.Manager.Settings["RootPath"], "Engines\\Win32\\Debug\\moai.exe");
 
             proc.StartInfo.WorkingDirectory = project.ProjectInfo.Directory.FullName;
             proc.StartInfo.UseShellExecute = false;

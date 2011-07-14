@@ -58,7 +58,7 @@ void AudioMixer::removeSound(int index)
 
 int AudioMixer::process(UInt32 numInputChannels, float* inputBuffer, UInt32 numOutputChannels, float *outputBuffer, UInt32 numFrames)
 {
-	RScopedLock l(&mLock);
+    mLock.lock();
 
     memset(outputBuffer, 0, sizeof(float) * numFrames * numOutputChannels);  
 	for(UInt32 i = 0; i < mSounds.size(); ++i)
@@ -88,10 +88,16 @@ int AudioMixer::process(UInt32 numInputChannels, float* inputBuffer, UInt32 numO
 				framesRead >= 0);
             
 			if(framesRead < 0)
+            {
+                mLock.unlock();
 				s->stop();
+                mLock.lock();
+            }
 		}
 	}
 
+    mLock.unlock();
+    
 	return 0;
 }
 

@@ -22,7 +22,7 @@ public:
 	bool load(const RString& path);
 
 	// AudioSource
-	virtual UInt32 readFrames(float* buffer, UInt32 numChannels, UInt32 numSamples);
+	virtual Int64 readFrames(float* buffer, UInt32 numChannels, UInt32 numSamples);
 	virtual void start();
 	virtual void stop();
 	virtual void setPosition(double position);
@@ -45,6 +45,6 @@ private:
 	CComQIPtr<IMediaEventEx > mpMediaEvent;
 	CComQIPtr<IMediaSeeking> mpMediaSeeking;
 	WAVEFORMATEX* mpWaveFormatEx;
-	RCriticalSection mCriticalSection;
+	RCriticalSection mLock;
 	bool mEOF;
 };

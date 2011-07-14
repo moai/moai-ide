@@ -3,6 +3,7 @@
 
 #include "pch.h"
 #include <moaicore/MOAIAction.h>
+#include <moaicore/MOAIActionMgr.h>
 #include <moaicore/MOAILogMessages.h>
 
 //================================================================//
@@ -287,7 +288,6 @@ void MOAIAction::RemoveChild ( MOAIAction& action ) {
 		action.UnblockSelf ();
 		action.UnblockAll ();
 		action.mParent = 0;
-		action.OnStop ();
 		action.Release ();
 	}
 }
@@ -310,7 +310,10 @@ void MOAIAction::Start ( MOAIAction& parent ) {
 void MOAIAction::Stop () {
 
 	if ( this->mParent ) {
+		this->Retain ();
 		this->mParent->RemoveChild ( *this );
+		this->OnStop ();
+		this->Release ();
 	}
 }
 
@@ -342,8 +345,15 @@ void MOAIAction::Update ( float step, u32 pass, bool checkPass ) {
 	this->mPass = 0;
 	this->mNew = false;
 	
-	ChildIt childIt = this->mChildren.Head ();
+	// the trick below is to alway retain the current child plus the
+	// *next* child in the list. each child is processed once and 
+	// released after processing, so all the children should be 
+	// retain/release'd exactly once.
 	
+	// we retain the head child in the list (if any)
+	// here because the first child retained inside the loop (below)
+	// is the *second* child in the list
+	ChildIt childIt = this->mChildren.Head ();
 	if ( childIt ) {
 		childIt->Data ()->Retain ();
 	}
@@ -351,73 +361,21 @@ void MOAIAction::Update ( float step, u32 pass, bool checkPass ) {
 	MOAIAction* child = 0;
 	while ( childIt ) {
 		
-		if ( child ) {
-			child->Release ();
-		}
-		
 		child = childIt->Data ();
 		
+		// retain the *next* child in the list (if any)
 		childIt = childIt->Next ();
 		if ( childIt ) {
 			childIt->Data ()->Retain ();
 		}
 		
 		child->Update ( step, pass, checkPass );
-	}
-	
-	if ( child ) {
+		
+		// release the *current* child
 		child->Release ();
 	}
 	
 	if ( this->IsDone ()) {
 		this->Stop ();
 	}
-}
-
-//================================================================//
-// MOAIActionMgr
-//================================================================//
-
-//----------------------------------------------------------------//
-void MOAIActionMgr::Clear () {
-
-	this->mRoot.ClearChildren ();
-}
-
-//----------------------------------------------------------------//
-u32 MOAIActionMgr::GetNextPass () {
-
-	this->mTotalPasses = this->mPass + 2;
-	return this->mPass + 1;
-}
-
-//----------------------------------------------------------------//
-MOAIActionMgr::MOAIActionMgr () :
-	mPass ( RESET_PASS ),
-	mCurrentAction ( 0 ) {
-}
-
-//----------------------------------------------------------------//
-MOAIActionMgr::~MOAIActionMgr () {
-
-	this->Clear ();
-}
-
-//----------------------------------------------------------------//
-void MOAIActionMgr::StartAction ( MOAIAction& action ) {
-
-	this->mRoot.AddChild ( action );
-}
-
-//----------------------------------------------------------------//
-void MOAIActionMgr::Update ( float step ) {
-
-	this->GetNextPass ();
-
-	for ( this->mPass = 0; this->mPass < this->mTotalPasses; ++this->mPass ) {
-		this->mRoot.Update ( step, this->mPass, true );
-	}
-
-	this->mPass = RESET_PASS;
-	this->mCurrentAction = 0;
 }

@@ -25,6 +25,7 @@
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="1"
 			CharacterSet="1"
+			WholeProgramOptimization="0"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -44,8 +45,8 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;..\..\src&quot;;&quot;..\..\3rdparty\glut-3.7.6-bin&quot;"
-				PreprocessorDefinitions="WIN32;_CONSOLE;_DEBUG;AKUGLUT_USE_LUAEXT;AKUGLUT_USE_UNTZ"
+				AdditionalIncludeDirectories="..\..\src\hosts;..\..\src;&quot;..\..\3rdparty\glut-3.7.6-bin&quot;"
+				PreprocessorDefinitions="WIN32;_CONSOLE;_DEBUG;GLUTHOST_USE_LUAEXT;GLUTHOST_USE_PARTICLE_PRESETS;GLUTHOST_USE_UNTZ"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -192,7 +193,7 @@
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="1"
 			CharacterSet="1"
-			WholeProgramOptimization="1"
+			WholeProgramOptimization="0"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -211,8 +212,8 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;..\..\src&quot;;&quot;..\..\3rdparty\glut-3.7.6-bin&quot;"
-				PreprocessorDefinitions="WIN32;_CONSOLE;AKUGLUT_USE_LUAEXT;AKUGLUT_USE_UNTZ"
+				AdditionalIncludeDirectories="..\..\src\hosts;..\..\src;&quot;..\..\3rdparty\glut-3.7.6-bin&quot;"
+				PreprocessorDefinitions="WIN32;_CONSOLE;GLUTHOST_USE_LUAEXT;GLUTHOST_USE_PARTICLE_PRESETS;GLUTHOST_USE_UNTZ"
 				RuntimeLibrary="2"
 				TreatWChar_tAsBuiltInType="false"
 				ForceConformanceInForLoopScope="false"
@@ -352,15 +353,23 @@
 	</References>
 	<Files>
 		<File
-			RelativePath="..\..\src\aku\AKUGlut.cpp"
+			RelativePath="..\..\src\hosts\GlutHost.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\src\aku\AKUGlut.h"
+			RelativePath="..\..\src\hosts\GlutHost.h"
 			>
 		</File>
 		<File
-			RelativePath=".\main.cpp"
+			RelativePath="..\..\src\hosts\GlutHostMain.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\src\hosts\ParticlePresets.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\src\hosts\ParticlePresets.h"
 			>
 		</File>
 	</Files>

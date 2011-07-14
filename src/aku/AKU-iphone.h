@@ -10,7 +10,6 @@
 #import <Foundation/Foundation.h>
 #import <StoreKit/StoreKit.h>
 #import <UIKit/UIKit.h>
-#import <moaiext-iphone/Reachability.h>
 
 void		AKUAppDidFailToRegisterForRemoteNotificationsWithError	( NSError* error );
 void		AKUAppDidReceiveLocalNotification						( UILocalNotification* notification );
@@ -18,6 +17,14 @@ void		AKUAppDidReceiveRemoteNotification						( NSDictionary* userInfo );
 void		AKUAppDidRegisterForRemoteNotificationsWithDeviceToken	( NSData* deviceToken );
 void		AKUIphoneInit											( UIApplication* application );
 
-NSString*    AKUGetIphoneNetworkReachability					    	( );
+
+enum ConnectionType {
+	CONNECTION_TYPE_NONE,
+	CONNECTION_TYPE_WIFI,
+	CONNECTION_TYPE_WWAN
+};
+
+long AKUGetIphoneNetworkReachability					    	( );
+const char* AKUGetGUID													( );
 
 #endif
