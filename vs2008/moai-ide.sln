@@ -1,0 +1,41 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DockPanelSuite", "..\ide\libraries\DockPanelSuite\DockPanelSuite.csproj", "{B2886585-F158-4870-95A5-564007987F45}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MOAI IDE", "..\ide\src\MOAI IDE.csproj", "{5BA158DE-7E14-42BD-8ABE-2FFBCD1CC268}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		IDE Debug|x64 = IDE Debug|x64
+		IDE Debug|x86 = IDE Debug|x86
+		IDE Release|x64 = IDE Release|x64
+		IDE Release|x86 = IDE Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B2886585-F158-4870-95A5-564007987F45}.IDE Debug|x64.ActiveCfg = Debug|x64
+		{B2886585-F158-4870-95A5-564007987F45}.IDE Debug|x64.Build.0 = Debug|x64
+		{B2886585-F158-4870-95A5-564007987F45}.IDE Debug|x86.ActiveCfg = Debug|x86
+		{B2886585-F158-4870-95A5-564007987F45}.IDE Debug|x86.Build.0 = Debug|x86
+		{B2886585-F158-4870-95A5-564007987F45}.IDE Release|x64.ActiveCfg = Release|x64
+		{B2886585-F158-4870-95A5-564007987F45}.IDE Release|x64.Build.0 = Release|x64
+		{B2886585-F158-4870-95A5-564007987F45}.IDE Release|x86.ActiveCfg = Release|x86
+		{B2886585-F158-4870-95A5-564007987F45}.IDE Release|x86.Build.0 = Release|x86
+		{5BA158DE-7E14-42BD-8ABE-2FFBCD1CC268}.IDE Debug|x64.ActiveCfg = Debug|x64
+		{5BA158DE-7E14-42BD-8ABE-2FFBCD1CC268}.IDE Debug|x64.Build.0 = Debug|x64
+		{5BA158DE-7E14-42BD-8ABE-2FFBCD1CC268}.IDE Debug|x86.ActiveCfg = Debug|x86
+		{5BA158DE-7E14-42BD-8ABE-2FFBCD1CC268}.IDE Debug|x86.Build.0 = Debug|x86
+		{5BA158DE-7E14-42BD-8ABE-2FFBCD1CC268}.IDE Release|x64.ActiveCfg = Release|x64
+		{5BA158DE-7E14-42BD-8ABE-2FFBCD1CC268}.IDE Release|x64.Build.0 = Release|x64
+		{5BA158DE-7E14-42BD-8ABE-2FFBCD1CC268}.IDE Release|x86.ActiveCfg = Release|x86
+		{5BA158DE-7E14-42BD-8ABE-2FFBCD1CC268}.IDE Release|x86.Build.0 = Release|x86
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		AMDCaProjectFile = C:\Documents and Settings\Patrick\My Documents\git\moai\vs2008\CodeAnalyst\moai-open.caw
+		AMDCaPersistentStartup = moai (Utilities\moai)
+		AMDCaPersistentConfig = Debug|Win32
+	EndGlobalSection
+EndGlobal
