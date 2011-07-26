@@ -5,6 +5,8 @@ using System.Windows.Forms;
 
 namespace MOAI
 {
+    public delegate void E();
+
     static class Program
     {
         public static Manager Manager = null;

@@ -7,7 +7,7 @@ namespace MOAI.Menus.Definitions.Window
 {
     class NewWindow : Action
     {
-        public override void OnSetSettings()
+        public override void OnInitialize()
         {
             this.Implemented = false;
             this.ItemIcon = null;
@@ -18,7 +18,7 @@ namespace MOAI.Menus.Definitions.Window
 
     class Split : Action
     {
-        public override void OnSetSettings()
+        public override void OnInitialize()
         {
             this.Implemented = false;
             this.ItemIcon = Properties.Resources.windows_split;
@@ -29,7 +29,7 @@ namespace MOAI.Menus.Definitions.Window
 
     class SetFloating : Action
     {
-        public override void OnSetSettings()
+        public override void OnInitialize()
         {
             this.Implemented = false;
             this.ItemIcon = null;
@@ -40,7 +40,7 @@ namespace MOAI.Menus.Definitions.Window
 
     class SetDockable : Action
     {
-        public override void OnSetSettings()
+        public override void OnInitialize()
         {
             this.Implemented = false;
             this.ItemIcon = null;
@@ -51,7 +51,7 @@ namespace MOAI.Menus.Definitions.Window
 
     class SetTabbedDocument : Action
     {
-        public override void OnSetSettings()
+        public override void OnInitialize()
         {
             this.Implemented = false;
             this.ItemIcon = null;
@@ -62,7 +62,7 @@ namespace MOAI.Menus.Definitions.Window
 
     class SetAutoHide : Action
     {
-        public override void OnSetSettings()
+        public override void OnInitialize()
         {
             this.Implemented = false;
             this.ItemIcon = Properties.Resources.windows_autohide;
@@ -73,7 +73,7 @@ namespace MOAI.Menus.Definitions.Window
 
     class Hide : Action
     {
-        public override void OnSetSettings()
+        public override void OnInitialize()
         {
             this.Implemented = false;
             this.ItemIcon = null;
@@ -84,7 +84,7 @@ namespace MOAI.Menus.Definitions.Window
 
     class AutoHideAll : Action
     {
-        public override void OnSetSettings()
+        public override void OnInitialize()
         {
             this.Implemented = false;
             this.ItemIcon = null;
@@ -95,7 +95,7 @@ namespace MOAI.Menus.Definitions.Window
 
     class NewHorizontalTabGroup : Action
     {
-        public override void OnSetSettings()
+        public override void OnInitialize()
         {
             this.Implemented = false;
             this.ItemIcon = Properties.Resources.windows_tile_horizontal;
@@ -106,7 +106,7 @@ namespace MOAI.Menus.Definitions.Window
 
     class NewVerticalTabGroup : Action
     {
-        public override void OnSetSettings()
+        public override void OnInitialize()
         {
             this.Implemented = false;
             this.ItemIcon = Properties.Resources.windows_tile_vertical;
@@ -117,7 +117,7 @@ namespace MOAI.Menus.Definitions.Window
 
     class CloseAll : Action
     {
-        public override void OnSetSettings()
+        public override void OnInitialize()
         {
             this.Implemented = false;
             this.ItemIcon = null;
@@ -128,7 +128,7 @@ namespace MOAI.Menus.Definitions.Window
 
     class Reset : Action
     {
-        public override void OnSetSettings()
+        public override void OnInitialize()
         {
             this.Implemented = false;
             this.ItemIcon = null;
@@ -139,7 +139,7 @@ namespace MOAI.Menus.Definitions.Window
 
     class Windows : Action
     {
-        public override void OnSetSettings()
+        public override void OnInitialize()
         {
             this.Implemented = false;
             this.ItemIcon = null;

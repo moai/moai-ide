@@ -24,8 +24,9 @@ namespace MOAI
         IDE p_IDEWindow;
         Dictionary<string, string> p_Settings;
 
-        public event EventHandler OnSolutionLoaded;
-        public event EventHandler OnSolutionUnloaded;
+        public event EventHandler SolutionLoaded;
+        public event EventHandler SolutionUnloaded;
+        public event EventHandler IDEOpened;
 
         public delegate void VoidLambda();
 
@@ -57,8 +58,11 @@ namespace MOAI
             this.p_DebugManager = new Debug.Manager(this);
             this.p_DesignersManager = new Designers.Manager(this);
             this.p_ToolsManager = new Tools.Manager(this);
-            this.p_IDEWindow = new IDE(this);
             this.p_MenuManager = new Menus.Manager(this);
+
+            this.p_IDEWindow = new IDE(this);
+            if (this.IDEOpened != null)
+                this.IDEOpened(this, new EventArgs());
         }
 
         /// <summary>
@@ -89,8 +93,8 @@ namespace MOAI
                 this.p_ActiveProject = this.p_ActiveSolution.Projects[0];
 
             // Now trigger the load event.
-            if (this.OnSolutionLoaded != null)
-                this.OnSolutionLoaded(this, new EventArgs());
+            if (this.SolutionLoaded != null)
+                this.SolutionLoaded(this, new EventArgs());
         }
 
         /// <summary>
@@ -101,8 +105,8 @@ namespace MOAI
             this.p_ActiveSolution = null;
 
             // Now trigger the load event.
-            if (this.OnSolutionUnloaded != null)
-                this.OnSolutionUnloaded(this, new EventArgs());
+            if (this.SolutionUnloaded != null)
+                this.SolutionUnloaded(this, new EventArgs());
         }
 
         /// <summary>

@@ -77,7 +77,7 @@
             this.c_DockWorkspace.Dock = System.Windows.Forms.DockStyle.Fill;
             this.c_DockWorkspace.DockBottomPortion = 200;
             this.c_DockWorkspace.DockLeftPortion = 250;
-            this.c_DockWorkspace.DockRightPortion = 200;
+            this.c_DockWorkspace.DockRightPortion = 250;
             this.c_DockWorkspace.DockTopPortion = 150;
             this.c_DockWorkspace.DocumentStyle = DockPanelSuite.DocumentStyle.DockingWindow;
             this.c_DockWorkspace.Location = new System.Drawing.Point(0, 0);

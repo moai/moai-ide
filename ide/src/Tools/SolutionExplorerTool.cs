@@ -53,7 +53,7 @@ namespace MOAI.Tools
         {
             get
             {
-                return DockState.DockLeft;
+                return DockState.DockRight;
             }
         }
 

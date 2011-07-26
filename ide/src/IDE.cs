@@ -105,7 +105,9 @@ namespace MOAI
         }
 
         /// <summary>
-        /// This event is raised when the active tab changes.
+        /// This event is raised when the active tab changes.  DO NOT USE!  Use
+        /// the DesignerChanged event in the Designers manager instead as this event
+        /// will not fire when a new tab is created!
         /// </summary>
         public event EventHandler ActiveTabChanged;
         protected void OnActiveTabChanged()

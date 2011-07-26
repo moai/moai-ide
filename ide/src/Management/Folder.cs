@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.IO;
+using System.Windows.Forms;
 
 namespace MOAI.Management
 {
@@ -63,6 +64,31 @@ namespace MOAI.Management
             get
             {
                 return this.p_FolderInfo;
+            }
+        }
+
+        /// <summary>
+        /// Returns the context menu for this file.
+        /// </summary>
+        public override ContextMenu ContextMenu
+        {
+            get
+            {
+                return new ContextMenu(new MenuItem[] {
+                    new MenuItem("Add"),
+                    new MenuItem("-"),
+                    new MenuItem("Exclude From Project"),
+                    new MenuItem("-"),
+                    new MenuItem("Cut"),
+                    new MenuItem("Copy"),
+                    new MenuItem("Paste"),
+                    new MenuItem("Delete"),
+                    new MenuItem("Rename"),
+                    new MenuItem("-"),
+                    new MenuItem("Open Folder in Windows Explorer"),
+                    new MenuItem("-"),
+                    new MenuItem("Properties")
+                });
             }
         }
 

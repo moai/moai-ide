@@ -308,14 +308,12 @@ namespace MOAI.Menus
                                 action.OnActivate();
                             }
                         );
-                        this.m_Manager.AssociateEvents(action);
                         //this.m_Manager.Parent.IDEWindow.MenuActions.Add(action);
 
-                        action.OnSetSettings();
+                        action.OnInitialize();
                         c_ActiveItem.Enabled = action.Enabled;
                         if (action.ItemIcon != null)
                             c_ActiveItem.Image = action.ItemIcon;
-                        action.OnLoad();
                     }
                     else
                         c_ActiveItem.Enabled = false;

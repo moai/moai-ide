@@ -17,6 +17,7 @@ namespace MOAI.Designers
         public event DesignerEventHandler DesignerOpened;
         public event DesignerEventHandler DesignerRefocused;
         public event DesignerEventHandler DesignerClosed;
+        public event DesignerEventHandler DesignerChanged;
 
         public class DesignerEventArgs : EventArgs
         {
@@ -42,6 +43,27 @@ namespace MOAI.Designers
         public Manager(MOAI.Manager parent)
         {
             this.p_Parent = parent;
+
+            // Listen for tab changes.
+            this.DesignerOpened += new DesignerEventHandler((sender, e) =>
+            {
+                if (this.p_Parent.IDEWindow.ActiveTab is Designers.Designer)
+                {
+                    if (this.DesignerChanged != null)
+                        this.DesignerChanged(this, new DesignerEventArgs(this.p_Parent.IDEWindow.ActiveTab as Designers.Designer));
+                }
+            });
+            this.p_Parent.IDEOpened += new EventHandler((_1, _2) =>
+            {
+                this.p_Parent.IDEWindow.ActiveTabChanged += new EventHandler((sender, e) =>
+                {
+                    if (this.p_Parent.IDEWindow.ActiveTab is Designers.Designer)
+                    {
+                        if (this.DesignerChanged != null)
+                            this.DesignerChanged(this, new DesignerEventArgs(this.p_Parent.IDEWindow.ActiveTab as Designers.Designer));
+                    }
+                });
+            });
         }
 
         /// <summary>

@@ -14,7 +14,12 @@ namespace MOAI.Debug
     {
         private MOAI.Manager p_Parent = null;
         private OutputTool m_OutputTool = null;
-        private bool m_Running = false;
+
+        private Process m_Process = null;
+        private Communicator m_Communicator = null;
+
+        public event EventHandler DebugStart;
+        public event EventHandler DebugStop;
 
         /// <summary>
         /// Creates a new Manager class for managing debugging.
@@ -29,44 +34,58 @@ namespace MOAI.Debug
         /// Runs the specified project with debugging.
         /// </summary>
         /// <param name="project">The project to run under the debugger.</param>
-        public bool Run(MOAI.Management.Project project)
+        public bool Start(MOAI.Management.Project project)
         {
-            if (this.m_Running)
+            if (this.m_Process != null)
             {
                 // Can't run.
                 return false;
             }
+            
+            // Fire the event to say that debugging has started.
+            if (this.DebugStart != null)
+                this.DebugStart(this, new EventArgs());
 
+            // Clear the existing output log.
             this.m_OutputTool = this.p_Parent.ToolsManager.Get(typeof(OutputTool)) as OutputTool;
             if (this.m_OutputTool != null)
                 this.m_OutputTool.ClearLog();
 
             // Start the debug listening service.
-            Communicator communicator = new Communicator(7018);
-            communicator.MessageArrived += new EventHandler<MessageEventArgs>(communicator_MessageArrived);
+            this.m_Communicator = new Communicator(7018);
+            this.m_Communicator.MessageArrived += new EventHandler<MessageEventArgs>(m_Communicator_MessageArrived);
 
-            Process proc = new Process();
-            /*if (File.Exists("C:\\Windows\\system32\\vsjitdebugger.exe"))
-            {
-                proc.StartInfo.FileName = "C:\\Windows\\system32\\vsjitdebugger.exe";
-                proc.StartInfo.Arguments = '"' + Path.Combine(Program.Manager.Settings["RootPath"], "Engines\\Win32\\Debug\\moai.exe") + '"';
-            }
-            else*/
-                proc.StartInfo.FileName = "C:\\Server Storage\\Projects\\MOAI (Zipline)\\moai-dev\\vs2008\\bin\\Win32\\Debug\\moai.exe";
-                //proc.StartInfo.FileName = Path.Combine(Program.Manager.Settings["RootPath"], "Engines\\Win32\\Debug\\moai.exe");
+            this.m_Process = new Process();
+            this.m_Process.StartInfo.FileName = Path.Combine(Program.Manager.Settings["RootPath"], "Engines\\Win32\\Debug\\moai.exe");
+            this.m_Process.StartInfo.WorkingDirectory = project.ProjectInfo.Directory.FullName;
+            this.m_Process.StartInfo.UseShellExecute = false;
+            this.m_Process.StartInfo.RedirectStandardOutput = true;
+            this.m_Process.StartInfo.Arguments = "Main.lua";
+            this.m_Process.OutputDataReceived += new DataReceivedEventHandler(m_Process_OutputDataReceived);
+            this.m_Process.EnableRaisingEvents = true;
+            this.m_Process.Exited += new EventHandler(m_Process_Exited);
 
-            proc.StartInfo.WorkingDirectory = project.ProjectInfo.Directory.FullName;
-            proc.StartInfo.UseShellExecute = false;
-            proc.StartInfo.RedirectStandardOutput = true;
-            proc.StartInfo.Arguments = "Main.lua";
-            //proc.OutputDataReceived += new DataReceivedEventHandler(proc_OutputDataReceived);
-            proc.EnableRaisingEvents = true;
-            proc.Exited += new EventHandler(proc_Exited);
-
-            proc.Start();
-            proc.BeginOutputReadLine();
-            this.m_Running = true;
+            this.m_Process.Start();
+            this.m_Process.BeginOutputReadLine();
             return true;
+        }
+
+        /// <summary>
+        /// Stops the debugging process that is currently underway.
+        /// </summary>
+        public void Stop()
+        {
+            if (this.m_Process == null)
+                return;
+            if (!this.m_Process.HasExited)
+                this.m_Process.Kill();
+            this.m_Process = null;
+            this.m_Communicator.Close();
+            this.m_Communicator = null;
+
+            // Fire the event to say that debugging has stopped.
+            if (this.DebugStop != null)
+                this.DebugStop(this, new EventArgs());
         }
 
         /// <summary>
@@ -74,7 +93,7 @@ namespace MOAI.Debug
         /// </summary>
         /// <param name="sender">The sender of the event.</param>
         /// <param name="e">The event information.</param>
-        private void communicator_MessageArrived(object sender, MessageEventArgs e)
+        private void m_Communicator_MessageArrived(object sender, MessageEventArgs e)
         {
             // Invoke the message handling on the IDE's thread.
             this.p_Parent.IDEWindow.Invoke(new Action(() =>
@@ -116,9 +135,9 @@ namespace MOAI.Debug
         /// </summary>
         /// <param name="sender">The sender of the event.</param>
         /// <param name="e">The event information.</param>
-        void proc_Exited(object sender, EventArgs e)
+        void m_Process_Exited(object sender, EventArgs e)
         {
-            this.m_Running = false;
+            this.Stop();
         }
 
         /// <summary>
@@ -127,7 +146,7 @@ namespace MOAI.Debug
         /// </summary>
         /// <param name="sender">The sender of the event.</param>
         /// <param name="e">The event information.</param>
-        void proc_OutputDataReceived(object sender, DataReceivedEventArgs e)
+        void m_Process_OutputDataReceived(object sender, DataReceivedEventArgs e)
         {
             if (this.m_OutputTool != null && e.Data != null)
             {

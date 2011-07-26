@@ -38,26 +38,25 @@ namespace MOAI.Menus
             return this.m_Loader.ToolBar;
         }
 
-        public void AssociateEvents(Action action)
+        /// <summary>
+        /// Wraps the specified action by assigning it's handlers and returning
+        /// the menu item related to it.
+        /// </summary>
+        /// <param name="action">The action to wrap.</param>
+        /// <returns>The menu item for the action.</returns>
+        public static ToolStripMenuItem WrapAction(Action action)
         {
-            this.p_Parent.OnSolutionLoaded += new EventHandler((sender, e) =>
-                {
-                    action.OnSolutionLoaded();
-                });
-            this.p_Parent.OnSolutionUnloaded += new EventHandler((sender, e) =>
-                {
-                    action.OnSolutionUnloaded();
-                });
-            this.p_Parent.DesignersManager.DesignerOpened += new MOAI.Designers.Manager.DesignerEventHandler((sender, e) =>
-                {
-                    if (this.p_Parent.IDEWindow.ActiveTab is Designers.Designer)
-                        action.OnTabChanged(this.p_Parent.IDEWindow.ActiveTab as Designers.Designer);
-                });
-            this.p_Parent.IDEWindow.ActiveTabChanged += new EventHandler((sender, e) =>
-                {
-                    if (this.p_Parent.IDEWindow.ActiveTab is Designers.Designer)
-                        action.OnTabChanged(this.p_Parent.IDEWindow.ActiveTab as Designers.Designer);
-                });
+            ToolStripMenuItem mi = new ToolStripMenuItem();
+            action.SetItem(mi, mi);
+            action.OnInitialize();
+            mi.Text = action.Text;
+            mi.ShortcutKeys = action.Shortcut;
+            mi.ShowShortcutKeys = false;
+            mi.Enabled = action.Enabled;
+            if (action.ItemIcon != null)
+                mi.Image = action.ItemIcon;
+            mi.Click += new EventHandler((sender, e) => { action.OnActivate(); });
+            return mi;
         }
 
         /// <summary>

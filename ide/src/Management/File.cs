@@ -5,6 +5,7 @@ using System.Text;
 using MOAI.Collections;
 using System.IO;
 using System.Drawing;
+using System.Windows.Forms;
 
 namespace MOAI.Management
 {
@@ -89,6 +90,31 @@ namespace MOAI.Management
             get
             {
                 return this.p_Project;
+            }
+        }
+
+        /// <summary>
+        /// Returns the context menu for this file.
+        /// </summary>
+        public override ContextMenu ContextMenu
+        {
+            get
+            {
+                return new ContextMenu(new MenuItem[] {
+                    new MenuItem("Open"),
+                    new MenuItem("-"),
+                    new MenuItem("View Code"),
+                    new MenuItem("View Designer"),
+                    new MenuItem("-"),
+                    new MenuItem("Exclude From Project"),
+                    new MenuItem("-"),
+                    new MenuItem("Cut"),
+                    new MenuItem("Copy"),
+                    new MenuItem("Delete"),
+                    new MenuItem("Rename"),
+                    new MenuItem("-"),
+                    new MenuItem("Properties")
+                });
             }
         }
 

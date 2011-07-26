@@ -10,25 +10,23 @@ namespace MOAI.Menus.Definitions.Solution
 {
     class New : Action
     {
-        public override void OnSetSettings()
+        /// <summary>
+        /// This event is raied when the menu item is to be initalized.
+        /// </summary>
+        public override void OnInitialize()
         {
             this.ItemIcon = Properties.Resources.solution_create;
             this.Text = "New Solution";
             this.Enabled = true;
+
+            // Listen for events.
+            Program.Manager.SolutionLoaded += new EventHandler(Manager_OnSolutionLoaded);
+            Program.Manager.SolutionUnloaded += new EventHandler(Manager_OnSolutionUnloaded);
         }
 
-        public override void OnSolutionLoaded()
-        {
-            this.Enabled = false;
-            this.Item.Enabled = this.Enabled;
-        }
-
-        public override void OnSolutionUnloaded()
-        {
-            this.Enabled = true;
-            this.Item.Enabled = this.Enabled;
-        }
-
+        /// <summary>
+        /// This event is raised when the menu item is clicked or otherwise activated.
+        /// </summary>
         public override void OnActivate()
         {
             NewSolutionForm nsf = new NewSolutionForm();
@@ -39,29 +37,43 @@ namespace MOAI.Menus.Definitions.Solution
                 Program.Manager.LoadSolution(s.SolutionInfo.FullName);
             }
         }
+
+        /// <summary>
+        /// This event is raised when a solution is loaded (opened).
+        /// </summary>
+        private void Manager_OnSolutionLoaded(object sender, EventArgs e)
+        {
+            this.Enabled = false;
+        }
+
+        /// <summary>
+        /// This event is raised when a solution is unloaded (closed).
+        /// </summary>
+        private void Manager_OnSolutionUnloaded(object sender, EventArgs e)
+        {
+            this.Enabled = true;
+        }
     }
 
     class Open : Action
     {
-        public override void OnSetSettings()
+        /// <summary>
+        /// This event is raied when the menu item is to be initalized.
+        /// </summary>
+        public override void OnInitialize()
         {
             this.ItemIcon = Properties.Resources.solution_open;
             this.Text = "Open Solution";
             this.Enabled = true;
+
+            // Listen for events.
+            Program.Manager.SolutionLoaded += new EventHandler(Manager_OnSolutionLoaded);
+            Program.Manager.SolutionUnloaded += new EventHandler(Manager_OnSolutionUnloaded);
         }
 
-        public override void OnSolutionLoaded()
-        {
-            this.Enabled = false;
-            this.Item.Enabled = this.Enabled;
-        }
-
-        public override void OnSolutionUnloaded()
-        {
-            this.Enabled = true;
-            this.Item.Enabled = this.Enabled;
-        }
-
+        /// <summary>
+        /// This event is raised when the menu item is clicked or otherwise activated.
+        /// </summary>
         public override void OnActivate()
         {
             OpenFileDialog ofd = new OpenFileDialog();
@@ -75,47 +87,154 @@ namespace MOAI.Menus.Definitions.Solution
                 Program.Manager.LoadSolution(filename);
             }
         }
+
+        /// <summary>
+        /// This event is raised when a solution is loaded (opened).
+        /// </summary>
+        private void Manager_OnSolutionLoaded(object sender, EventArgs e)
+        {
+            this.Enabled = false;
+        }
+
+        /// <summary>
+        /// This event is raised when a solution is unloaded (closed).
+        /// </summary>
+        private void Manager_OnSolutionUnloaded(object sender, EventArgs e)
+        {
+            this.Enabled = true;
+        }
     }
 
     class Close : Action
     {
-        public override void OnSetSettings()
+        /// <summary>
+        /// This event is raied when the menu item is to be initalized.
+        /// </summary>
+        public override void OnInitialize()
         {
             this.ItemIcon = null;
             this.Text = "Close Solution";
             this.Enabled = false;
+
+            // Listen for events.
+            Program.Manager.SolutionLoaded += new EventHandler(Manager_OnSolutionLoaded);
+            Program.Manager.SolutionUnloaded += new EventHandler(Manager_OnSolutionUnloaded);
         }
 
+        /// <summary>
+        /// This event is raised when the menu item is clicked or otherwise activated.
+        /// </summary>
         public override void OnActivate()
         {
             // TODO: Implement asking whether to save changes here.
             Program.Manager.UnloadSolution();
         }
+
+        /// <summary>
+        /// This event is raised when a solution is loaded (opened).
+        /// </summary>
+        private void Manager_OnSolutionLoaded(object sender, EventArgs e)
+        {
+            this.Enabled = true;
+        }
+
+        /// <summary>
+        /// This event is raised when a solution is unloaded (closed).
+        /// </summary>
+        private void Manager_OnSolutionUnloaded(object sender, EventArgs e)
+        {
+            this.Enabled = false;
+        }
     }
 
     class StartWithDebug : Action
     {
-        public override void OnSetSettings()
+        /// <summary>
+        /// This event is raied when the menu item is to be initalized.
+        /// </summary>
+        public override void OnInitialize()
         {
             this.ItemIcon = Properties.Resources.debug;
             this.Text = "Start with Debugging";
             this.Enabled = false;
+
+            // Listen for events.
+            Program.Manager.DebugManager.DebugStart += new EventHandler(DebugManager_OnDebugStart);
+            Program.Manager.DebugManager.DebugStop += new EventHandler(DebugManager_OnDebugStop);
+            Program.Manager.SolutionLoaded += new EventHandler(Manager_OnSolutionLoaded);
+            Program.Manager.SolutionUnloaded += new EventHandler(Manager_OnSolutionUnloaded);
         }
 
+        /// <summary>
+        /// This event is raised when the menu item is clicked or otherwise activated.
+        /// </summary>
         public override void OnActivate()
         {
-            Program.Manager.DebugManager.Run(Program.Manager.ActiveProject);
+            Program.Manager.DebugManager.Start(Program.Manager.ActiveProject);
+        }
+
+        /// <summary>
+        /// This event is raised when a solution is loaded (opened).
+        /// </summary>
+        private void Manager_OnSolutionLoaded(object sender, EventArgs e)
+        {
+            this.Enabled = true;
+        }
+
+        /// <summary>
+        /// This event is raised when a solution is unloaded (closed).
+        /// </summary>
+        private void Manager_OnSolutionUnloaded(object sender, EventArgs e)
+        {
+            this.Enabled = false;
+        }
+
+        /// <summary>
+        /// This event is raised when debugging starts.
+        /// </summary>
+        private void DebugManager_OnDebugStart(object sender, EventArgs e)
+        {
+            this.Enabled = false;
+        }
+
+        /// <summary>
+        /// This event is raised when debugging stops.
+        /// </summary>
+        private void DebugManager_OnDebugStop(object sender, EventArgs e)
+        {
+            this.Enabled = true;
         }
     }
 
     class StartWithoutDebug : Action
     {
-        public override void OnSetSettings()
+        /// <summary>
+        /// This event is raied when the menu item is to be initalized.
+        /// </summary>
+        public override void OnInitialize()
         {
             this.Implemented = false;
             this.ItemIcon = Properties.Resources.debug_without;
             this.Text = "Start without Debugging";
             this.Enabled = false;
+
+            // Listen for when debugging starts or stops.
+            Program.Manager.DebugManager.DebugStart += new EventHandler(DebugManager_OnDebugStart);
+            Program.Manager.DebugManager.DebugStop += new EventHandler(DebugManager_OnDebugStop);
+        }
+
+        /// <summary>
+        /// This event is raised when debugging starts.
+        /// </summary>
+        private void DebugManager_OnDebugStart(object sender, EventArgs e)
+        {
+        }
+
+        /// <summary>
+        /// This event is raised when debugging stops.
+        /// </summary>
+        private void DebugManager_OnDebugStop(object sender, EventArgs e)
+        {
         }
     }
 }

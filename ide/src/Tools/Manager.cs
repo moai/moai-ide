@@ -52,11 +52,11 @@ namespace MOAI.Tools
                 c = constructor.Invoke(null) as Tool;
 
             // Add the solution loaded/unloaded events.
-            this.p_Parent.OnSolutionLoaded += new EventHandler((sender, e) =>
+            this.p_Parent.SolutionLoaded += new EventHandler((sender, e) =>
                 {
                     c.OnSolutionLoaded();
                 });
-            this.p_Parent.OnSolutionUnloaded += new EventHandler((sender, e) =>
+            this.p_Parent.SolutionUnloaded += new EventHandler((sender, e) =>
             {
                 c.OnSolutionUnloaded();
             });

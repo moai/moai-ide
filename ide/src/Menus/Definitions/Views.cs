@@ -7,39 +7,25 @@ namespace MOAI.Menus.Definitions.Views
 {
     class Code : Action
     {
-        public override void OnSetSettings()
+        public override void OnInitialize()
         {
             this.Implemented = false;
             this.ItemIcon = Properties.Resources.view_code;
             this.Text = "Code";
             this.Enabled = false;
-        }
-
-        public override void OnLoad()
-        {
-            if (this.MenuItem != null)
-            {
-                this.MenuItem.Checked = true;
-            }
+            this.MenuItem.Checked = true;
         }
     }
 
     class Designer : Action
     {
-        public override void OnSetSettings()
+        public override void OnInitialize()
         {
             this.Implemented = false;
             this.ItemIcon = Properties.Resources.view_designer;
             this.Text = "Designer";
             this.Enabled = false;
-        }
-
-        public override void OnLoad()
-        {
-            if (this.MenuItem != null)
-            {
-                this.MenuItem.Checked = false;
-            }
+            this.MenuItem.Checked = false;
         }
     }
 }

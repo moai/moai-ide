@@ -71,73 +71,17 @@ namespace MOAI.Designers.Start
                 switch (uri.LocalPath)
                 {
                     case "solution":
-                        if (query["mode"] == "new")
+                        switch (query["mode"])
                         {
-                            if (Program.Manager.ActiveSolution != null)
-                            {
-                                MessageBox.Show(
-                                    "You have already loaded a solution.  If you wish to create a new solution, close the current one first.",
-                                    "Solution Already Loaded",
-                                    MessageBoxButtons.OK,
-                                    MessageBoxIcon.Error);
-                                return;
-                            }
-
-                            NewSolutionForm nsf = new NewSolutionForm();
-                            if (nsf.ShowDialog() == DialogResult.OK)
-                            {
-                                // Request that the template create itself with the data provided.
-                                nsf.Result.Template.Create(nsf.Result);
-                            }
-
-                            return;
+                            case "new":
+                                // Call the "New Solution" menu option.
+                                new Menus.Definitions.Solution.New().OnActivate();
+                                break;
+                            case "open":
+                                // Call the "Open Solution" menu option.
+                                new Menus.Definitions.Solution.Open().OnActivate();
+                                break;
                         }
-                        else if (query["mode"] == "open")
-                        {
-                            if (Program.Manager.ActiveSolution != null)
-                            {
-                                MessageBox.Show(
-                                    "You have already loaded a solution.  If you wish to load this solution, close the current one first.",
-                                    "Solution Already Loaded",
-                                    MessageBoxButtons.OK,
-                                    MessageBoxIcon.Error);
-                                return;
-                            }
-
-                            if (query.ContainsKey("uri"))
-                            {
-                                // directly load the solution.
-                                string filename = query["uri"];
-                                if (System.IO.File.Exists(filename))
-                                {
-                                    Program.Manager.LoadSolution(filename);
-                                }
-                                else
-                                {
-                                    MessageBox.Show(
-                                        "The selected solution could not be found on disk.",
-                                        "Solution Unavailable",
-                                        MessageBoxButtons.OK,
-                                        MessageBoxIcon.Error);
-                                }
-                            }
-                            else
-                            {
-                                OpenFileDialog ofd = new OpenFileDialog();
-                                ofd.CheckFileExists = true;
-                                ofd.CheckPathExists = true;
-                                ofd.RestoreDirectory = true;
-                                ofd.Filter = "MOAI Solutions|*.rsln|MOAI Projects|*.rproj";
-                                if (ofd.ShowDialog() == DialogResult.OK)
-                                {
-                                    string filename = ofd.FileName;
-                                    Program.Manager.LoadSolution(filename);
-                                }
-                            }
-
-                            return;
-                        }
-
                         break;
                     case "tutorial":
                         MessageBox.Show(

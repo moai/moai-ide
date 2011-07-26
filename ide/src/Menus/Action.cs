@@ -17,14 +17,12 @@ namespace MOAI.Menus
         private Keys p_Shortcut = Keys.None;
         private ToolStripMenuItem m_MenuItem = null;
         private ToolStripItem m_Item = null;
+        private object m_Context = null;
 
         public Action() { }
-        public virtual void OnSetSettings() { }
-        public virtual void OnLoad() { }
+        public Action(object context) { this.m_Context = context; }
+        public virtual void OnInitialize() { }
         public virtual void OnActivate() { }
-        public virtual void OnSolutionLoaded() { this.Enabled = true; }
-        public virtual void OnSolutionUnloaded() { this.Enabled = false; }
-        public virtual void OnTabChanged(Designer editor) { }
 
         /// <summary>
         /// The icon to be used for this action.
@@ -71,10 +69,16 @@ namespace MOAI.Menus
                 if (this.p_Implemented)
                 {
                     if (this.m_Item != null)
-                        this.m_Item.Enabled = value;
+                        if (this.m_Item.Owner != null && this.m_Item.Owner.InvokeRequired)
+                            this.m_Item.Owner.Invoke(new E(() => { this.m_Item.Enabled = value; }));
+                        else
+                            this.m_Item.Enabled = value;
                 }
                 else
-                    this.m_Item.Enabled = false;
+                    if (this.m_Item.Owner != null && this.m_Item.Owner.InvokeRequired)
+                        this.m_Item.Owner.Invoke(new E(() => { this.m_Item.Enabled = false; }));
+                    else
+                        this.m_Item.Enabled = false;
             }
         }
 
@@ -93,10 +97,16 @@ namespace MOAI.Menus
                 if (this.p_Implemented)
                 {
                     if (this.m_Item != null)
-                        this.m_Item.Enabled = value;
+                        if (this.m_Item.Owner != null && this.m_Item.Owner.InvokeRequired)
+                            this.m_Item.Owner.Invoke(new E(() => { this.m_Item.Enabled = value; }));
+                        else
+                            this.m_Item.Enabled = value;
                 }
                 else
-                    this.m_Item.Enabled = false;
+                    if (this.m_Item.Owner != null && this.m_Item.Owner.InvokeRequired)
+                        this.m_Item.Owner.Invoke(new E(() => { this.m_Item.Enabled = false; }));
+                    else
+                        this.m_Item.Enabled = false;
             }
         }
 
@@ -136,6 +146,17 @@ namespace MOAI.Menus
             get
             {
                 return this.m_Item;
+            }
+        }
+
+        /// <summary>
+        /// The context data associated with this action.
+        /// </summary>
+        protected object Context
+        {
+            get
+            {
+                return this.m_Context;
             }
         }
 

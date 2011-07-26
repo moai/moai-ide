@@ -7,7 +7,7 @@ namespace MOAI.Menus.Definitions.Tools
 {
     class BuildOutput : Action
     {
-        public override void OnSetSettings()
+        public override void OnInitialize()
         {
             this.Implemented = false;
             this.ItemIcon = Properties.Resources.tools_build_output;
@@ -18,7 +18,7 @@ namespace MOAI.Menus.Definitions.Tools
 
     class ErrorList : Action
     {
-        public override void OnSetSettings()
+        public override void OnInitialize()
         {
             this.Implemented = false;
             this.ItemIcon = Properties.Resources.tools_error_list;
@@ -29,7 +29,7 @@ namespace MOAI.Menus.Definitions.Tools
 
     class PropertiesWindow : Action
     {
-        public override void OnSetSettings()
+        public override void OnInitialize()
         {
             this.Implemented = false;
             this.ItemIcon = Properties.Resources.tools_properties_window;
@@ -40,7 +40,7 @@ namespace MOAI.Menus.Definitions.Tools
 
     class SolutionExplorer : Action
     {
-        public override void OnSetSettings()
+        public override void OnInitialize()
         {
             this.Implemented = false;
             this.ItemIcon = Properties.Resources.tools_solution_explorer;
@@ -51,7 +51,7 @@ namespace MOAI.Menus.Definitions.Tools
 
     class LuaConsole : Action
     {
-        public override void OnSetSettings()
+        public override void OnInitialize()
         {
             this.Implemented = false;
             this.ItemIcon = Properties.Resources.tools_console;
@@ -62,7 +62,7 @@ namespace MOAI.Menus.Definitions.Tools
 
     class ObjectBrowser : Action
     {
-        public override void OnSetSettings()
+        public override void OnInitialize()
         {
             this.Implemented = false;
             this.ItemIcon = Properties.Resources.tools_object_browser;
@@ -73,7 +73,7 @@ namespace MOAI.Menus.Definitions.Tools
 
     class Toolbox : Action
     {
-        public override void OnSetSettings()
+        public override void OnInitialize()
         {
             this.Implemented = false;
             this.ItemIcon = Properties.Resources.tools_toolbox;
@@ -84,7 +84,7 @@ namespace MOAI.Menus.Definitions.Tools
 
     class Manage : Action
     {
-        public override void OnSetSettings()
+        public override void OnInitialize()
         {
             this.Implemented = false;
             this.ItemIcon = Properties.Resources.tools_addons_manage;

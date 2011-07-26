@@ -454,7 +454,7 @@
     <Content Include="Deployment\Engines\Win32\Debug\luac.exe">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Deployment\Engines\Win32\Debug\moai-DLL.dll">
+    <Content Include="Deployment\Engines\Win32\Debug\moai-untz.exe">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Deployment\Engines\Win32\Debug\moai.exe">

@@ -5,6 +5,7 @@ using System.Text;
 using MOAI.Tools;
 using System.IO;
 using System.Xml;
+using System.Windows.Forms;
 
 namespace MOAI.Management
 {
@@ -101,9 +102,32 @@ namespace MOAI.Management
         /// <returns>A new TreeNode.</returns>
         public System.Windows.Forms.TreeNode ToTreeNode()
         {
+            // Construct the tree node.
             System.Windows.Forms.TreeNode node = new System.Windows.Forms.TreeNode("Solution");
             foreach (Project p in this.p_Projects)
                 node.Nodes.Add(p.ToTreeNode());
+
+            // Set the context menu for the node.
+            node.ContextMenu = new ContextMenu(new MenuItem[] {
+                    new MenuItem("Build Solution"),
+                    new MenuItem("Rebuild Solution"),
+                    new MenuItem("Clean Solution"),
+                    new MenuItem("-"),
+                    new MenuItem("Project Dependencies..."),
+                    new MenuItem("Project Build Order..."),
+                    new MenuItem("-"),
+                    new MenuItem("Add"),
+                    new MenuItem("-"),
+                    new MenuItem("Set Startup Projects..."),
+                    new MenuItem("-"),
+                    new MenuItem("Paste"),
+                    new MenuItem("Rename"),
+                    new MenuItem("-"),
+                    new MenuItem("Open Folder in Windows Explorer"),
+                    new MenuItem("-"),
+                    new MenuItem("Properties")
+                });
+
             return node;
         }
 

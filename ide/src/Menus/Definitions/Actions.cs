@@ -9,7 +9,13 @@ namespace MOAI.Menus.Definitions.Actions
 {
     class Open : Action
     {
-        public override void OnSetSettings()
+        public Open() : base() { }
+        public Open(object context) : base(context) { }
+
+        /// <summary>
+        /// This event is raied when the menu item is to be initalized.
+        /// </summary>
+        public override void OnInitialize()
         {
             this.Implemented = false;
             this.ItemIcon = Properties.Resources.actions_open;
@@ -18,9 +24,32 @@ namespace MOAI.Menus.Definitions.Actions
         }
     }
 
+    class OpenInWindowsExplorer : Action
+    {
+        public OpenInWindowsExplorer() : base() { }
+        public OpenInWindowsExplorer(object context) : base(context) { }
+
+        /// <summary>
+        /// This event is raied when the menu item is to be initalized.
+        /// </summary>
+        public override void OnInitialize()
+        {
+            this.Implemented = false;
+            this.ItemIcon = Properties.Resources.actions_open;
+            this.Text = "Open in Windows Explorer";
+            this.Enabled = false;
+        }
+    }
+
     class Close : Action
     {
-        public override void OnSetSettings()
+        public Close() : base() { }
+        public Close(object context) : base(context) { }
+
+        /// <summary>
+        /// This event is raied when the menu item is to be initalized.
+        /// </summary>
+        public override void OnInitialize()
         {
             this.Implemented = false;
             this.ItemIcon = null;
@@ -33,34 +62,45 @@ namespace MOAI.Menus.Definitions.Actions
     {
         private Designer m_CurrentEditor = null;
 
-        public override void OnSetSettings()
+        public Save() : base() { }
+        public Save(object context) : base(context) { }
+
+        /// <summary>
+        /// This event is raied when the menu item is to be initalized.
+        /// </summary>
+        public override void OnInitialize()
         {
             this.ItemIcon = Properties.Resources.actions_save;
             this.Text = "Save";
             this.Enabled = false;
             this.Shortcut = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S;
+
+            // Listen for events.
+            Program.Manager.DesignersManager.DesignerChanged += new MOAI.Designers.Manager.DesignerEventHandler(DesignersManager_DesignerChanged);
         }
 
+        /// <summary>
+        /// This event is raised when the menu item is clicked or otherwise activated.
+        /// </summary>
         public override void OnActivate()
         {
             m_CurrentEditor.OnSaveFile();
         }
 
-        public override void OnSolutionLoaded()
+        /// <summary>
+        /// This event is raised when the active tab (designer) changes.
+        /// </summary>
+        private void DesignersManager_DesignerChanged(object sender, MOAI.Designers.Manager.DesignerEventArgs e)
         {
-        }
-
-        public override void OnTabChanged(Designer editor)
-        {
-            if (editor == null || editor.File == null)
+            if (e.Designer == null || e.Designer.File == null)
             {
                 this.Enabled = false;
                 return;
             }
-            
-            this.Enabled = editor.CanSave;
-            this.m_CurrentEditor = editor;
-            this.Text = "Save " + editor.File.FileInfo.Name;
+
+            this.Enabled = e.Designer.CanSave;
+            this.m_CurrentEditor = e.Designer;
+            this.Text = "Save " + e.Designer.File.FileInfo.Name;
         }
     }
 
@@ -68,37 +108,58 @@ namespace MOAI.Menus.Definitions.Actions
     {
         private Designer m_CurrentEditor = null;
 
-        public override void OnSetSettings()
+        public SaveAs() : base() { }
+        public SaveAs(object context) : base(context) { }
+
+        /// <summary>
+        /// This event is raied when the menu item is to be initalized.
+        /// </summary>
+        public override void OnInitialize()
         {
             this.Implemented = false;
             this.ItemIcon = null;
             this.Text = "Save as...";
             this.Enabled = false;
+
+            // Listen for events.
+            Program.Manager.DesignersManager.DesignerChanged += new MOAI.Designers.Manager.DesignerEventHandler(DesignersManager_DesignerChanged);
         }
 
+        /// <summary>
+        /// This event is raised when the menu item is clicked or otherwise activated.
+        /// </summary>
         public override void OnActivate()
         {
             // TODO: Implement Save As...
         }
 
-        public override void OnTabChanged(Designer editor)
+        /// <summary>
+        /// This event is raised when the active tab (designer) changes.
+        /// </summary>
+        private void DesignersManager_DesignerChanged(object sender, MOAI.Designers.Manager.DesignerEventArgs e)
         {
-            if (editor == null || editor.File == null)
+            if (e.Designer == null || e.Designer.File == null)
             {
                 this.Enabled = false;
                 return;
             }
 
-            this.Enabled = editor.CanSave;
-            this.m_CurrentEditor = editor;
-            this.Text = "Save " + editor.File.FileInfo.Name + " as...";
+            this.Enabled = e.Designer.CanSave;
+            this.m_CurrentEditor = e.Designer;
+            this.Text = "Save " + e.Designer.File.FileInfo.Name + " as...";
             this.Item.Enabled = this.Enabled;
         }
     }
 
     class SaveAll : Action
     {
-        public override void OnSetSettings()
+        public SaveAll() : base() { }
+        public SaveAll(object context) : base(context) { }
+
+        /// <summary>
+        /// This event is raied when the menu item is to be initalized.
+        /// </summary>
+        public override void OnInitialize()
         {
             this.Implemented = false;
             this.ItemIcon = Properties.Resources.actions_save_all;
@@ -109,35 +170,58 @@ namespace MOAI.Menus.Definitions.Actions
 
     class Exit : Action
     {
-        public override void OnSetSettings()
+        public Exit() : base() { }
+        public Exit(object context) : base(context) { }
+
+        /// <summary>
+        /// This event is raied when the menu item is to be initalized.
+        /// </summary>
+        public override void OnInitialize()
         {
             this.ItemIcon = null;
             this.Text = "Exit";
             this.Enabled = true;
+
+            // Listen for events.
+            Program.Manager.SolutionLoaded += new EventHandler(Manager_OnSolutionLoaded);
+            Program.Manager.SolutionUnloaded += new EventHandler(Manager_OnSolutionUnloaded);
         }
 
+        /// <summary>
+        /// This event is raised when the menu item is clicked or otherwise activated.
+        /// </summary>
         public override void OnActivate()
         {
             // TODO: Add proper unsaved changes checking etc.. here
             Program.Manager.Stop();
         }
 
-        public override void OnSolutionLoaded()
+        /// <summary>
+        /// This event is raised when a solution is loaded (opened).
+        /// </summary>
+        private void Manager_OnSolutionLoaded(object sender, EventArgs e)
         {
             this.Enabled = true;
-            this.Item.Enabled = this.Enabled;
         }
 
-        public override void OnSolutionUnloaded()
+        /// <summary>
+        /// This event is raised when a solution is unloaded (closed).
+        /// </summary>
+        private void Manager_OnSolutionUnloaded(object sender, EventArgs e)
         {
-            this.Enabled = true;
-            this.Item.Enabled = this.Enabled;
+            this.Enabled = false;
         }
     }
 
     class Undo : Action
     {
-        public override void OnSetSettings()
+        public Undo() : base() { }
+        public Undo(object context) : base(context) { }
+
+        /// <summary>
+        /// This event is raied when the menu item is to be initalized.
+        /// </summary>
+        public override void OnInitialize()
         {
             this.Implemented = false;
             this.ItemIcon = Properties.Resources.actions_undo;
@@ -148,7 +232,13 @@ namespace MOAI.Menus.Definitions.Actions
 
     class Redo : Action
     {
-        public override void OnSetSettings()
+        public Redo() : base() { }
+        public Redo(object context) : base(context) { }
+
+        /// <summary>
+        /// This event is raied when the menu item is to be initalized.
+        /// </summary>
+        public override void OnInitialize()
         {
             this.Implemented = false;
             this.ItemIcon = Properties.Resources.actions_redo;
@@ -159,7 +249,13 @@ namespace MOAI.Menus.Definitions.Actions
 
     class Cut : Action
     {
-        public override void OnSetSettings()
+        public Cut() : base() { }
+        public Cut(object context) : base(context) { }
+
+        /// <summary>
+        /// This event is raied when the menu item is to be initalized.
+        /// </summary>
+        public override void OnInitialize()
         {
             this.Implemented = false;
             this.ItemIcon = Properties.Resources.actions_cut;
@@ -170,7 +266,13 @@ namespace MOAI.Menus.Definitions.Actions
 
     class Copy : Action
     {
-        public override void OnSetSettings()
+        public Copy() : base() { }
+        public Copy(object context) : base(context) { }
+
+        /// <summary>
+        /// This event is raied when the menu item is to be initalized.
+        /// </summary>
+        public override void OnInitialize()
         {
             this.Implemented = false;
             this.ItemIcon = Properties.Resources.actions_copy;
@@ -181,7 +283,13 @@ namespace MOAI.Menus.Definitions.Actions
 
     class Paste : Action
     {
-        public override void OnSetSettings()
+        public Paste() : base() { }
+        public Paste(object context) : base(context) { }
+
+        /// <summary>
+        /// This event is raied when the menu item is to be initalized.
+        /// </summary>
+        public override void OnInitialize()
         {
             this.Implemented = false;
             this.ItemIcon = Properties.Resources.actions_paste;
@@ -192,7 +300,13 @@ namespace MOAI.Menus.Definitions.Actions
 
     class Delete : Action
     {
-        public override void OnSetSettings()
+        public Delete() : base() { }
+        public Delete(object context) : base(context) { }
+
+        /// <summary>
+        /// This event is raied when the menu item is to be initalized.
+        /// </summary>
+        public override void OnInitialize()
         {
             this.Implemented = false;
             this.ItemIcon = null;
@@ -201,9 +315,49 @@ namespace MOAI.Menus.Definitions.Actions
         }
     }
 
+    class Remove : Action
+    {
+        public Remove() : base() { }
+        public Remove(object context) : base(context) { }
+
+        /// <summary>
+        /// This event is raied when the menu item is to be initalized.
+        /// </summary>
+        public override void OnInitialize()
+        {
+            this.Implemented = false;
+            this.ItemIcon = null;
+            this.Text = "Remove";
+            this.Enabled = false;
+        }
+    }
+
+    class Rename : Action
+    {
+        public Rename() : base() { }
+        public Rename(object context) : base(context) { }
+
+        /// <summary>
+        /// This event is raied when the menu item is to be initalized.
+        /// </summary>
+        public override void OnInitialize()
+        {
+            this.Implemented = false;
+            this.ItemIcon = null;
+            this.Text = "Rename";
+            this.Enabled = false;
+        }
+    }
+
     class SelectAll : Action
     {
-        public override void OnSetSettings()
+        public SelectAll() : base() { }
+        public SelectAll(object context) : base(context) { }
+
+        /// <summary>
+        /// This event is raied when the menu item is to be initalized.
+        /// </summary>
+        public override void OnInitialize()
         {
             this.Implemented = false;
             this.ItemIcon = null;
@@ -214,7 +368,13 @@ namespace MOAI.Menus.Definitions.Actions
 
     class QuickFind : Action
     {
-        public override void OnSetSettings()
+        public QuickFind() : base() { }
+        public QuickFind(object context) : base(context) { }
+
+        /// <summary>
+        /// This event is raied when the menu item is to be initalized.
+        /// </summary>
+        public override void OnInitialize()
         {
             this.Implemented = false;
             this.ItemIcon = null;
@@ -225,7 +385,13 @@ namespace MOAI.Menus.Definitions.Actions
 
     class QuickReplace : Action
     {
-        public override void OnSetSettings()
+        public QuickReplace() : base() { }
+        public QuickReplace(object context) : base(context) { }
+
+        /// <summary>
+        /// This event is raied when the menu item is to be initalized.
+        /// </summary>
+        public override void OnInitialize()
         {
             this.Implemented = false;
             this.ItemIcon = null;
@@ -236,7 +402,13 @@ namespace MOAI.Menus.Definitions.Actions
 
     class FindInFiles : Action
     {
-        public override void OnSetSettings()
+        public FindInFiles() : base() { }
+        public FindInFiles(object context) : base(context) { }
+
+        /// <summary>
+        /// This event is raied when the menu item is to be initalized.
+        /// </summary>
+        public override void OnInitialize()
         {
             this.Implemented = false;
             this.ItemIcon = Properties.Resources.actions_find_in_files;
@@ -247,7 +419,13 @@ namespace MOAI.Menus.Definitions.Actions
 
     class ReplaceInFiles : Action
     {
-        public override void OnSetSettings()
+        public ReplaceInFiles() : base() { }
+        public ReplaceInFiles(object context) : base(context) { }
+
+        /// <summary>
+        /// This event is raied when the menu item is to be initalized.
+        /// </summary>
+        public override void OnInitialize()
         {
             this.Implemented = false;
             this.ItemIcon = null;
@@ -258,7 +436,13 @@ namespace MOAI.Menus.Definitions.Actions
 
     class GoTo : Action
     {
-        public override void OnSetSettings()
+        public GoTo() : base() { }
+        public GoTo(object context) : base(context) { }
+
+        /// <summary>
+        /// This event is raied when the menu item is to be initalized.
+        /// </summary>
+        public override void OnInitialize()
         {
             this.Implemented = false;
             this.ItemIcon = null;
@@ -269,7 +453,13 @@ namespace MOAI.Menus.Definitions.Actions
 
     class Preferences : Action
     {
-        public override void OnSetSettings()
+        public Preferences() : base() { }
+        public Preferences(object context) : base(context) { }
+
+        /// <summary>
+        /// This event is raied when the menu item is to be initalized.
+        /// </summary>
+        public override void OnInitialize()
         {
             this.Implemented = false;
             this.ItemIcon = null;

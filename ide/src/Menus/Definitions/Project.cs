@@ -8,7 +8,13 @@ namespace MOAI.Menus.Definitions.Project
 {
     class New : Action
     {
-        public override void OnSetSettings()
+        public New() : base() { }
+        public New(object context) : base(context) { }
+
+        /// <summary>
+        /// This event is raied when the menu item is to be initalized.
+        /// </summary>
+        public override void OnInitialize()
         {
             this.Implemented = false;
             this.ItemIcon = Properties.Resources.project_create;
@@ -19,7 +25,13 @@ namespace MOAI.Menus.Definitions.Project
 
     class AddFile : Action
     {
-        public override void OnSetSettings()
+        public AddFile() : base() { }
+        public AddFile(object context) : base(context) { }
+
+        /// <summary>
+        /// This event is raied when the menu item is to be initalized.
+        /// </summary>
+        public override void OnInitialize()
         {
             this.Implemented = false;
             this.ItemIcon = Properties.Resources.file_add;
@@ -30,9 +42,13 @@ namespace MOAI.Menus.Definitions.Project
 
     class AddModel : Action
     {
-        public File TargetDirectory = null;
+        public AddModel() : base() { }
+        public AddModel(object context) : base(context) { }
 
-        public override void OnSetSettings()
+        /// <summary>
+        /// This event is raied when the menu item is to be initalized.
+        /// </summary>
+        public override void OnInitialize()
         {
             this.Implemented = false;
             this.ItemIcon = Properties.Resources.model_add;
@@ -54,9 +70,13 @@ namespace MOAI.Menus.Definitions.Project
 
     class AddImage : Action
     {
-        public File TargetDirectory = null;
+        public AddImage() : base() { }
+        public AddImage(object context) : base(context) { }
 
-        public override void OnSetSettings()
+        /// <summary>
+        /// This event is raied when the menu item is to be initalized.
+        /// </summary>
+        public override void OnInitialize()
         {
             this.Implemented = false;
             this.ItemIcon = Properties.Resources.image_add;
@@ -78,9 +98,13 @@ namespace MOAI.Menus.Definitions.Project
 
     class AddAudio : Action
     {
-        public File TargetDirectory = null;
+        public AddAudio() : base() { }
+        public AddAudio(object context) : base(context) { }
 
-        public override void OnSetSettings()
+        /// <summary>
+        /// This event is raied when the menu item is to be initalized.
+        /// </summary>
+        public override void OnInitialize()
         {
             this.Implemented = false;
             this.ItemIcon = Properties.Resources.audio_add;
@@ -91,9 +115,13 @@ namespace MOAI.Menus.Definitions.Project
 
     class AddTemplate : Action
     {
-        public File TargetDirectory = null;
+        public AddTemplate() : base() { }
+        public AddTemplate(object context) : base(context) { }
 
-        public override void OnSetSettings()
+        /// <summary>
+        /// This event is raied when the menu item is to be initalized.
+        /// </summary>
+        public override void OnInitialize()
         {
             this.Implemented = false;
             this.ItemIcon = null; //Properties.Resources.template_add;
@@ -104,9 +132,13 @@ namespace MOAI.Menus.Definitions.Project
 
     class AddArea : Action
     {
-        public File TargetDirectory = null;
+        public AddArea() : base() { }
+        public AddArea(object context) : base(context) { }
 
-        public override void OnSetSettings()
+        /// <summary>
+        /// This event is raied when the menu item is to be initalized.
+        /// </summary>
+        public override void OnInitialize()
         {
             this.Implemented = false;
             this.ItemIcon = Properties.Resources.area_add;
@@ -117,9 +149,13 @@ namespace MOAI.Menus.Definitions.Project
 
     class AddWorld : Action
     {
-        public File TargetDirectory = null;
+        public AddWorld() : base() { }
+        public AddWorld(object context) : base(context) { }
 
-        public override void OnSetSettings()
+        /// <summary>
+        /// This event is raied when the menu item is to be initalized.
+        /// </summary>
+        public override void OnInitialize()
         {
             this.Implemented = false;
             this.ItemIcon = Properties.Resources.world_add;
@@ -130,9 +166,13 @@ namespace MOAI.Menus.Definitions.Project
 
     class AddClass : Action
     {
-        public File TargetDirectory = null;
+        public AddClass() : base() { }
+        public AddClass(object context) : base(context) { }
 
-        public override void OnSetSettings()
+        /// <summary>
+        /// This event is raied when the menu item is to be initalized.
+        /// </summary>
+        public override void OnInitialize()
         {
             this.Implemented = false;
             this.ItemIcon = Properties.Resources.class_add;
@@ -143,9 +183,13 @@ namespace MOAI.Menus.Definitions.Project
 
     class AddScript : Action
     {
-        public File TargetDirectory = null;
+        public AddScript() : base() { }
+        public AddScript(object context) : base(context) { }
 
-        public override void OnSetSettings()
+        /// <summary>
+        /// This event is raied when the menu item is to be initalized.
+        /// </summary>
+        public override void OnInitialize()
         {
             this.Implemented = false;
             this.ItemIcon = Properties.Resources.script_add;
@@ -156,9 +200,13 @@ namespace MOAI.Menus.Definitions.Project
 
     class AddNewItem : Action
     {
-        public File TargetDirectory = null;
+        public AddNewItem() : base() { }
+        public AddNewItem(object context) : base(context) { }
 
-        public override void OnSetSettings()
+        /// <summary>
+        /// This event is raied when the menu item is to be initalized.
+        /// </summary>
+        public override void OnInitialize()
         {
             this.Implemented = false;
             this.ItemIcon = null;
@@ -169,9 +217,13 @@ namespace MOAI.Menus.Definitions.Project
 
     class AddExistingItem : Action
     {
-        public File TargetDirectory = null;
+        public AddExistingItem() : base() { }
+        public AddExistingItem(object context) : base(context) { }
 
-        public override void OnSetSettings()
+        /// <summary>
+        /// This event is raied when the menu item is to be initalized.
+        /// </summary>
+        public override void OnInitialize()
         {
             this.Implemented = false;
             this.ItemIcon = null;
@@ -182,7 +234,13 @@ namespace MOAI.Menus.Definitions.Project
 
     class AddReference : Action
     {
-        public override void OnSetSettings()
+        public AddReference() : base() { }
+        public AddReference(object context) : base(context) { }
+
+        /// <summary>
+        /// This event is raied when the menu item is to be initalized.
+        /// </summary>
+        public override void OnInitialize()
         {
             this.Implemented = false;
             this.ItemIcon = Properties.Resources.reference;
@@ -193,7 +251,13 @@ namespace MOAI.Menus.Definitions.Project
 
     class ProjProperties : Action
     {
-        public override void OnSetSettings()
+        public ProjProperties() : base() { }
+        public ProjProperties(object context) : base(context) { }
+
+        /// <summary>
+        /// This event is raied when the menu item is to be initalized.
+        /// </summary>
+        public override void OnInitialize()
         {
             this.Implemented = false;
             this.ItemIcon = null;
@@ -202,9 +266,49 @@ namespace MOAI.Menus.Definitions.Project
         }
     }
 
+    class ProjDependencies : Action
+    {
+        public ProjDependencies() : base() { }
+        public ProjDependencies(object context) : base(context) { }
+
+        /// <summary>
+        /// This event is raied when the menu item is to be initalized.
+        /// </summary>
+        public override void OnInitialize()
+        {
+            this.Implemented = false;
+            this.ItemIcon = null;
+            this.Text = "Project Dependencies...";
+            this.Enabled = false;
+        }
+    }
+
+    class ProjBuildOrder : Action
+    {
+        public ProjBuildOrder() : base() { }
+        public ProjBuildOrder(object context) : base(context) { }
+
+        /// <summary>
+        /// This event is raied when the menu item is to be initalized.
+        /// </summary>
+        public override void OnInitialize()
+        {
+            this.Implemented = false;
+            this.ItemIcon = null;
+            this.Text = "Project Build Order...";
+            this.Enabled = false;
+        }
+    }
+
     class Build : Action
     {
-        public override void OnSetSettings()
+        public Build() : base() { }
+        public Build(object context) : base(context) { }
+
+        /// <summary>
+        /// This event is raied when the menu item is to be initalized.
+        /// </summary>
+        public override void OnInitialize()
         {
             this.Implemented = false;
             this.ItemIcon = null;
@@ -223,7 +327,13 @@ namespace MOAI.Menus.Definitions.Project
 
     class Rebuild : Action
     {
-        public override void OnSetSettings()
+        public Rebuild() : base() { }
+        public Rebuild(object context) : base(context) { }
+
+        /// <summary>
+        /// This event is raied when the menu item is to be initalized.
+        /// </summary>
+        public override void OnInitialize()
         {
             this.Implemented = false;
             this.ItemIcon = null;
@@ -234,11 +344,82 @@ namespace MOAI.Menus.Definitions.Project
 
     class Clean : Action
     {
-        public override void OnSetSettings()
+        public Clean() : base() { }
+        public Clean(object context) : base(context) { }
+
+        /// <summary>
+        /// This event is raied when the menu item is to be initalized.
+        /// </summary>
+        public override void OnInitialize()
         {
             this.Implemented = false;
             this.ItemIcon = null;
             this.Text = "Clean MyProject";
+            this.Enabled = false;
+        }
+    }
+
+    class StartWithDebug : Action
+    {
+        public StartWithDebug() : base() { }
+        public StartWithDebug(object context) : base(context) { }
+
+        /// <summary>
+        /// This event is raied when the menu item is to be initalized.
+        /// </summary>
+        public override void OnInitialize()
+        {
+            this.ItemIcon = Properties.Resources.debug;
+            this.Text = "Start with Debugging";
+            this.Enabled = true;
+
+            // Listen for events.
+            Program.Manager.DebugManager.DebugStart += new EventHandler(DebugManager_OnDebugStart);
+            Program.Manager.DebugManager.DebugStop += new EventHandler(DebugManager_OnDebugStop);
+        }
+
+        /// <summary>
+        /// This event is raised when the menu item is clicked or otherwise activated.
+        /// </summary>
+        public override void OnActivate()
+        {
+            // FIXME: Fix this so that it uses the context of the project selected.
+            if (this.Context != null && this.Context is Management.Project)
+                Program.Manager.DebugManager.Start(this.Context as Management.Project);
+            else
+                System.Windows.Forms.MessageBox.Show("Unable to start this project with debugging.  Unable to determine the project to run.");
+        }
+
+        /// <summary>
+        /// This event is raised when debugging starts.
+        /// </summary>
+        private void DebugManager_OnDebugStart(object sender, EventArgs e)
+        {
+            this.Enabled = false;
+        }
+
+        /// <summary>
+        /// This event is raised when debugging stops.
+        /// </summary>
+        private void DebugManager_OnDebugStop(object sender, EventArgs e)
+        {
+            this.Enabled = true;
+        }
+    }
+
+    class SetAsStartupProject : Action
+    {
+        public SetAsStartupProject() : base() { }
+        public SetAsStartupProject(object context) : base(context) { }
+
+        /// <summary>
+        /// This event is raied when the menu item is to be initalized.
+        /// </summary>
+        public override void OnInitialize()
+        {
+            this.Implemented = false;
+            this.ItemIcon = null;
+            this.Text = "Set as Startup Project";
             this.Enabled = false;
         }
     }
