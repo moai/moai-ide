@@ -18,7 +18,7 @@ namespace MOAI.Menus.Definitions.Actions
         public override void OnInitialize()
         {
             this.Implemented = false;
-            this.ItemIcon = Properties.Resources.actions_open;
+            this.ItemIcon = MOAI.Properties.Resources.actions_open;
             this.Text = "Open File";
             this.Enabled = false;
         }
@@ -35,7 +35,7 @@ namespace MOAI.Menus.Definitions.Actions
         public override void OnInitialize()
         {
             this.Implemented = false;
-            this.ItemIcon = Properties.Resources.actions_open;
+            this.ItemIcon = MOAI.Properties.Resources.actions_open;
             this.Text = "Open in Windows Explorer";
             this.Enabled = false;
         }
@@ -70,7 +70,7 @@ namespace MOAI.Menus.Definitions.Actions
         /// </summary>
         public override void OnInitialize()
         {
-            this.ItemIcon = Properties.Resources.actions_save;
+            this.ItemIcon = MOAI.Properties.Resources.actions_save;
             this.Text = "Save";
             this.Enabled = false;
             this.Shortcut = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S;
@@ -95,6 +95,7 @@ namespace MOAI.Menus.Definitions.Actions
             if (e.Designer == null || e.Designer.File == null)
             {
                 this.Enabled = false;
+                this.Text = "Save";
                 return;
             }
 
@@ -116,7 +117,6 @@ namespace MOAI.Menus.Definitions.Actions
         /// </summary>
         public override void OnInitialize()
         {
-            this.Implemented = false;
             this.ItemIcon = null;
             this.Text = "Save as...";
             this.Enabled = false;
@@ -130,7 +130,8 @@ namespace MOAI.Menus.Definitions.Actions
         /// </summary>
         public override void OnActivate()
         {
-            // TODO: Implement Save As...
+            m_CurrentEditor.OnSaveFileAs();
+            Program.Manager.DesignersManager.EmulateDesignerChange();
         }
 
         /// <summary>
@@ -141,13 +142,13 @@ namespace MOAI.Menus.Definitions.Actions
             if (e.Designer == null || e.Designer.File == null)
             {
                 this.Enabled = false;
+                this.Text = "Save as...";
                 return;
             }
 
             this.Enabled = e.Designer.CanSave;
             this.m_CurrentEditor = e.Designer;
             this.Text = "Save " + e.Designer.File.FileInfo.Name + " as...";
-            this.Item.Enabled = this.Enabled;
         }
     }
 
@@ -162,7 +163,7 @@ namespace MOAI.Menus.Definitions.Actions
         public override void OnInitialize()
         {
             this.Implemented = false;
-            this.ItemIcon = Properties.Resources.actions_save_all;
+            this.ItemIcon = MOAI.Properties.Resources.actions_save_all;
             this.Text = "Save All";
             this.Enabled = false;
         }
@@ -224,7 +225,7 @@ namespace MOAI.Menus.Definitions.Actions
         public override void OnInitialize()
         {
             this.Implemented = false;
-            this.ItemIcon = Properties.Resources.actions_undo;
+            this.ItemIcon = MOAI.Properties.Resources.actions_undo;
             this.Text = "Undo";
             this.Enabled = false;
         }
@@ -241,7 +242,7 @@ namespace MOAI.Menus.Definitions.Actions
         public override void OnInitialize()
         {
             this.Implemented = false;
-            this.ItemIcon = Properties.Resources.actions_redo;
+            this.ItemIcon = MOAI.Properties.Resources.actions_redo;
             this.Text = "Redo";
             this.Enabled = false;
         }
@@ -258,7 +259,7 @@ namespace MOAI.Menus.Definitions.Actions
         public override void OnInitialize()
         {
             this.Implemented = false;
-            this.ItemIcon = Properties.Resources.actions_cut;
+            this.ItemIcon = MOAI.Properties.Resources.actions_cut;
             this.Text = "Cut";
             this.Enabled = false;
         }
@@ -275,7 +276,7 @@ namespace MOAI.Menus.Definitions.Actions
         public override void OnInitialize()
         {
             this.Implemented = false;
-            this.ItemIcon = Properties.Resources.actions_copy;
+            this.ItemIcon = MOAI.Properties.Resources.actions_copy;
             this.Text = "Copy";
             this.Enabled = false;
         }
@@ -292,7 +293,7 @@ namespace MOAI.Menus.Definitions.Actions
         public override void OnInitialize()
         {
             this.Implemented = false;
-            this.ItemIcon = Properties.Resources.actions_paste;
+            this.ItemIcon = MOAI.Properties.Resources.actions_paste;
             this.Text = "Paste";
             this.Enabled = false;
         }
@@ -345,6 +346,23 @@ namespace MOAI.Menus.Definitions.Actions
             this.Implemented = false;
             this.ItemIcon = null;
             this.Text = "Rename";
+            this.Enabled = false;
+        }
+    }
+
+    class Exclude : Action
+    {
+        public Exclude() : base() { }
+        public Exclude(object context) : base(context) { }
+
+        /// <summary>
+        /// This event is raied when the menu item is to be initalized.
+        /// </summary>
+        public override void OnInitialize()
+        {
+            this.Implemented = false;
+            this.ItemIcon = null;
+            this.Text = "Exclude From Project";
             this.Enabled = false;
         }
     }
@@ -411,7 +429,7 @@ namespace MOAI.Menus.Definitions.Actions
         public override void OnInitialize()
         {
             this.Implemented = false;
-            this.ItemIcon = Properties.Resources.actions_find_in_files;
+            this.ItemIcon = MOAI.Properties.Resources.actions_find_in_files;
             this.Text = "Find in Files";
             this.Enabled = false;
         }
@@ -464,6 +482,23 @@ namespace MOAI.Menus.Definitions.Actions
             this.Implemented = false;
             this.ItemIcon = null;
             this.Text = "Preferences";
+            this.Enabled = false;
+        }
+    }
+
+    class Properties : Action
+    {
+        public Properties() : base() { }
+        public Properties(object context) : base(context) { }
+
+        /// <summary>
+        /// This event is raied when the menu item is to be initalized.
+        /// </summary>
+        public override void OnInitialize()
+        {
+            this.Implemented = false;
+            this.ItemIcon = null;
+            this.Text = "Properties";
             this.Enabled = false;
         }
     }

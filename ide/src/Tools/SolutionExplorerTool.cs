@@ -42,11 +42,42 @@ namespace MOAI.Tools
 
         public void ReloadTree()
         {
+            // Search the tree node for events to disconnect from.
+            if (this.c_SolutionTree.Nodes.Count > 0)
+            {
+                foreach (TreeNode tn in this.c_SolutionTree.Nodes[0].Nodes)
+                {
+                    if (tn.Tag is Project)
+                    {
+                        (tn.Tag as Project).FileAdded -= new EventHandler(OnReloadRequired);
+                        (tn.Tag as Project).FileRemoved -= new EventHandler(OnReloadRequired);
+                    }
+                }
+            }
+
             // Fill the solution explorer with the tree nodes.
             c_SolutionTree.Nodes.Clear();
             if (this.m_Manager.Parent.ActiveSolution != null)
                 c_SolutionTree.Nodes.Add(this.m_Manager.Parent.ActiveSolution.ToTreeNode());
             c_SolutionTree.ExpandAll();
+
+            // Search the tree node for events to listen to.
+            if (this.c_SolutionTree.Nodes.Count > 0)
+            {
+                foreach (TreeNode tn in this.c_SolutionTree.Nodes[0].Nodes)
+                {
+                    if (tn.Tag is Project)
+                    {
+                        (tn.Tag as Project).FileAdded += new EventHandler(OnReloadRequired);
+                        (tn.Tag as Project).FileRemoved += new EventHandler(OnReloadRequired);
+                    }
+                }
+            }
+        }
+
+        void OnReloadRequired(object sender, EventArgs e)
+        {
+            this.ReloadTree();
         }
 
         public override DockState DefaultState

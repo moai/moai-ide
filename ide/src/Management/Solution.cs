@@ -106,26 +106,31 @@ namespace MOAI.Management
             System.Windows.Forms.TreeNode node = new System.Windows.Forms.TreeNode("Solution");
             foreach (Project p in this.p_Projects)
                 node.Nodes.Add(p.ToTreeNode());
+            node.Tag = this;
 
             // Set the context menu for the node.
-            node.ContextMenu = new ContextMenu(new MenuItem[] {
-                    new MenuItem("Build Solution"),
-                    new MenuItem("Rebuild Solution"),
-                    new MenuItem("Clean Solution"),
-                    new MenuItem("-"),
-                    new MenuItem("Project Dependencies..."),
-                    new MenuItem("Project Build Order..."),
-                    new MenuItem("-"),
-                    new MenuItem("Add"),
-                    new MenuItem("-"),
-                    new MenuItem("Set Startup Projects..."),
-                    new MenuItem("-"),
-                    new MenuItem("Paste"),
-                    new MenuItem("Rename"),
-                    new MenuItem("-"),
-                    new MenuItem("Open Folder in Windows Explorer"),
-                    new MenuItem("-"),
-                    new MenuItem("Properties")
+            node.ContextMenuStrip = new ContextMenuStrip();
+            node.ContextMenuStrip.Items.AddRange(new ToolStripItem[] {
+                    Menus.Manager.WrapAction(new Menus.Definitions.Solution.Build(this)),
+                    Menus.Manager.WrapAction(new Menus.Definitions.Solution.Rebuild(this)),
+                    Menus.Manager.WrapAction(new Menus.Definitions.Solution.Clean(this)),
+                    new ToolStripSeparator(),
+                    Menus.Manager.WrapAction(new Menus.Definitions.Project.ProjDependencies(this)),
+                    Menus.Manager.WrapAction(new Menus.Definitions.Project.ProjBuildOrder(this)),
+                    new ToolStripSeparator(),
+                    new ToolStripMenuItem("Add", null, new ToolStripItem[] {
+                        Menus.Manager.WrapAction(new Menus.Definitions.Project.New(this)),
+                        Menus.Manager.WrapAction(new Menus.Definitions.Project.Existing(this))
+                    }),
+                    new ToolStripSeparator(),
+                    Menus.Manager.WrapAction(new Menus.Definitions.Solution.SetStartupProjects(this)),
+                    new ToolStripSeparator(),
+                    Menus.Manager.WrapAction(new Menus.Definitions.Actions.Paste(this)),
+                    Menus.Manager.WrapAction(new Menus.Definitions.Actions.Rename(this)),
+                    new ToolStripSeparator(),
+                    Menus.Manager.WrapAction(new Menus.Definitions.Actions.OpenInWindowsExplorer(this)),
+                    new ToolStripSeparator(),
+                    Menus.Manager.WrapAction(new Menus.Definitions.Actions.Properties(this))
                 });
 
             return node;

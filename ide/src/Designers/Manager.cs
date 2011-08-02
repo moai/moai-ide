@@ -67,6 +67,16 @@ namespace MOAI.Designers
         }
 
         /// <summary>
+        /// Fires the OnDesignerChanged event to update any menu items which use file-related
+        /// information within their text or designer-related statuses.
+        /// </summary>
+        public void EmulateDesignerChange()
+        {
+            if (this.DesignerChanged != null)
+                this.DesignerChanged(this, new DesignerEventArgs(this.p_Parent.IDEWindow.ActiveTab as Designers.Designer));
+        }
+
+        /// <summary>
         /// Opens a new designer for the specified file, or returns an existing
         /// editor for this file.
         /// </summary>

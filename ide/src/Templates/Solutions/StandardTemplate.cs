@@ -6,7 +6,7 @@ using System.Drawing;
 using MOAI.Management;
 using System.IO;
 
-namespace MOAI.Templates
+namespace MOAI.Templates.Solutions
 {
     public class StandardTemplate : BaseTemplate
     {

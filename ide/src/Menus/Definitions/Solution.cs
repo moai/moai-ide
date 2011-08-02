@@ -147,6 +147,65 @@ namespace MOAI.Menus.Definitions.Solution
         }
     }
 
+    class Build : Action
+    {
+        public Build() : base() { }
+        public Build(object context) : base(context) { }
+
+        /// <summary>
+        /// This event is raied when the menu item is to be initalized.
+        /// </summary>
+        public override void OnInitialize()
+        {
+            this.Implemented = false;
+            this.ItemIcon = null;
+            this.Text = "Build Solution";
+            this.Enabled = false;
+        }
+
+        public override void OnActivate()
+        {
+            /*
+            Compilation.ProjectBuilder pb = new Compilation.ProjectBuilder(Program.MainWindow.CurrentSolution.Projects[0], Program.MainWindow.BuildOutput);
+            pb.Build(Roket3D.Compilation.BuildMode.DEBUG);
+            */
+        }
+    }
+
+    class Rebuild : Action
+    {
+        public Rebuild() : base() { }
+        public Rebuild(object context) : base(context) { }
+
+        /// <summary>
+        /// This event is raied when the menu item is to be initalized.
+        /// </summary>
+        public override void OnInitialize()
+        {
+            this.Implemented = false;
+            this.ItemIcon = null;
+            this.Text = "Rebuild Solution";
+            this.Enabled = false;
+        }
+    }
+
+    class Clean : Action
+    {
+        public Clean() : base() { }
+        public Clean(object context) : base(context) { }
+
+        /// <summary>
+        /// This event is raied when the menu item is to be initalized.
+        /// </summary>
+        public override void OnInitialize()
+        {
+            this.Implemented = false;
+            this.ItemIcon = null;
+            this.Text = "Clean Solution";
+            this.Enabled = false;
+        }
+    }
+
     class StartWithDebug : Action
     {
         /// <summary>
@@ -235,6 +294,23 @@ namespace MOAI.Menus.Definitions.Solution
         /// </summary>
         private void DebugManager_OnDebugStop(object sender, EventArgs e)
         {
+        }
+    }
+
+    class SetStartupProjects : Action
+    {
+        public SetStartupProjects() : base() { }
+        public SetStartupProjects(object context) : base(context) { }
+
+        /// <summary>
+        /// This event is raied when the menu item is to be initalized.
+        /// </summary>
+        public override void OnInitialize()
+        {
+            this.Implemented = false;
+            this.ItemIcon = null;
+            this.Text = "Set Startup Projects...";
+            this.Enabled = false;
         }
     }
 }

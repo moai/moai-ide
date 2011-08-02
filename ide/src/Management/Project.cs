@@ -15,6 +15,9 @@ namespace MOAI.Management
         private FileInfo p_ProjectInfo = null;
         private List<File> p_Files = new List<File>();
 
+        public event EventHandler FileAdded;
+        public event EventHandler FileRemoved;
+
         /// <summary>
         /// Creates a new instance of the Project class that is not associated
         /// with any on-disk solution.
@@ -271,6 +274,7 @@ namespace MOAI.Management
                 );
             foreach (File f in this.p_Files)
                 f.Associate(node);
+            node.Tag = this;
 
             // Set the context menu for the node.
             node.ContextMenuStrip = new ContextMenuStrip();
@@ -298,10 +302,48 @@ namespace MOAI.Management
                     new ToolStripSeparator(),
                     Menus.Manager.WrapAction(new Menus.Definitions.Actions.OpenInWindowsExplorer(this)),
                     new ToolStripSeparator(),
-                    Menus.Manager.WrapAction(new Menus.Definitions.Project.ProjProperties(this))
+                    Menus.Manager.WrapAction(new Menus.Definitions.Actions.Properties(this))
                 });
 
             return node;
+        }
+
+        /// <summary>
+        /// Adds a file interactively to the project (i.e. prompts the user).
+        /// </summary>
+        public void AddFileInteractive()
+        {
+            this.AddFileInteractive(null, null);
+        }
+
+        /// <summary>
+        /// Adds a file interactively to the project (i.e. prompts the user).
+        /// </summary>
+        public void AddFileInteractive(string preselected)
+        {
+            this.AddFileInteractive(preselected, null);
+        }
+
+        /// <summary>
+        /// Adds a file interactively to the project (i.e. prompts the user).
+        /// </summary>
+        public void AddFileInteractive(Folder f)
+        {
+            this.AddFileInteractive(null, f);
+        }
+
+        /// <summary>
+        /// Adds a file interactively to the project (i.e. prompts the user).
+        /// </summary>
+        /// <param name="f">The folder to place the file in, or null for the project root.</param>
+        public void AddFileInteractive(string preselected, Folder f)
+        {
+            NewFileForm nff = new NewFileForm(preselected);
+            if (nff.ShowDialog() == DialogResult.OK)
+            {
+                // Create the file.
+                nff.Result.Template.Create(nff.Result.Name, this, f);
+            }
         }
 
         /// <summary>
@@ -311,6 +353,14 @@ namespace MOAI.Management
         public void AddFile(File f)
         {
             this.p_Files.Add(f);
+            if (f is Folder)
+            {
+                Folder ff = f as Folder;
+                ff.FileAdded += new EventHandler(ff_FileAdded);
+                ff.FileRemoved += new EventHandler(ff_FileRemoved);
+            }
+            if (this.FileAdded != null)
+                this.FileAdded(this, new EventArgs());
         }
 
         /// <summary>
@@ -320,6 +370,34 @@ namespace MOAI.Management
         public void RemoveFile(File f)
         {
             this.p_Files.Remove(f);
+            if (f is Folder)
+            {
+                Folder ff = f as Folder;
+                ff.FileAdded -= new EventHandler(ff_FileAdded);
+                ff.FileRemoved -= new EventHandler(ff_FileRemoved);
+            }
+            if (this.FileRemoved != null)
+                this.FileRemoved(this, new EventArgs());
+        }
+
+        /// <summary>
+        /// This function propagates FileAdded events from folders as
+        /// FileAdded events on the project itself.
+        /// </summary>
+        private void ff_FileAdded(object sender, EventArgs e)
+        {
+            if (this.FileAdded != null)
+                this.FileAdded(this, new EventArgs());
+        }
+
+        /// <summary>
+        /// This function propagates FileRemoved events from folders as
+        /// FileRemoved events on the project itself.
+        /// </summary>
+        private void ff_FileRemoved(object sender, EventArgs e)
+        {
+            if (this.FileRemoved != null)
+                this.FileRemoved(this, new EventArgs());
         }
 
         /// <summary>

@@ -5,7 +5,7 @@ using System.Text;
 using System.Drawing;
 using MOAI.Management;
 
-namespace MOAI.Templates
+namespace MOAI.Templates.Solutions
 {
     public abstract class BaseTemplate
     {

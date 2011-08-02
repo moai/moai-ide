@@ -23,10 +23,10 @@ namespace MOAI.Menus.Definitions.Project
         }
     }
 
-    class AddFile : Action
+    class Existing : Action
     {
-        public AddFile() : base() { }
-        public AddFile(object context) : base(context) { }
+        public Existing() : base() { }
+        public Existing(object context) : base(context) { }
 
         /// <summary>
         /// This event is raied when the menu item is to be initalized.
@@ -34,8 +34,57 @@ namespace MOAI.Menus.Definitions.Project
         public override void OnInitialize()
         {
             this.Implemented = false;
+            this.ItemIcon = null;
+            this.Text = "Existing Project...";
+            this.Enabled = false;
+        }
+    }
+
+    class AddNewItem : Action
+    {
+        public AddNewItem() : base() { }
+        public AddNewItem(object context) : base(context) { }
+
+        /// <summary>
+        /// This event is raied when the menu item is to be initalized.
+        /// </summary>
+        public override void OnInitialize()
+        {
             this.ItemIcon = Properties.Resources.file_add;
             this.Text = "Add New Item";
+            this.Enabled = true;
+
+            // Listen for events.
+            Program.Manager.SolutionLoaded += new EventHandler(Manager_OnSolutionLoaded);
+            Program.Manager.SolutionUnloaded += new EventHandler(Manager_OnSolutionUnloaded);
+        }
+
+        /// <summary>
+        /// This event is raised when the menu item is clicked or otherwise activated.
+        /// </summary>
+        public override void OnActivate()
+        {
+            if (this.Context is Management.Project)
+                (this.Context as Management.Project).AddFileInteractive();
+            else if (this.Context is Management.Folder)
+                (this.Context as Management.Folder).Project.AddFileInteractive(this.Context as Management.Folder);
+            else
+                Program.Manager.ActiveProject.AddFileInteractive();
+        }
+
+        /// <summary>
+        /// This event is raised when a solution is loaded (opened).
+        /// </summary>
+        private void Manager_OnSolutionLoaded(object sender, EventArgs e)
+        {
+            this.Enabled = true;
+        }
+
+        /// <summary>
+        /// This event is raised when a solution is unloaded (closed).
+        /// </summary>
+        private void Manager_OnSolutionUnloaded(object sender, EventArgs e)
+        {
             this.Enabled = false;
         }
     }
@@ -191,26 +240,41 @@ namespace MOAI.Menus.Definitions.Project
         /// </summary>
         public override void OnInitialize()
         {
-            this.Implemented = false;
             this.ItemIcon = Properties.Resources.script_add;
             this.Text = "Add Script...";
-            this.Enabled = false;
-        }
-    }
+            this.Enabled = true;
 
-    class AddNewItem : Action
-    {
-        public AddNewItem() : base() { }
-        public AddNewItem(object context) : base(context) { }
+            // Listen for events.
+            Program.Manager.SolutionLoaded += new EventHandler(Manager_OnSolutionLoaded);
+            Program.Manager.SolutionUnloaded += new EventHandler(Manager_OnSolutionUnloaded);
+        }
 
         /// <summary>
-        /// This event is raied when the menu item is to be initalized.
+        /// This event is raised when the menu item is clicked or otherwise activated.
         /// </summary>
-        public override void OnInitialize()
+        public override void OnActivate()
         {
-            this.Implemented = false;
-            this.ItemIcon = null;
-            this.Text = "Add New Item";
+            if (this.Context is Management.Project)
+                (this.Context as Management.Project).AddFileInteractive("ScriptTemplate");
+            else if (this.Context is Management.Folder)
+                (this.Context as Management.Folder).Project.AddFileInteractive("ScriptTemplate", this.Context as Management.Folder);
+            else
+                Program.Manager.ActiveProject.AddFileInteractive("ScriptTemplate");
+        }
+
+        /// <summary>
+        /// This event is raised when a solution is loaded (opened).
+        /// </summary>
+        private void Manager_OnSolutionLoaded(object sender, EventArgs e)
+        {
+            this.Enabled = true;
+        }
+
+        /// <summary>
+        /// This event is raised when a solution is unloaded (closed).
+        /// </summary>
+        private void Manager_OnSolutionUnloaded(object sender, EventArgs e)
+        {
             this.Enabled = false;
         }
     }

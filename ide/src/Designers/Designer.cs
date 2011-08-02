@@ -51,9 +51,14 @@ namespace MOAI.Designers
         protected virtual void OnTabChanged() { }
 
         /// <summary>
-        /// This function is called after the file that this designer owns has been saved to disk.
+        /// This function is called to tell the designer that it should save the file to disk.
         /// </summary>
         public virtual void OnSaveFile() { }
+
+        /// <summary>
+        /// This function is called to tell the designer that it should save the file to disk as another name.
+        /// </summary>
+        public virtual void OnSaveFileAs() { }
 
         /// <summary>
         /// The path to the file that this editor is currently editing.

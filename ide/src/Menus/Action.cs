@@ -51,6 +51,11 @@ namespace MOAI.Menus
             protected set
             {
                 this.p_Text = value;
+                if (this.m_MenuItem != null)
+                    if (this.m_MenuItem.Owner != null && this.m_MenuItem.Owner.InvokeRequired)
+                        this.m_MenuItem.Owner.Invoke(new E(() => { this.m_MenuItem.Text = value; }));
+                    else
+                        this.m_MenuItem.Text = value;
             }
         }
 

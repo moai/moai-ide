@@ -8,7 +8,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.IO;
 using System.Reflection;
-using MOAI.Templates;
+using MOAI.Templates.Solutions;
 
 namespace MOAI
 {

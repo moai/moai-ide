@@ -7,6 +7,9 @@ namespace MOAI.Menus.Definitions.Views
 {
     class Code : Action
     {
+        public Code() : base() { }
+        public Code(object context) : base(context) { }
+
         public override void OnInitialize()
         {
             this.Implemented = false;
@@ -19,6 +22,9 @@ namespace MOAI.Menus.Definitions.Views
 
     class Designer : Action
     {
+        public Designer() : base() { }
+        public Designer(object context) : base(context) { }
+
         public override void OnInitialize()
         {
             this.Implemented = false;

@@ -168,7 +168,7 @@ namespace MOAI.Designers.Code
         }
 
         /// <summary>
-        /// This function is called after the file that this designer owns has been saved to disk.
+        /// This function is called to tell the designer that it should save the file to disk.
         /// </summary>
         public override void OnSaveFile()
         {
@@ -178,6 +178,23 @@ namespace MOAI.Designers.Code
             }
             this.TabText = this.File.FileInfo.Name;
             this.m_SavedText = this.c_CodeEditor.Text;
+        }
+
+        /// <summary>
+        /// This function is called to tell the designer that it should save the file to disk as another name.
+        /// </summary>
+        public override void OnSaveFileAs()
+        {
+            SaveFileDialog sfd = new SaveFileDialog();
+            sfd.AddExtension = true;
+            sfd.DefaultExt = "lua";
+            sfd.Filter = "Script Files|*.lua";
+            sfd.InitialDirectory = this.File.FileInfo.DirectoryName;
+            if (sfd.ShowDialog() == DialogResult.OK)
+            {
+                this.File = new File(null, null, sfd.FileName);
+                this.OnSaveFile();
+            }
         }
     }
 }

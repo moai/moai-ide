@@ -12,6 +12,9 @@ namespace MOAI.Management
         private DirectoryInfo p_FolderInfo = null;
         private List<File> p_Files = null;
 
+        public event EventHandler FileAdded;
+        public event EventHandler FileRemoved;
+
         /// <summary>
         /// Creates a new Folder object for representing a folder in the project.
         /// </summary>
@@ -110,6 +113,8 @@ namespace MOAI.Management
         public void Add(File file)
         {
             this.p_Files.Add(file);
+            if (this.FileAdded != null)
+                this.FileAdded(this, new EventArgs());
         }
 
         /// <summary>
