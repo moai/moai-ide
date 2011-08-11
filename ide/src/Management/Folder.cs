@@ -71,27 +71,37 @@ namespace MOAI.Management
         }
 
         /// <summary>
-        /// Returns the context menu for this file.
+        /// Returns the context menu for this folder.
         /// </summary>
-        public override ContextMenu ContextMenu
+        public override ContextMenuStrip ContextMenuStrip
         {
             get
             {
-                return new ContextMenu(new MenuItem[] {
-                    new MenuItem("Add"),
-                    new MenuItem("-"),
-                    new MenuItem("Exclude From Project"),
-                    new MenuItem("-"),
-                    new MenuItem("Cut"),
-                    new MenuItem("Copy"),
-                    new MenuItem("Paste"),
-                    new MenuItem("Delete"),
-                    new MenuItem("Rename"),
-                    new MenuItem("-"),
-                    new MenuItem("Open Folder in Windows Explorer"),
-                    new MenuItem("-"),
-                    new MenuItem("Properties")
+                // Set the context menu for the node.
+                ContextMenuStrip ret = new ContextMenuStrip();
+                ret.Items.AddRange(new ToolStripItem[] {
+                    new ToolStripMenuItem("Add", null, new ToolStripItem[] {
+                        Menus.Manager.WrapAction(new Menus.Definitions.Project.AddNewItem(this)),
+                        Menus.Manager.WrapAction(new Menus.Definitions.Project.AddExistingItem(this)),
+                        Menus.Manager.WrapAction(new Menus.Definitions.Project.AddFolder(this)),
+                        new ToolStripSeparator(),
+                        Menus.Manager.WrapAction(new Menus.Definitions.Project.AddScript(this)),
+                        Menus.Manager.WrapAction(new Menus.Definitions.Project.AddClass(this))
+                    }),
+                    new ToolStripSeparator(),
+                    Menus.Manager.WrapAction(new Menus.Definitions.Actions.Exclude(this)),
+                    new ToolStripSeparator(),
+                    Menus.Manager.WrapAction(new Menus.Definitions.Actions.Cut(this)),
+                    Menus.Manager.WrapAction(new Menus.Definitions.Actions.Copy(this)),
+                    Menus.Manager.WrapAction(new Menus.Definitions.Actions.Paste(this)),
+                    Menus.Manager.WrapAction(new Menus.Definitions.Actions.Remove(this)),
+                    Menus.Manager.WrapAction(new Menus.Definitions.Actions.Rename(this)),
+                    new ToolStripSeparator(),
+                    Menus.Manager.WrapAction(new Menus.Definitions.Actions.OpenInWindowsExplorer(this)),
+                    new ToolStripSeparator(),
+                    Menus.Manager.WrapAction(new Menus.Definitions.Actions.Properties(this))
                 });
+                return ret;
             }
         }
 

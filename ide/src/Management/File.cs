@@ -54,7 +54,10 @@ namespace MOAI.Management
         {
             // Set properties.
             this.Text = this.ToString();
-            this.ImageKey = Associations.GetImageKey(this.p_FileInfo.Extension.Substring(1));
+            if (this.p_FileInfo.Extension != "")
+                this.ImageKey = Associations.GetImageKey(this.p_FileInfo.Extension.Substring(1));
+            else
+                this.ImageKey = null;
             this.SelectedImageKey = this.ImageKey;
 
             // Add this file to the node.

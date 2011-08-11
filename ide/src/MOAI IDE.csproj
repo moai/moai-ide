@@ -602,6 +602,7 @@
     </Compile>
     <Compile Include="Management\Associations.cs" />
     <Compile Include="Templates\Files\BaseTemplate.cs" />
+    <Compile Include="Templates\Files\FolderTemplate.cs" />
     <Compile Include="Templates\Files\ScriptTemplate.cs" />
     <Compile Include="Templates\Files\FileCreationData.cs" />
     <Compile Include="Templates\Solutions\BaseTemplate.cs" />

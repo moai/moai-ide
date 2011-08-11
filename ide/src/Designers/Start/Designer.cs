@@ -27,8 +27,8 @@ namespace MOAI.Designers.Start
             this.CanSave = false;
             this.File = null;
 
-            this.TabText = "Start Page";
-            this.c_WebBrowser.Url = new System.Uri(Program.Manager.Settings["RootPath"] + "/Start Page/index.htm", System.UriKind.Absolute);
+            this.TabText = "Cloud Dashboard";
+            this.c_WebBrowser.Url = new System.Uri("http://dashboard.moaicloud.com/login.php", System.UriKind.Absolute);
         }
 
         /// <summary>

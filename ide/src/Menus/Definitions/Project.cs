@@ -51,7 +51,7 @@ namespace MOAI.Menus.Definitions.Project
         public override void OnInitialize()
         {
             this.ItemIcon = Properties.Resources.file_add;
-            this.Text = "Add New Item";
+            this.Text = "Add New Item...";
             this.Enabled = true;
 
             // Listen for events.
@@ -291,7 +291,56 @@ namespace MOAI.Menus.Definitions.Project
         {
             this.Implemented = false;
             this.ItemIcon = null;
-            this.Text = "Add Existing Item";
+            this.Text = "Add Existing Item...";
+            this.Enabled = false;
+        }
+    }
+
+    class AddFolder : Action
+    {
+        public AddFolder() : base() { }
+        public AddFolder(object context) : base(context) { }
+
+        /// <summary>
+        /// This event is raied when the menu item is to be initalized.
+        /// </summary>
+        public override void OnInitialize()
+        {
+            this.ItemIcon = Properties.Resources.folder;
+            this.Text = "Add Folder...";
+            this.Enabled = true;
+
+            // Listen for events.
+            Program.Manager.SolutionLoaded += new EventHandler(Manager_OnSolutionLoaded);
+            Program.Manager.SolutionUnloaded += new EventHandler(Manager_OnSolutionUnloaded);
+        }
+
+        /// <summary>
+        /// This event is raised when the menu item is clicked or otherwise activated.
+        /// </summary>
+        public override void OnActivate()
+        {
+            if (this.Context is Management.Project)
+                (this.Context as Management.Project).AddFileInteractive("FolderTemplate");
+            else if (this.Context is Management.Folder)
+                (this.Context as Management.Folder).Project.AddFileInteractive("FolderTemplate", this.Context as Management.Folder);
+            else
+                Program.Manager.ActiveProject.AddFileInteractive("FolderTemplate");
+        }
+
+        /// <summary>
+        /// This event is raised when a solution is loaded (opened).
+        /// </summary>
+        private void Manager_OnSolutionLoaded(object sender, EventArgs e)
+        {
+            this.Enabled = true;
+        }
+
+        /// <summary>
+        /// This event is raised when a solution is unloaded (closed).
+        /// </summary>
+        private void Manager_OnSolutionUnloaded(object sender, EventArgs e)
+        {
             this.Enabled = false;
         }
     }

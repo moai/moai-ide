@@ -25,6 +25,17 @@ namespace MOAI.Management
         public Project()
         {
             this.p_ProjectInfo = null;
+
+            // Add our own events for handling when files are added
+            // or removed.
+            this.FileAdded += new EventHandler((sender, e) =>
+            {
+                this.Save();
+            });
+            this.FileRemoved += new EventHandler((sender, e) =>
+            {
+                this.Save();
+            });
         }
 
         /// <summary>
@@ -32,11 +43,32 @@ namespace MOAI.Management
         /// </summary>
         /// <param name="file">The solution file to be loaded.</param>
         public Project(FileInfo file)
+            : this()
         {
             this.p_ProjectInfo = file;
 
             // Read the project data from the file.
             this.LoadFromXml(this.p_ProjectInfo);
+        }
+
+        /// <summary>
+        /// Creates a new Project object that represents a MOAI project.  The
+        /// constructor attempts to load the from disk using the specified path.
+        /// </summary>
+        /// <param name="path">The path to the project file.</param>
+        public Project(string path)
+            : this()
+        {
+            this.p_ProjectInfo = new FileInfo(path);
+            this.p_Files = new List<File>();
+
+            if (this.p_ProjectInfo.Exists)
+            {
+                this.LoadFromXml(this.p_ProjectInfo);
+                this.p_Initalized = true;
+            }
+            else
+                this.p_Initalized = false;
         }
 
         /// <summary>
@@ -127,58 +159,14 @@ namespace MOAI.Management
             foreach (File f in files)
             {
                 if (f is Folder)
-                    this.WriteFiles(writer, (f as Folder).Files, (f as Folder).FolderInfo.Name);
+                    this.WriteFiles(writer, (f as Folder).Files, (path + "/" + (f as Folder).FolderInfo.Name).TrimStart(new char[] { '/' }));
                 else
                 {
                     writer.WriteStartElement("File");
-                    writer.WriteAttributeString("Include", path + f.FileInfo.Name);
+                    writer.WriteAttributeString("Include", (path + "/" + f.FileInfo.Name).TrimStart(new char[] { '/' }));
                     writer.WriteString("");
                     writer.WriteEndElement();
                 }
-            }
-        }
-
-        #endregion
-
-        /// <summary>
-        /// Creates a new Project object that represents a Roket3D project.  The
-        /// constructor attempts to load the from disk using the specified path.
-        /// </summary>
-        /// <param name="path">The path to the project file.</param>
-        public Project(string path)
-        {
-            this.p_ProjectInfo = new FileInfo(path);
-            this.p_Files = new List<File>();
-
-            if (this.p_ProjectInfo.Exists)
-            {
-                this.LoadFromXml(this.p_ProjectInfo);
-                this.p_Initalized = true;
-            }
-            else
-                this.p_Initalized = false;
-        }
-
-        /// <summary>
-        /// Whether the project has been initialized.
-        /// </summary>
-        public bool Initalized
-        {
-            get
-            {
-                return this.p_Initalized;
-            }
-        }
-
-        /// <summary>
-        /// The FileInfo object that represents the on-disk project file for
-        /// this project.
-        /// </summary>
-        public FileInfo ProjectInfo
-        {
-            get
-            {
-                return this.p_ProjectInfo;
             }
         }
 
@@ -229,6 +217,8 @@ namespace MOAI.Management
                             if (!handled)
                             {
                                 Folder newf = new Folder(this, file.Directory.FullName, path.Substring(0, path.Length - 1));
+                                newf.FileAdded += new EventHandler(ff_FileAdded);
+                                newf.FileRemoved += new EventHandler(ff_FileRemoved);
                                 this.p_Files.Add(newf);
                                 ff = newf;
                             }
@@ -246,6 +236,8 @@ namespace MOAI.Management
                             if (!handled)
                             {
                                 Folder newf = new Folder(this, file.Directory.FullName, path.Substring(0, path.Length - 1));
+                                newf.FileAdded += new EventHandler(ff_FileAdded);
+                                newf.FileRemoved += new EventHandler(ff_FileRemoved);
                                 ff.Add(newf);
                                 ff = newf;
                             }
@@ -259,6 +251,31 @@ namespace MOAI.Management
                     else
                         ff.Add(new File(this, file.Directory.FullName, f.Attributes["Include"]));
                 }
+            }
+        }
+
+        #endregion
+
+        /// <summary>
+        /// Whether the project has been initialized.
+        /// </summary>
+        public bool Initalized
+        {
+            get
+            {
+                return this.p_Initalized;
+            }
+        }
+
+        /// <summary>
+        /// The FileInfo object that represents the on-disk project file for
+        /// this project.
+        /// </summary>
+        public FileInfo ProjectInfo
+        {
+            get
+            {
+                return this.p_ProjectInfo;
             }
         }
 
@@ -287,6 +304,10 @@ namespace MOAI.Management
                     Menus.Manager.WrapAction(new Menus.Definitions.Project.ProjBuildOrder(this)),
                     new ToolStripSeparator(),
                     new ToolStripMenuItem("Add", null, new ToolStripItem[] {
+                        Menus.Manager.WrapAction(new Menus.Definitions.Project.AddNewItem(this)),
+                        Menus.Manager.WrapAction(new Menus.Definitions.Project.AddExistingItem(this)),
+                        Menus.Manager.WrapAction(new Menus.Definitions.Project.AddFolder(this)),
+                        new ToolStripSeparator(),
                         Menus.Manager.WrapAction(new Menus.Definitions.Project.AddScript(this)),
                         Menus.Manager.WrapAction(new Menus.Definitions.Project.AddClass(this))
                     }),
