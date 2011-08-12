@@ -17,6 +17,7 @@ namespace MOAI.Management
 
         public event EventHandler FileAdded;
         public event EventHandler FileRemoved;
+        public event EventHandler<FileEventArgs> FileRenamed;
 
         /// <summary>
         /// Creates a new instance of the Project class that is not associated
@@ -33,6 +34,10 @@ namespace MOAI.Management
                 this.Save();
             });
             this.FileRemoved += new EventHandler((sender, e) =>
+            {
+                this.Save();
+            });
+            this.FileRenamed += new EventHandler<FileEventArgs>((sender, e) =>
             {
                 this.Save();
             });
@@ -238,7 +243,7 @@ namespace MOAI.Management
                                 Folder newf = new Folder(this, file.Directory.FullName, path.Substring(0, path.Length - 1));
                                 newf.FileAdded += new EventHandler(ff_FileAdded);
                                 newf.FileRemoved += new EventHandler(ff_FileRemoved);
-                                ff.Add(newf);
+                                ff.AddWithoutEvent(newf);
                                 ff = newf;
                             }
                         }
@@ -249,7 +254,7 @@ namespace MOAI.Management
                     if (ff == null)
                         this.p_Files.Add(new File(this, file.Directory.FullName, f.Attributes["Include"]));
                     else
-                        ff.Add(new File(this, file.Directory.FullName, f.Attributes["Include"]));
+                        ff.AddWithoutEvent(new File(this, file.Directory.FullName, f.Attributes["Include"]));
                 }
             }
         }
@@ -422,6 +427,16 @@ namespace MOAI.Management
         }
 
         /// <summary>
+        /// Performs the FileRenamed event.  Used by external code that renames
+        /// files on disk so that any relevant aspects of the IDE get updated.
+        /// </summary>
+        public void PerformRename(File file)
+        {
+            if (this.FileRenamed != null)
+                this.FileRenamed(this, new FileEventArgs(file));
+        }
+
+        /// <summary>
         /// A read-only list of the files within the root directory of the project.
         /// </summary>
         public System.Collections.ObjectModel.ReadOnlyCollection<File> Files
@@ -430,6 +445,16 @@ namespace MOAI.Management
             {
                 return this.p_Files.AsReadOnly();
             }
+        }
+    }
+
+    public class FileEventArgs : EventArgs
+    {
+        public File File { get; private set; }
+
+        public FileEventArgs(File file)
+        {
+            this.File = file;
         }
     }
 }

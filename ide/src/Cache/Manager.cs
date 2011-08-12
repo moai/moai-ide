@@ -7,17 +7,22 @@ namespace MOAI.Cache
 {
     public class Manager
     {
+        private MOAI.Manager p_Manager = null;
         private Scintilla p_ScintillaCache = null;
         private AutoComplete p_AutoComplete = null;
 
         /// <summary>
         /// Creates a new cache manager, which manages all of the sub-caches.
         /// </summary>
-        public Manager()
+        public Manager(MOAI.Manager manager)
         {
+            this.p_Manager = manager;
+
             this.p_ScintillaCache = new Scintilla();
             this.p_AutoComplete = new AutoComplete();
             this.p_AutoComplete.Import();
+
+            MOAI.Cache.Clipboard.Register(this.p_Manager);
         }
 
         /// <summary>

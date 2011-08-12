@@ -95,6 +95,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\libraries\Json.NET\Newtonsoft.Json.Net35.dll</HintPath>
     </Reference>
+    <Reference Include="PresentationCore">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
     <Reference Include="ScintillaNet, Version=2.2.3581.19319, Culture=neutral, PublicKeyToken=948d6c9751444115, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\libraries\Scintilla.NET\ScintillaNet.dll</HintPath>
@@ -513,6 +516,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="icon.ico" />
+    <Compile Include="Cache\Clipboard.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Debug\Communicator.cs" />
     <Compile Include="Debug\ExceptionDialog.cs">
       <SubType>Form</SubType>

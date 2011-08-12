@@ -28,7 +28,7 @@ namespace MOAI.Management
         /// Creates a new File object based on an relative path and a Project object.
         /// </summary>
         /// <param name="p">The project that owns this folder.</param>
-        /// <param name="parent">The parent director (the directory the project file is located in).</param>
+        /// <param name="parent">The parent directory (the directory the project file is located in).</param>
         /// <param name="relpath">The relative path to the file.</param>
         public File(Project p, string parent, string relpath)
         {
@@ -125,7 +125,6 @@ namespace MOAI.Management
                     new ToolStripSeparator(),
                     Menus.Manager.WrapAction(new Menus.Definitions.Actions.Cut(this)),
                     Menus.Manager.WrapAction(new Menus.Definitions.Actions.Copy(this)),
-                    Menus.Manager.WrapAction(new Menus.Definitions.Actions.Paste(this)),
                     Menus.Manager.WrapAction(new Menus.Definitions.Actions.Rename(this)),
                     new ToolStripSeparator(),
                     Menus.Manager.WrapAction(new Menus.Definitions.Actions.OpenInWindowsExplorer(this)),
@@ -143,6 +142,16 @@ namespace MOAI.Management
         public override string ToString()
         {
             return this.FileInfo.Name;
+        }
+
+        /// <summary>
+        /// Performs the FileRenamed event.  Used by external code that renames
+        /// files on disk so that any relevant aspects of the IDE get updated.
+        /// </summary>
+        public void PerformRenamed()
+        {
+            if (this.p_Project != null)
+                this.p_Project.PerformRename(this);
         }
     }
 }

@@ -29,26 +29,7 @@ namespace MOAI.Designers
             this.p_File = file;
             if (this.p_File != null)
                 this.TabText = this.p_File.FileInfo.Name;
-            this.p_Manager.IDEWindow.ActiveTabChanged += (sender, e) =>
-                {
-                    this.OnTabChanged();
-                };
-            this.p_Manager.IDEWindow.ResizeEnd += (sender, e) =>
-                {
-                    this.OnResize();
-                };
         }
-
-        /// <summary>
-        /// This function is called after the IDE has finished resizing itself, or the
-        /// total size of this dock content has otherwise changed.
-        /// </summary>
-        protected virtual void OnResize() { }
-
-        /// <summary>
-        /// This function is called after the active tab has changed.
-        /// </summary>
-        protected virtual void OnTabChanged() { }
 
         /// <summary>
         /// This function is called to tell the designer that it should save the file to disk.
@@ -88,6 +69,21 @@ namespace MOAI.Designers
             protected set
             {
                 this.p_File = value;
+            }
+        }
+
+        /// <summary>
+        /// The main manager in the application.
+        /// </summary>
+        protected MOAI.Manager Manager
+        {
+            get
+            {
+                return this.p_Manager;
+            }
+            private set
+            {
+                this.p_Manager = value;
             }
         }
 

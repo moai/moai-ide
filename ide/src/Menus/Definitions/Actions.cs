@@ -17,10 +17,25 @@ namespace MOAI.Menus.Definitions.Actions
         /// </summary>
         public override void OnInitialize()
         {
-            this.Implemented = false;
             this.ItemIcon = MOAI.Properties.Resources.actions_open;
             this.Text = "Open File";
-            this.Enabled = false;
+            this.Enabled = true;
+        }
+
+        /// <summary>
+        /// This event is raised when the menu item is clicked or otherwise activated.
+        /// </summary>
+        public override void OnActivate()
+        {
+            if (this.Context is Management.File)
+                Program.Manager.DesignersManager.OpenDesigner(this.Context as Management.File);
+            else
+            {
+                System.Windows.Forms.OpenFileDialog ofd = new System.Windows.Forms.OpenFileDialog();
+                ofd.Filter = "Lua Scripts;*.lua|All Files;*.*";
+                if (ofd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                    Program.Manager.DesignersManager.OpenDesigner(new Management.File(null, null, ofd.FileName));
+            }
         }
     }
 
@@ -34,10 +49,22 @@ namespace MOAI.Menus.Definitions.Actions
         /// </summary>
         public override void OnInitialize()
         {
-            this.Implemented = false;
             this.ItemIcon = MOAI.Properties.Resources.actions_open;
             this.Text = "Open in Windows Explorer";
-            this.Enabled = false;
+            this.Enabled = true;
+        }
+
+        /// <summary>
+        /// This event is raised when the menu item is clicked or otherwise activated.
+        /// </summary>
+        public override void OnActivate()
+        {
+            if (this.Context is Management.Project)
+                System.Diagnostics.Process.Start((this.Context as Management.Project).ProjectInfo.DirectoryName);
+            else if (this.Context is Management.Folder)
+                System.Diagnostics.Process.Start((this.Context as Management.Folder).FolderInfo.FullName);
+            else if (this.Context is Management.File)
+                System.Diagnostics.Process.Start((this.Context as Management.File).FileInfo.FullName);
         }
     }
 
@@ -263,6 +290,30 @@ namespace MOAI.Menus.Definitions.Actions
             this.Text = "Cut";
             this.Enabled = false;
         }
+
+        /// <summary>
+        /// This event is raised when the menu item is clicked or otherwise activated.
+        /// </summary>
+        public override void OnActivate()
+        {
+            if (this.Context is Management.Folder || this.Context is Management.File)
+            {
+                // Add the selected file or folder to the list.
+                string[] files = null;
+                if (this.Context is Management.Folder)
+                    files = new string[] { (this.Context as Management.Folder).FolderInfo.FullName };
+                else if (this.Context is Management.File)
+                    files = new string[] { (this.Context as Management.File).FileInfo.FullName };
+
+                // This process is sourced from http://web.archive.org/web/20070218155439/http://blogs.wdevs.com/IDecember/archive/2005/10/27/10979.aspx.
+                System.Windows.IDataObject data = new System.Windows.DataObject(System.Windows.DataFormats.FileDrop, files);
+                MemoryStream stream = new MemoryStream(4);
+                byte[] bytes = new byte[] { 2, 0, 0, 0 };
+                memo.Write(bytes, 0, bytes.Length);
+                data.SetData("Preferred DropEffect", memo);
+                MOAI.Cache.Clipboard.Contents = data;
+            }
+        }
     }
 
     class Copy : Action
@@ -275,10 +326,33 @@ namespace MOAI.Menus.Definitions.Actions
         /// </summary>
         public override void OnInitialize()
         {
-            this.Implemented = false;
             this.ItemIcon = MOAI.Properties.Resources.actions_copy;
             this.Text = "Copy";
-            this.Enabled = false;
+            this.Enabled = true;
+        }
+
+        /// <summary>
+        /// This event is raised when the menu item is clicked or otherwise activated.
+        /// </summary>
+        public override void OnActivate()
+        {
+            if (this.Context is Management.Folder || this.Context is Management.File)
+            {
+                // Add the selected file or folder to the list.
+                string[] files = null;
+                if (this.Context is Management.Folder)
+                    files = new string[] { (this.Context as Management.Folder).FolderInfo.FullName };
+                else if (this.Context is Management.File)
+                    files = new string[] { (this.Context as Management.File).FileInfo.FullName };
+
+                // This process is sourced from http://web.archive.org/web/20070218155439/http://blogs.wdevs.com/IDecember/archive/2005/10/27/10979.aspx.
+                System.Windows.IDataObject data = new System.Windows.DataObject(System.Windows.DataFormats.FileDrop, files);
+                MemoryStream stream = new MemoryStream(4);
+                byte[] bytes = new byte[] { 5, 0, 0, 0 };
+                memo.Write(bytes, 0, bytes.Length);
+                data.SetData("Preferred DropEffect", memo);
+                MOAI.Cache.Clipboard.Contents = data;
+            }
         }
     }
 
@@ -292,10 +366,59 @@ namespace MOAI.Menus.Definitions.Actions
         /// </summary>
         public override void OnInitialize()
         {
-            this.Implemented = false;
             this.ItemIcon = MOAI.Properties.Resources.actions_paste;
             this.Text = "Paste";
-            this.Enabled = false;
+            this.Enabled = true;
+        }
+
+        /// <summary>
+        /// This event is raised when the menu item is clicked or otherwise activated.
+        /// </summary>
+        public override void OnActivate()
+        {
+            if (this.Context is Management.Project || this.Context is Management.Folder)
+            {
+                // We are copying a set of files or folders into a project using the solution
+                // explorer.
+                System.Windows.IDataObject data = MOAI.Cache.Clipboard.Contents;
+                if (!data.GetDataPresent(System.Windows.DataFormats.FileDrop))
+                    return;
+
+                /* REWRITE
+                System.Collections.Specialized.StringCollection sc = MOAI.Cache.Clipboard.ContentsFileDropList;
+                if (sc == null)
+                    return;
+
+                foreach (string s in sc)
+                {
+                    // Get a FileInfo object representing the file to be copied.
+                    FileInfo ff = new FileInfo(s);
+
+                    if (this.Context is Management.Project)
+                    {
+                        ff.CopyTo(Path.Combine((this.Context as Management.Project).ProjectInfo.DirectoryName, ff.Name));
+                        (this.Context as Management.Project).AddFile(
+                            new Management.File(
+                                this.Context as Management.Project,
+                                (this.Context as Management.Project).ProjectInfo.DirectoryName,
+                                ff.Name
+                                )
+                            );
+                    }
+                    else if (this.Context is Management.Folder)
+                    {
+                        ff.CopyTo(Path.Combine((this.Context as Management.Folder).FolderInfo.FullName, ff.Name));
+                        (this.Context as Management.Folder).Add(
+                            new Management.File(
+                                (this.Context as Management.Folder).Project,
+                                (this.Context as Management.Folder).Project.ProjectInfo.DirectoryName,
+                                ff.FullName.Substring((this.Context as Management.Folder).FolderInfo.FullName.Length + 1)
+                                )
+                            );
+                    }
+                }
+                */
+            }
         }
     }
 
@@ -343,10 +466,77 @@ namespace MOAI.Menus.Definitions.Actions
         /// </summary>
         public override void OnInitialize()
         {
-            this.Implemented = false;
             this.ItemIcon = null;
             this.Text = "Rename";
-            this.Enabled = false;
+            this.Enabled = true;
+        }
+
+        /// <summary>
+        /// This event is raised when the menu item is clicked or otherwise activated.
+        /// </summary>
+        public override void OnActivate()
+        {
+            if (this.Context is Management.File)
+            {
+                System.Windows.Forms.NodeLabelEditEventHandler handler = null;
+                handler = new System.Windows.Forms.NodeLabelEditEventHandler((sender, e) =>
+                {
+                    // Check this is the node we are interested in.
+                    if (e.Node == this.Context)
+                    {
+                        // Check to see if the new label is null (indiciating don't change).
+                        if (e.Label == null)
+                        {
+                            (this.Context as Management.File).Text = (this.Context as Management.File).FileInfo.Name;
+                            (this.Context as Management.File).TreeView.AfterLabelEdit -= handler;
+                            (this.Context as Management.File).TreeView.LabelEdit = false;
+                            return;
+                        }
+                        
+                        // Check to see if the label is valid.
+                        if (e.Label.IndexOfAny(new char[] { '/', '\\', ':', '*', '"', '<', '>', '|' }) != -1)
+                        {
+                            (this.Context as Management.File).Text = (this.Context as Management.File).FileInfo.Name;
+                            System.Windows.Forms.MessageBox.Show(@"Please enter a filename; it must not contain any
+    " + "of the following characters: / \\ : * \" < > |", "Rename Failed", System.Windows.Forms.MessageBoxButtons.OK,
+                                System.Windows.Forms.MessageBoxIcon.Error);
+                            (this.Context as Management.File).BeginEdit();
+                        }
+                        else
+                        {
+                            // Attempt to rename the file.
+                            try
+                            {
+                                (this.Context as Management.File).FileInfo.MoveTo(
+                                    Path.Combine(
+                                        (this.Context as Management.File).FileInfo.DirectoryName,
+                                        e.Label
+                                    )
+                                );
+                                (this.Context as Management.File).TreeView.AfterLabelEdit -= handler;
+                                (this.Context as Management.File).TreeView.LabelEdit = false;
+                                (this.Context as Management.File).Text = e.Label;
+                                (this.Context as Management.File).PerformRenamed();
+
+                                // Force the solution explorer to refresh.
+                                MOAI.Tools.SolutionExplorerTool s = Program.Manager.ToolsManager.Get(typeof(MOAI.Tools.SolutionExplorerTool)) as MOAI.Tools.SolutionExplorerTool;
+                                if (s != null)
+                                    s.ReloadTree();
+                            }
+                            catch (IOException)
+                            {
+                                (this.Context as Management.File).Text = (this.Context as Management.File).FileInfo.Name;
+                                System.Windows.Forms.MessageBox.Show("Unable to rename file.", "Rename Failed", System.Windows.Forms.MessageBoxButtons.OK,
+                                    System.Windows.Forms.MessageBoxIcon.Error);
+                                (this.Context as Management.File).BeginEdit();
+                            }
+                        }
+                    }
+                });
+                (this.Context as Management.File).TreeView.AfterLabelEdit += handler;
+                (this.Context as Management.File).TreeView.LabelEdit = true;
+                (this.Context as Management.File).BeginEdit();
+            }
         }
     }
 

@@ -23,6 +23,16 @@ namespace MOAI.Designers.Start
         {
             InitializeComponent();
 
+            // Listen for events.
+            this.Manager.IDEWindow.ActiveTabChanged += (sender, e) =>
+            {
+                this.OnTabChanged();
+            };
+            this.Manager.IDEWindow.ResizeEnd += (sender, e) =>
+            {
+                this.OnResize();
+            };
+
             // This editor can never save.
             this.CanSave = false;
             this.File = null;
@@ -35,14 +45,14 @@ namespace MOAI.Designers.Start
         /// This function is called after the IDE has finished resizing itself, or the
         /// total size of this dock content has otherwise changed.
         /// </summary>
-        protected override void OnResize()
+        private void OnResize()
         {
         }
 
         /// <summary>
         /// This function is called after the active tab has changed.
         /// </summary>
-        protected override void OnTabChanged()
+        private void OnTabChanged()
         {
         }
 

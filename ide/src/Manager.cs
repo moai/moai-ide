@@ -53,7 +53,7 @@ namespace MOAI
         {
             this.p_ActiveSolution = null;
             this.p_ActiveProject = null;
-            this.p_CacheManager = new Cache.Manager();
+            this.p_CacheManager = new Cache.Manager(this);
             this.p_BuildManager = new Build.Manager(this);
             this.p_DebugManager = new Debug.Manager(this);
             this.p_DesignersManager = new Designers.Manager(this);

@@ -14,6 +14,7 @@ namespace MOAI.Management
 
         public event EventHandler FileAdded;
         public event EventHandler FileRemoved;
+        public event EventHandler FileRenamed;
 
         /// <summary>
         /// Creates a new Folder object for representing a folder in the project.
@@ -119,12 +120,22 @@ namespace MOAI.Management
         /// <summary>
         /// Adds a file to the list of files contained within this folder.
         /// </summary>
-        /// <param name="file"></param>
         public void Add(File file)
         {
             this.p_Files.Add(file);
             if (this.FileAdded != null)
                 this.FileAdded(this, new EventArgs());
+        }
+
+        /// <summary>
+        /// Adds a file to the list of files within this folder without 
+        /// raising the FileAdded event (useful when initially loading a
+        /// project so we don't accidently autosave over the top of the
+        /// file we're currently loading from).
+        /// </summary>
+        public void AddWithoutEvent(File file)
+        {
+            this.p_Files.Add(file);
         }
 
         /// <summary>

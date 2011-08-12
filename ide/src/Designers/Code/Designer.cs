@@ -27,14 +27,24 @@ namespace MOAI.Designers.Code
         {
             InitializeComponent();
 
-            // This editor can save as long as the file is writable.
-            this.CanSave = !file.FileInfo.IsReadOnly;
+            // Listen for events.
+            file.Project.FileRenamed += new EventHandler<FileEventArgs>((sender, e) =>
+            {
+                if (e.File == this.File)
+                {
+                    if (this.c_CodeEditor.Text != this.m_SavedText)
+                        this.TabText = this.File.FileInfo.Name + " *";
+                    else
+                        this.TabText = this.File.FileInfo.Name;
+                }
+            });
 
+            // Initialize the code editor.
             this.c_CodeEditor = new CodeEditor(
                 manager.CacheManager,
-                (file.FileInfo.Extension.Substring(1) == "lua" ||
-                 file.FileInfo.Extension.Substring(1) == "rks" ||
-                 file.FileInfo.Extension.Substring(1) == "rs")
+                (this.File.FileInfo.Extension.Substring(1) == "lua" ||
+                 this.File.FileInfo.Extension.Substring(1) == "rks" ||
+                 this.File.FileInfo.Extension.Substring(1) == "rs")
                 );
             this.c_CodeEditor.DwellStart += new EventHandler<ScintillaNet.ScintillaMouseEventArgs>(c_CodeEditor_DwellStart);
             this.c_CodeEditor.DwellEnd += new EventHandler<ScintillaNet.ScintillaMouseEventArgs>(c_CodeEditor_DwellEnd);
@@ -42,13 +52,23 @@ namespace MOAI.Designers.Code
             this.c_CodeEditor.SyntaxCheckRequested += new EventHandler(c_CodeEditor_SyntaxCheckRequested);
 
             // Now load the file data.
-            using (System.IO.StreamReader reader = new System.IO.StreamReader(file.FileInfo.FullName))
+            using (System.IO.StreamReader reader = new System.IO.StreamReader(this.File.FileInfo.FullName))
             {
                 this.c_CodeEditor.Text = reader.ReadToEnd();
             }
             this.m_SavedText = this.c_CodeEditor.Text;
-            this.TabText = this.File.FileInfo.Name;
 
+            // Detect if this file is read-only.
+            this.CanSave = !this.File.FileInfo.IsReadOnly;
+            if (this.CanSave)
+                this.TabText = this.File.FileInfo.Name;
+            else
+            {
+                this.TabText = this.File.FileInfo.Name + " (Read Only)";
+                this.c_CodeEditor.NativeInterface.SetReadOnly(true);
+            }
+
+            // Add the code editor to the tab.
             this.Controls.Add(this.c_CodeEditor);
         }
 
@@ -150,21 +170,6 @@ namespace MOAI.Designers.Code
             {
                 // TODO: Implement a refresh call to the Error List tool window.
             }
-        }
-
-        /// <summary>
-        /// This function is called after the IDE has finished resizing itself, or the
-        /// total size of this dock content has otherwise changed.
-        /// </summary>
-        protected override void OnResize()
-        {
-        }
-
-        /// <summary>
-        /// This function is called after the active tab has changed.
-        /// </summary>
-        protected override void OnTabChanged()
-        {
         }
 
         /// <summary>
