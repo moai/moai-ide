@@ -125,6 +125,7 @@ namespace MOAI.Management
                     new ToolStripSeparator(),
                     Menus.Manager.WrapAction(new Menus.Definitions.Actions.Cut(this)),
                     Menus.Manager.WrapAction(new Menus.Definitions.Actions.Copy(this)),
+                    Menus.Manager.WrapAction(new Menus.Definitions.Actions.Delete(this)),
                     Menus.Manager.WrapAction(new Menus.Definitions.Actions.Rename(this)),
                     new ToolStripSeparator(),
                     Menus.Manager.WrapAction(new Menus.Definitions.Actions.OpenInWindowsExplorer(this)),

@@ -77,7 +77,10 @@ namespace MOAI.Tools
 
         void OnReloadRequired(object sender, EventArgs e)
         {
-            this.ReloadTree();
+            if (this.c_SolutionTree.InvokeRequired)
+                this.c_SolutionTree.Invoke(new Action(() => { this.ReloadTree(); }));
+            else
+                this.ReloadTree();
         }
 
         public override DockState DefaultState
@@ -106,6 +109,26 @@ namespace MOAI.Tools
                 this.m_Manager.Parent.DesignersManager.OpenDesigner(this.c_SolutionTree.SelectedNode as File);
         }
 
+        /// <summary>
+        /// This event is raised when the user selects a node.
+        /// </summary>
+        /// <param name="sender">The sender of the event.</param>
+        /// <param name="e">The event information.</param>
+        private void c_SolutionTree_AfterSelect(object sender, System.Windows.Forms.TreeViewEventArgs e)
+        {
+            if (e.Node.Tag is Management.Solution || 
+                e.Node.Tag is Management.Project)
+                this.m_Manager.Parent.CacheManager.Context.Object = e.Node.Tag;
+            if (e.Node is Management.Folder ||
+                e.Node is Management.File)
+                this.m_Manager.Parent.CacheManager.Context.Object = e.Node;
+        }
+
+        /// <summary>
+        /// This event is raised when the user releases the mouse over the control.
+        /// </summary>
+        /// <param name="sender">The sender of the event.</param>
+        /// <param name="e">The event information.</param>
         private void c_SolutionTree_MouseUp(object sender, MouseEventArgs e)
         {
             if(e.Button == MouseButtons.Right)
@@ -113,6 +136,29 @@ namespace MOAI.Tools
                 // Select the clicked node
                 c_SolutionTree.SelectedNode = c_SolutionTree.GetNodeAt(e.X, e.Y);
             }
+        }
+
+        /// <summary>
+        /// This event is raised when the tree loses focus.
+        /// </summary>
+        /// <param name="sender">The sender of the event.</param>
+        /// <param name="e">The event information.</param>
+        private void c_SolutionTree_LostFocus(object sender, System.EventArgs e)
+        {
+            this.m_Manager.Parent.CacheManager.Context.Object = null;
+        }
+
+        /// <summary>
+        /// This event is raised when the tree gains focus.
+        /// </summary>
+        /// <param name="sender">The sender of the event.</param>
+        /// <param name="e">The event information.</param>
+        private void c_SolutionTree_GotFocus(object sender, System.EventArgs e)
+        {
+            // Simulate a tree node select when the tree gains focus if
+            // there was a tree node selected.
+            if (this.c_SolutionTree.SelectedNode != null)
+                this.c_SolutionTree_AfterSelect(this, new TreeViewEventArgs(this.c_SolutionTree.SelectedNode, TreeViewAction.Unknown));
         }
     }
 }

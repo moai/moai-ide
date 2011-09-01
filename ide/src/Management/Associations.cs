@@ -21,6 +21,7 @@ namespace MOAI.Management
                 { "rkw", "World", null },
                 { "rka", "Area", null },
                 { "ogg", "Audio", null },
+                { "wav", "Audio", null },
                 { "png", "Image", null },
                 { "bmp", "Image", null },
                 { "jpg", "Image", null },
@@ -72,6 +73,23 @@ namespace MOAI.Management
             Associations.p_ImageList.Images.Add("World", Resources.world);
             Associations.p_ImageList.Images.Add("NotFound", Resources.not_found);
             Associations.p_ImageList.Images.Add("NotFoundFolder", Resources.not_found_folder);
+
+            // Generate faded versions of the icons for cut operations.
+            int count = Associations.p_ImageList.Images.Count;
+            for (int i = 0; i < count; i += 1)
+            {
+                Bitmap b = new Bitmap(Associations.p_ImageList.Images[i].Width, Associations.p_ImageList.Images[i].Height, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+                Graphics g = Graphics.FromImage(b);
+                g.DrawImage(Associations.p_ImageList.Images[i], new Point(0, 0));
+                for (int x = 0; x < b.Width; x += 1)
+                    for (int y = 0; y < b.Height; y += 1)
+                    {
+                        Color col = b.GetPixel(x,y);
+                        if (col.A > 0)
+                            b.SetPixel(x, y, Color.FromArgb(128, col));
+                    }
+                Associations.p_ImageList.Images.Add(Associations.p_ImageList.Images.Keys[i] + ":Faded", b);
+            }
         }
 
         /// <summary>

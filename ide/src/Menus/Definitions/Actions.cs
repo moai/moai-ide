@@ -285,10 +285,35 @@ namespace MOAI.Menus.Definitions.Actions
         /// </summary>
         public override void OnInitialize()
         {
-            this.Implemented = false;
             this.ItemIcon = MOAI.Properties.Resources.actions_cut;
             this.Text = "Cut";
-            this.Enabled = false;
+            this.Enabled = (this.Context != null);
+            this.Shortcut = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.X;
+
+            // Listen for global context changes if we are not
+            // provided with a specific context.
+            if (this.Context == null)
+            {
+                Program.Manager.CacheManager.Context.ContextChanged += new EventHandler<MOAI.Cache.ContextEventArgs>(Context_ContextChanged);
+
+                // Simulate a context change initially.
+                this.Context_ContextChanged(this, new MOAI.Cache.ContextEventArgs(Program.Manager.CacheManager.Context.Object));
+            }
+        }
+
+        /// <summary>
+        /// This event is raised when the global context changes.
+        /// </summary>
+        void Context_ContextChanged(object sender, MOAI.Cache.ContextEventArgs e)
+        {
+            // Set our context to the global context object.
+            if (e.Object is Management.Folder ||
+                e.Object is Management.File)
+                this.Context = e.Object;
+            else
+                this.Context = null;
+
+            this.Enabled = (this.Context != null);
         }
 
         /// <summary>
@@ -309,9 +334,36 @@ namespace MOAI.Menus.Definitions.Actions
                 System.Windows.IDataObject data = new System.Windows.DataObject(System.Windows.DataFormats.FileDrop, files);
                 MemoryStream stream = new MemoryStream(4);
                 byte[] bytes = new byte[] { 2, 0, 0, 0 };
-                memo.Write(bytes, 0, bytes.Length);
-                data.SetData("Preferred DropEffect", memo);
+                stream.Write(bytes, 0, bytes.Length);
+                data.SetData("Preferred DropEffect", stream);
                 MOAI.Cache.Clipboard.Contents = data;
+
+                // Change the icon to faded, then listen to see if the clipboard
+                // gets overridden.
+                (this.Context as Management.File).ImageKey += ":Faded";
+                (this.Context as Management.File).SelectedImageKey += ":Faded";
+                EventHandler<MOAI.Cache.ClipboardEventArgs> ev = null;
+                Management.File o = this.Context as Management.File;
+                ev = (sender, e) =>
+                {
+                    string key = o.ImageKey;
+                    if (key.IndexOf(":Faded") == -1)
+                        return;
+                    key = key.Substring(0, key.IndexOf(":Faded"));
+                    o.ImageKey = key;
+                    o.SelectedImageKey = key;
+                    MOAI.Cache.Clipboard.ClipboardChanged -= ev;
+                };
+                MOAI.Cache.Clipboard.ClipboardChanged += ev;
+
+                // Now listen to see when the file disappears.
+                FileSystemWatcher watcher = new FileSystemWatcher(new FileInfo(files[0]).DirectoryName, new FileInfo(files[0]).Name);
+                watcher.Deleted += (sender, e) =>
+                {
+                    // Remove the file from the tree view.
+                    o.Project.RemoveFile(o);
+                };
+                watcher.EnableRaisingEvents = true;
             }
         }
     }
@@ -328,7 +380,33 @@ namespace MOAI.Menus.Definitions.Actions
         {
             this.ItemIcon = MOAI.Properties.Resources.actions_copy;
             this.Text = "Copy";
-            this.Enabled = true;
+            this.Enabled = (this.Context != null);
+            this.Shortcut = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.C;
+
+            // Listen for global context changes if we are not
+            // provided with a specific context.
+            if (this.Context == null)
+            {
+                Program.Manager.CacheManager.Context.ContextChanged += new EventHandler<MOAI.Cache.ContextEventArgs>(Context_ContextChanged);
+
+                // Simulate a context change initially.
+                this.Context_ContextChanged(this, new MOAI.Cache.ContextEventArgs(Program.Manager.CacheManager.Context.Object));
+            }
+        }
+
+        /// <summary>
+        /// This event is raised when the global context changes.
+        /// </summary>
+        void Context_ContextChanged(object sender, MOAI.Cache.ContextEventArgs e)
+        {
+            // Set our context to the global context object.
+            if (e.Object is Management.Folder ||
+                e.Object is Management.File)
+                this.Context = e.Object;
+            else
+                this.Context = null;
+
+            this.Enabled = (this.Context != null);
         }
 
         /// <summary>
@@ -349,8 +427,8 @@ namespace MOAI.Menus.Definitions.Actions
                 System.Windows.IDataObject data = new System.Windows.DataObject(System.Windows.DataFormats.FileDrop, files);
                 MemoryStream stream = new MemoryStream(4);
                 byte[] bytes = new byte[] { 5, 0, 0, 0 };
-                memo.Write(bytes, 0, bytes.Length);
-                data.SetData("Preferred DropEffect", memo);
+                stream.Write(bytes, 0, bytes.Length);
+                data.SetData("Preferred DropEffect", stream);
                 MOAI.Cache.Clipboard.Contents = data;
             }
         }
@@ -368,7 +446,33 @@ namespace MOAI.Menus.Definitions.Actions
         {
             this.ItemIcon = MOAI.Properties.Resources.actions_paste;
             this.Text = "Paste";
-            this.Enabled = true;
+            this.Enabled = (this.Context != null);
+            this.Shortcut = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.V;
+
+            // Listen for global context changes if we are not
+            // provided with a specific context.
+            if (this.Context == null)
+            {
+                Program.Manager.CacheManager.Context.ContextChanged += new EventHandler<MOAI.Cache.ContextEventArgs>(Context_ContextChanged);
+
+                // Simulate a context change initially.
+                this.Context_ContextChanged(this, new MOAI.Cache.ContextEventArgs(Program.Manager.CacheManager.Context.Object));
+            }
+        }
+
+        /// <summary>
+        /// This event is raised when the global context changes.
+        /// </summary>
+        void Context_ContextChanged(object sender, MOAI.Cache.ContextEventArgs e)
+        {
+            // Set our context to the global context object.
+            if (e.Object is Management.Project ||
+                e.Object is Management.Folder)
+                this.Context = e.Object;
+            else
+                this.Context = null;
+
+            this.Enabled = (this.Context != null);
         }
 
         /// <summary>
@@ -384,40 +488,64 @@ namespace MOAI.Menus.Definitions.Actions
                 if (!data.GetDataPresent(System.Windows.DataFormats.FileDrop))
                     return;
 
-                /* REWRITE
-                System.Collections.Specialized.StringCollection sc = MOAI.Cache.Clipboard.ContentsFileDropList;
-                if (sc == null)
-                    return;
+                // Check to see whether we are doing a cut or copy.
+                bool iscut = false;
+                if (data.GetDataPresent("Preferred DropEffect"))
+                    iscut = ((data.GetData("Preferred DropEffect") as MemoryStream).ReadByte() == 2);
 
-                foreach (string s in sc)
+                // Get the target folder.
+                string folder = null;
+                if (this.Context is Management.Project)
+                    folder = (this.Context as Management.Project).ProjectInfo.DirectoryName;
+                else if (this.Context is Management.Folder)
+                    folder = (this.Context as Management.Folder).FolderInfo.FullName;
+
+                // Move or copy the selected files.
+                string[] files = data.GetData(System.Windows.DataFormats.FileDrop) as string[];
+                foreach (FileInfo f in files.Select(input => new FileInfo(input)))
                 {
-                    // Get a FileInfo object representing the file to be copied.
-                    FileInfo ff = new FileInfo(s);
+                    // Check to make sure the file doesn't already exist in the destination.
+                    if (File.Exists(Path.Combine(folder, f.Name)))
+                    {
+                        System.Windows.Forms.MessageBox.Show(
+                            f.Name + " already exists in the destination folder.  It will not be copied or moved.",
+                            "File Already Exists",
+                            System.Windows.Forms.MessageBoxButtons.OK,
+                            System.Windows.Forms.MessageBoxIcon.Error
+                        );
+                        continue;
+                    }
+
+                    if (iscut)
+                        f.MoveTo(Path.Combine(folder, f.Name));
+                    else
+                        f.CopyTo(Path.Combine(folder, f.Name));
 
                     if (this.Context is Management.Project)
-                    {
-                        ff.CopyTo(Path.Combine((this.Context as Management.Project).ProjectInfo.DirectoryName, ff.Name));
-                        (this.Context as Management.Project).AddFile(
-                            new Management.File(
-                                this.Context as Management.Project,
+                        (this.Context as Management.Project).AddFile(new Management.File(
+                            this.Context as Management.Project,
+                            (this.Context as Management.Project).ProjectInfo.DirectoryName,
+                            PathHelpers.GetRelativePath(
                                 (this.Context as Management.Project).ProjectInfo.DirectoryName,
-                                ff.Name
+                                Path.Combine(folder, f.Name)
                                 )
-                            );
-                    }
+                            ));
                     else if (this.Context is Management.Folder)
-                    {
-                        ff.CopyTo(Path.Combine((this.Context as Management.Folder).FolderInfo.FullName, ff.Name));
-                        (this.Context as Management.Folder).Add(
-                            new Management.File(
-                                (this.Context as Management.Folder).Project,
+                        (this.Context as Management.Folder).AddWithoutEvent(new Management.File(
+                            (this.Context as Management.Folder).Project,
+                            (this.Context as Management.Folder).Project.ProjectInfo.DirectoryName,
+                            PathHelpers.GetRelativePath(
                                 (this.Context as Management.Folder).Project.ProjectInfo.DirectoryName,
-                                ff.FullName.Substring((this.Context as Management.Folder).FolderInfo.FullName.Length + 1)
+                                Path.Combine(folder, f.Name)
                                 )
-                            );
-                    }
+                            ));
                 }
-                */
+
+                // Force the project to be saved now.
+                if (this.Context is Management.Project)
+                    (this.Context as Management.Project).Save();
+                else if (this.Context is Management.Folder)
+                    (this.Context as Management.Folder).Project.Save();
             }
         }
     }
@@ -484,10 +612,17 @@ namespace MOAI.Menus.Definitions.Actions
                     // Check this is the node we are interested in.
                     if (e.Node == this.Context)
                     {
+                        // Store the original name.
+                        string original = null;
+                        if (this.Context is Management.Folder)
+                            original = (this.Context as Management.Folder).FolderInfo.Name;
+                        else if (this.Context is Management.File)
+                            original = (this.Context as Management.File).FileInfo.Name;
+
                         // Check to see if the new label is null (indiciating don't change).
                         if (e.Label == null)
                         {
-                            (this.Context as Management.File).Text = (this.Context as Management.File).FileInfo.Name;
+                            (this.Context as Management.File).Text = original;
                             (this.Context as Management.File).TreeView.AfterLabelEdit -= handler;
                             (this.Context as Management.File).TreeView.LabelEdit = false;
                             return;
@@ -496,7 +631,7 @@ namespace MOAI.Menus.Definitions.Actions
                         // Check to see if the label is valid.
                         if (e.Label.IndexOfAny(new char[] { '/', '\\', ':', '*', '"', '<', '>', '|' }) != -1)
                         {
-                            (this.Context as Management.File).Text = (this.Context as Management.File).FileInfo.Name;
+                            (this.Context as Management.File).Text = original;
                             System.Windows.Forms.MessageBox.Show(@"Please enter a filename; it must not contain any
     " + "of the following characters: / \\ : * \" < > |", "Rename Failed", System.Windows.Forms.MessageBoxButtons.OK,
                                 System.Windows.Forms.MessageBoxIcon.Error);
@@ -507,12 +642,20 @@ namespace MOAI.Menus.Definitions.Actions
                             // Attempt to rename the file.
                             try
                             {
-                                (this.Context as Management.File).FileInfo.MoveTo(
-                                    Path.Combine(
-                                        (this.Context as Management.File).FileInfo.DirectoryName,
-                                        e.Label
-                                    )
-                                );
+                                if (this.Context is Management.Folder)
+                                    (this.Context as Management.Folder).FolderInfo.MoveTo(
+                                        Path.Combine(
+                                            (this.Context as Management.Folder).FolderInfo.Parent.FullName,
+                                            e.Label
+                                        )
+                                    );
+                                else if (this.Context is Management.File)
+                                    (this.Context as Management.File).FileInfo.MoveTo(
+                                        Path.Combine(
+                                            (this.Context as Management.File).FileInfo.DirectoryName,
+                                            e.Label
+                                        )
+                                    );
                                 (this.Context as Management.File).TreeView.AfterLabelEdit -= handler;
                                 (this.Context as Management.File).TreeView.LabelEdit = false;
                                 (this.Context as Management.File).Text = e.Label;
@@ -525,7 +668,7 @@ namespace MOAI.Menus.Definitions.Actions
                             }
                             catch (IOException)
                             {
-                                (this.Context as Management.File).Text = (this.Context as Management.File).FileInfo.Name;
+                                (this.Context as Management.File).Text = original;
                                 System.Windows.Forms.MessageBox.Show("Unable to rename file.", "Rename Failed", System.Windows.Forms.MessageBoxButtons.OK,
                                     System.Windows.Forms.MessageBoxIcon.Error);
                                 (this.Context as Management.File).BeginEdit();
@@ -550,10 +693,21 @@ namespace MOAI.Menus.Definitions.Actions
         /// </summary>
         public override void OnInitialize()
         {
-            this.Implemented = false;
             this.ItemIcon = null;
             this.Text = "Exclude From Project";
-            this.Enabled = false;
+            this.Enabled = true;
+        }
+
+        /// <summary>
+        /// This event is raised when the menu item is clicked or otherwise activated.
+        /// </summary>
+        public override void OnActivate()
+        {
+            if (this.Context is Management.File || this.Context is Management.Folder)
+            {
+                // Remove the file from the tree view.
+                (this.Context as Management.File).Project.RemoveFile((this.Context as Management.File));
+            }
         }
     }
 

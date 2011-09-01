@@ -17,10 +17,10 @@ namespace MOAI.Menus
         private Keys p_Shortcut = Keys.None;
         private ToolStripMenuItem m_MenuItem = null;
         private ToolStripItem m_Item = null;
-        private object m_Context = null;
+        private object p_Context = null;
 
         public Action() { }
-        public Action(object context) { this.m_Context = context; }
+        public Action(object context) { this.p_Context = context; }
         public virtual void OnInitialize() { }
         public virtual void OnActivate() { }
 
@@ -161,7 +161,11 @@ namespace MOAI.Menus
         {
             get
             {
-                return this.m_Context;
+                return this.p_Context;
+            }
+            set
+            {
+                this.p_Context = value;
             }
         }
 

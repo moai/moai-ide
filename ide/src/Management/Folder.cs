@@ -123,6 +123,12 @@ namespace MOAI.Management
         public void Add(File file)
         {
             this.p_Files.Add(file);
+            if (file is Folder)
+            {
+                Folder ff = file as Folder;
+                ff.FileAdded += new EventHandler(ff_FileAdded);
+                ff.FileRemoved += new EventHandler(ff_FileRemoved);
+            }
             if (this.FileAdded != null)
                 this.FileAdded(this, new EventArgs());
         }
@@ -136,6 +142,58 @@ namespace MOAI.Management
         public void AddWithoutEvent(File file)
         {
             this.p_Files.Add(file);
+        }
+
+        /// <summary>
+        /// Searches for and propagates a removal request for a file within
+        /// this folder, or any of it's subfolders.
+        /// </summary>
+        public void Remove(File file)
+        {
+            if (this.p_Files.Contains(file))
+            {
+                this.p_Files.Remove(file);
+                if (file is Folder)
+                {
+                    Folder ff = file as Folder;
+                    ff.FileAdded -= new EventHandler(ff_FileAdded);
+                    ff.FileRemoved -= new EventHandler(ff_FileRemoved);
+                }
+                if (this.FileRemoved != null)
+                    this.FileRemoved(this, new EventArgs());
+            }
+            else
+            {
+                foreach (File f in this.p_Files.ToList())
+                {
+                    if (f is Folder)
+                    {
+                        // Request the subfolder to remove the file if they
+                        // have it.
+                        (f as Folder).Remove(file);
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// This function propagates FileAdded events from folders as
+        /// FileAdded events on the project itself.
+        /// </summary>
+        private void ff_FileAdded(object sender, EventArgs e)
+        {
+            if (this.FileAdded != null)
+                this.FileAdded(this, new EventArgs());
+        }
+
+        /// <summary>
+        /// This function propagates FileRemoved events from folders as
+        /// FileRemoved events on the project itself.
+        /// </summary>
+        private void ff_FileRemoved(object sender, EventArgs e)
+        {
+            if (this.FileRemoved != null)
+                this.FileRemoved(this, new EventArgs());
         }
 
         /// <summary>

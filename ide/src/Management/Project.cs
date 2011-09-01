@@ -6,6 +6,7 @@ using System.IO;
 using MOAI.Collections;
 using System.Xml;
 using System.Windows.Forms;
+using System.Threading;
 
 namespace MOAI.Management
 {
@@ -141,16 +142,28 @@ namespace MOAI.Management
             settings.Encoding = Encoding.UTF8;
             settings.Indent = true;
 
-            // Create the new XmlWriter.
-            XmlWriter writer = XmlWriter.Create(this.p_ProjectInfo.FullName, settings);
+            for (int i = 0; i < 5; i += 1)
+            {
+                try
+                {
+                    // Create the new XmlWriter.
+                    XmlWriter writer = XmlWriter.Create(this.p_ProjectInfo.FullName, settings);
 
-            // Generate the XML from the project data.
-            writer.WriteStartElement("Project");
-            writer.WriteAttributeString("ToolsVersion", "1.0");
-            writer.WriteString(""); // Force the root element to not be self-closing.
-            this.WriteFiles(writer, this.p_Files.AsReadOnly(), "");
-            writer.WriteEndElement();
-            writer.Close();
+                    // Generate the XML from the project data.
+                    writer.WriteStartElement("Project");
+                    writer.WriteAttributeString("ToolsVersion", "1.0");
+                    writer.WriteString(""); // Force the root element to not be self-closing.
+                    this.WriteFiles(writer, this.p_Files.AsReadOnly(), "");
+                    writer.WriteEndElement();
+                    writer.Close();
+                    return;
+                }
+                catch (IOException e)
+                {
+                    Thread.Sleep(0);
+                    continue;
+                }
+            }
         }
 
         /// <summary>
@@ -248,6 +261,10 @@ namespace MOAI.Management
                             }
                         }
                     }
+
+                    // Skip the file if it doesn't exist on disk.
+                    if (!System.IO.File.Exists(Path.Combine(file.Directory.FullName, f.Attributes["Include"])))
+                        continue;
 
                     // Now associate the file with the directory or project,
                     // depending on whether or not we have a parent directory.
@@ -390,20 +407,36 @@ namespace MOAI.Management
         }
 
         /// <summary>
-        /// Removes a file from the project.
+        /// Removes a file from the project, either by removing it directory
+        /// or asking subfolders to remove it.
         /// </summary>
-        /// <param name="f">The file to remove.</param>
-        public void RemoveFile(File f)
+        /// <param name="file">The file to remove.</param>
+        public void RemoveFile(File file)
         {
-            this.p_Files.Remove(f);
-            if (f is Folder)
+            if (this.p_Files.Contains(file))
             {
-                Folder ff = f as Folder;
-                ff.FileAdded -= new EventHandler(ff_FileAdded);
-                ff.FileRemoved -= new EventHandler(ff_FileRemoved);
+                this.p_Files.Remove(file);
+                if (file is Folder)
+                {
+                    Folder ff = file as Folder;
+                    ff.FileAdded -= new EventHandler(ff_FileAdded);
+                    ff.FileRemoved -= new EventHandler(ff_FileRemoved);
+                }
+                if (this.FileRemoved != null)
+                    this.FileRemoved(this, new EventArgs());
             }
-            if (this.FileRemoved != null)
-                this.FileRemoved(this, new EventArgs());
+            else
+            {
+                foreach (File f in this.p_Files.ToList())
+                {
+                    if (f is Folder)
+                    {
+                        // Request the subfolder to remove the file if they
+                        // have it.
+                        (f as Folder).Remove(file);
+                    }
+                }
+            }
         }
 
         /// <summary>

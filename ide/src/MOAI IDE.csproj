@@ -519,6 +519,7 @@
     <Compile Include="Cache\Clipboard.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Cache\Context.cs" />
     <Compile Include="Debug\Communicator.cs" />
     <Compile Include="Debug\ExceptionDialog.cs">
       <SubType>Form</SubType>

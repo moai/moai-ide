@@ -1,2 +1,2 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="1.0"><File Include="Main.lua"></File><File Include="Something3.lua"></File><File Include="Test/OMG.lua"></File><File Include="Test/glut32.dll"></File><File Include="AAA.lua"></File></Project>
+<Project ToolsVersion="1.0"><File Include="Main.lua"></File><File Include="Test/OMG.lua"></File><File Include="AAA.lua"></File></Project>

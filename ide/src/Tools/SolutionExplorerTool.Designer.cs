@@ -39,8 +39,11 @@
             this.c_SolutionTree.Name = "c_SolutionTree";
             this.c_SolutionTree.Size = new System.Drawing.Size(249, 475);
             this.c_SolutionTree.TabIndex = 0;
+            this.c_SolutionTree.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.c_SolutionTree_AfterSelect);
             this.c_SolutionTree.DoubleClick += new System.EventHandler(this.c_SolutionTree_DoubleClick);
             this.c_SolutionTree.MouseUp += new System.Windows.Forms.MouseEventHandler(this.c_SolutionTree_MouseUp);
+            this.c_SolutionTree.LostFocus += new System.EventHandler(this.c_SolutionTree_LostFocus);
+            this.c_SolutionTree.GotFocus += new System.EventHandler(this.c_SolutionTree_GotFocus);
             // 
             // SolutionExplorerTool
             // 
@@ -53,7 +56,6 @@
             this.Text = "Solution Explorer";
             this.Load += new System.EventHandler(this.ToolSolutionExplorer_Load);
             this.ResumeLayout(false);
-
         }
 
         #endregion
