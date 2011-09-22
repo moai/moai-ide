@@ -32,16 +32,6 @@ namespace MOAI.Designers
         }
 
         /// <summary>
-        /// This function is called to tell the designer that it should save the file to disk.
-        /// </summary>
-        public virtual void OnSaveFile() { }
-
-        /// <summary>
-        /// This function is called to tell the designer that it should save the file to disk as another name.
-        /// </summary>
-        public virtual void OnSaveFileAs() { }
-
-        /// <summary>
         /// The path to the file that this editor is currently editing.
         /// </summary>
         public string Path
@@ -84,21 +74,6 @@ namespace MOAI.Designers
             private set
             {
                 this.p_Manager = value;
-            }
-        }
-
-        /// <summary>
-        /// Whether the save operation is valid on this editor.
-        /// </summary>
-        public bool CanSave
-        {
-            get
-            {
-                return this.p_CanSave;
-            }
-            protected set
-            {
-                this.p_CanSave = value;
             }
         }
     }

@@ -7,15 +7,17 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using MOAI.Management;
+using MOAI.Operatables;
 
 namespace MOAI.Designers.Code
 {
-    public partial class Designer : MOAI.Designers.Designer
+    public partial class Designer : MOAI.Designers.Designer, ICuttable, ICopyable, IPastable, IDeletable, ISavable
     {
         private List<LuaError> m_Errors = new List<LuaError>();
         private CodeEditor c_CodeEditor = null;
         private ToolTip c_ToolTip = new ToolTip();
         private string m_SavedText = null;
+        private bool p_CanSave = false;
 
         /// <summary>
         /// Creates a new code editor.
@@ -50,6 +52,21 @@ namespace MOAI.Designers.Code
             this.c_CodeEditor.DwellEnd += new EventHandler<ScintillaNet.ScintillaMouseEventArgs>(c_CodeEditor_DwellEnd);
             this.c_CodeEditor.KeyUp += new KeyEventHandler(c_CodeEditor_KeyUp);
             this.c_CodeEditor.SyntaxCheckRequested += new EventHandler(c_CodeEditor_SyntaxCheckRequested);
+            this.c_CodeEditor.SelectionChanged += new EventHandler(c_CodeEditor_SelectionChanged);
+            this.c_CodeEditor.GotFocus += new EventHandler(c_CodeEditor_GotFocus);
+            this.c_CodeEditor.LostFocus += new EventHandler(c_CodeEditor_LostFocus);
+
+            // Initalize the context menu for the code editor.
+            this.c_CodeEditor.ContextMenuStrip = new ContextMenuStrip();
+            this.c_CodeEditor.ContextMenuStrip.Items.AddRange(new ToolStripItem[] {
+                    Menus.Manager.WrapAction(new Menus.Definitions.Actions.Undo(this.c_CodeEditor)),
+                    Menus.Manager.WrapAction(new Menus.Definitions.Actions.Redo(this.c_CodeEditor)),
+                    new ToolStripSeparator(),
+                    Menus.Manager.WrapAction(new Menus.Definitions.Actions.Cut(this.c_CodeEditor)),
+                    Menus.Manager.WrapAction(new Menus.Definitions.Actions.Copy(this.c_CodeEditor)),
+                    Menus.Manager.WrapAction(new Menus.Definitions.Actions.Paste(this.c_CodeEditor)),
+                    Menus.Manager.WrapAction(new Menus.Definitions.Actions.Delete(this.c_CodeEditor))
+                });
 
             // Now load the file data.
             using (System.IO.StreamReader reader = new System.IO.StreamReader(this.File.FileInfo.FullName))
@@ -59,8 +76,8 @@ namespace MOAI.Designers.Code
             this.m_SavedText = this.c_CodeEditor.Text;
 
             // Detect if this file is read-only.
-            this.CanSave = !this.File.FileInfo.IsReadOnly;
-            if (this.CanSave)
+            this.p_CanSave = !this.File.FileInfo.IsReadOnly;
+            if (this.p_CanSave)
                 this.TabText = this.File.FileInfo.Name;
             else
             {
@@ -81,6 +98,8 @@ namespace MOAI.Designers.Code
             this.c_CodeEditor.GoTo.Line(line);
             this.c_CodeEditor.GetRange(this.c_CodeEditor.Lines[line - 1].StartPosition, this.c_CodeEditor.Lines[line - 1].EndPosition).SetIndicator(0);
         }
+
+        #region Event Handling
 
         /// <summary>
         /// This event is raised when the user has placed their mouse in the same position
@@ -173,9 +192,122 @@ namespace MOAI.Designers.Code
         }
 
         /// <summary>
-        /// This function is called to tell the designer that it should save the file to disk.
+        /// This event is raised when the selected text area has been changed.
         /// </summary>
-        public override void OnSaveFile()
+        /// <param name="sender">The sender of the event.</param>
+        /// <param name="e">The event information.</param>
+        void c_CodeEditor_SelectionChanged(object sender, EventArgs e)
+        {
+            this.Manager.CacheManager.Context.Object = this.c_CodeEditor as ScintillaNet.Scintilla;
+
+            /*
+            if (this.c_CodeEditor.Selection.Length != 0)
+                this.Manager.CacheManager.Context.Object = new Selection(this.c_CodeEditor.Selection, this.c_CodeEditor);
+            else
+                this.Manager.CacheManager.Context.Object = new Cursor(this.c_CodeEditor.Selection);
+             */
+        }
+
+        /// <summary>
+        /// This event is raised when the code editor gains focus.
+        /// </summary>
+        /// <param name="sender">The sender of the event.</param>
+        /// <param name="e">The event information.</param>
+        void c_CodeEditor_GotFocus(object sender, EventArgs e)
+        {
+            this.Manager.CacheManager.Context.Object = this.c_CodeEditor as ScintillaNet.Scintilla;
+        }
+
+        /// <summary>
+        /// This event is raised when the code editor loses focus.
+        /// </summary>
+        /// <param name="sender">The sender of the event.</param>
+        /// <param name="e">The event information.</param>
+        void c_CodeEditor_LostFocus(object sender, EventArgs e)
+        {
+            this.Manager.CacheManager.Context.Object = null;
+        }
+
+        #endregion
+
+        #region Operation Implementions
+
+        /// <summary>
+        /// Boolean value indicating whether this designer can currently have data cut.
+        /// </summary>
+        bool ICuttable.CanCut
+        {
+            get { return this.c_CodeEditor.Selection.Length > 0; }
+        }
+
+        /// <summary>
+        /// Boolean value indicating whether this designer can currently have data copied.
+        /// </summary>
+        bool ICopyable.CanCopy
+        {
+            get { return this.c_CodeEditor.Selection.Length > 0; }
+        }
+
+        /// <summary>
+        /// Boolean value indicating whether this designer can be pasted into.
+        /// </summary>
+        bool IPastable.CanPaste
+        {
+            get { return true; }
+        }
+
+        /// <summary>
+        /// Called when the user wants to cut data.
+        /// </summary>
+        void ICuttable.Cut()
+        {
+            this.c_CodeEditor.NativeInterface.Cut();
+        }
+
+        /// <summary>
+        /// Called when the user wants to copy data.
+        /// </summary>
+        void ICopyable.Copy()
+        {
+            this.c_CodeEditor.NativeInterface.Copy();
+        }
+
+        /// <summary>
+        /// Called when the user wants to remove data.
+        /// </summary>
+        void IDeletable.Delete()
+        {
+            this.c_CodeEditor.NativeInterface.DeleteBack();
+        }
+
+        /// <summary>
+        /// Called when the user wants to paste data.
+        /// </summary>
+        void IPastable.Paste()
+        {
+            this.c_CodeEditor.NativeInterface.Paste();
+        }
+
+        /// <summary>
+        /// Boolean value indicating whether the current data can be saved.
+        /// </summary>
+        bool ISavable.CanSave
+        {
+            get { return this.p_CanSave; }
+        }
+
+        /// <summary>
+        /// The string value representing the name of the current data (e.g. file name).
+        /// </summary>
+        string ISavable.SaveName
+        {
+            get { return this.File.FileInfo.Name; }
+        }
+
+        /// <summary>
+        /// Called when the user wants to save the file with it's current name.
+        /// </summary>
+        void ISavable.SaveFile()
         {
             using (System.IO.StreamWriter writer = new System.IO.StreamWriter(this.File.FileInfo.FullName, false))
             {
@@ -186,9 +318,9 @@ namespace MOAI.Designers.Code
         }
 
         /// <summary>
-        /// This function is called to tell the designer that it should save the file to disk as another name.
+        /// Called when the user wants to save the file as a different name.
         /// </summary>
-        public override void OnSaveFileAs()
+        void ISavable.SaveFileAs()
         {
             SaveFileDialog sfd = new SaveFileDialog();
             sfd.AddExtension = true;
@@ -198,8 +330,10 @@ namespace MOAI.Designers.Code
             if (sfd.ShowDialog() == DialogResult.OK)
             {
                 this.File = new File(null, null, sfd.FileName);
-                this.OnSaveFile();
+                (this as ISavable).SaveFile();
             }
         }
+
+        #endregion
     }
 }

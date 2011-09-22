@@ -33,10 +33,6 @@ namespace MOAI.Designers.Start
                 this.OnResize();
             };
 
-            // This editor can never save.
-            this.CanSave = false;
-            this.File = null;
-
             this.TabText = "Cloud Dashboard";
             this.c_WebBrowser.Url = new System.Uri("http://dashboard.moaicloud.com/login.php", System.UriKind.Absolute);
         }
@@ -54,14 +50,6 @@ namespace MOAI.Designers.Start
         /// </summary>
         private void OnTabChanged()
         {
-        }
-
-        /// <summary>
-        /// This function is called after the file that this designer owns has been saved to disk.
-        /// </summary>
-        public override void OnSaveFile()
-        {
-
         }
 
         /// <summary>

@@ -519,7 +519,14 @@
     <Compile Include="Cache\Clipboard.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Operatables\ICopyable.cs" />
+    <Compile Include="Operatables\ICuttable.cs" />
+    <Compile Include="Operatables\IDeletable.cs" />
+    <Compile Include="Operatables\IPastable.cs" />
     <Compile Include="Cache\Context.cs" />
+    <Compile Include="Cache\UndoRedoCache.cs" />
+    <Compile Include="Cache\UndoRedo\IUndoRedoState.cs" />
+    <Compile Include="Cache\UndoRedo\ScintillaUndoRedoState.cs" />
     <Compile Include="Debug\Communicator.cs" />
     <Compile Include="Debug\ExceptionDialog.cs">
       <SubType>Form</SubType>
@@ -540,6 +547,10 @@
     <Compile Include="Debug\Messages\ExcpUserMessage.cs" />
     <Compile Include="Debug\Messages\WaitMessage.cs" />
     <Compile Include="Debug\Messages\ExcpInternalMessage.cs" />
+    <Compile Include="Designers\Code\Cursor.cs" />
+    <Compile Include="Designers\Code\Selection.cs" />
+    <Compile Include="Operatables\IRemovable.cs" />
+    <Compile Include="Operatables\IRenamable.cs" />
     <Compile Include="Management\NewFileForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -608,6 +619,7 @@
       <DependentUpon>Designer.cs</DependentUpon>
     </Compile>
     <Compile Include="Management\Associations.cs" />
+    <Compile Include="Operatables\ISavable.cs" />
     <Compile Include="Templates\Files\BaseTemplate.cs" />
     <Compile Include="Templates\Files\FolderTemplate.cs" />
     <Compile Include="Templates\Files\ScriptTemplate.cs" />

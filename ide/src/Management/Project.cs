@@ -7,10 +7,11 @@ using MOAI.Collections;
 using System.Xml;
 using System.Windows.Forms;
 using System.Threading;
+using MOAI.Operatables;
 
 namespace MOAI.Management
 {
-    public class Project
+    public class Project : IPastable
     {
         private bool p_Initalized = false;
         private FileInfo p_ProjectInfo = null;
@@ -479,6 +480,72 @@ namespace MOAI.Management
                 return this.p_Files.AsReadOnly();
             }
         }
+
+        #region Operation Implementations
+
+        /// <summary>
+        /// Boolean value indicating whether this project can be pasted into.
+        /// </summary>
+        bool IPastable.CanPaste
+        {
+            get { return true; }
+        }
+
+        /// <summary>
+        /// Called when the user wants to paste into the root of this project.
+        /// </summary>
+        void IPastable.Paste()
+        {
+            // We are copying a set of files or folders into a project using the solution
+            // explorer.
+            System.Windows.IDataObject data = MOAI.Cache.Clipboard.Contents;
+            if (!data.GetDataPresent(System.Windows.DataFormats.FileDrop))
+                return;
+
+            // Check to see whether we are doing a cut or copy.
+            bool iscut = false;
+            if (data.GetDataPresent("Preferred DropEffect"))
+                iscut = ((data.GetData("Preferred DropEffect") as MemoryStream).ReadByte() == 2);
+
+            // Get the target folder.
+            string folder = this.ProjectInfo.DirectoryName;
+
+            // Move or copy the selected files.
+            string[] files = data.GetData(System.Windows.DataFormats.FileDrop) as string[];
+            foreach (FileInfo f in files.Select(input => new FileInfo(input)))
+            {
+                // Check to make sure the file doesn't already exist in the destination.
+                if (System.IO.File.Exists(Path.Combine(folder, f.Name)))
+                {
+                    System.Windows.Forms.MessageBox.Show(
+                        f.Name + " already exists in the destination folder.  It will not be copied or moved.",
+                        "File Already Exists",
+                        System.Windows.Forms.MessageBoxButtons.OK,
+                        System.Windows.Forms.MessageBoxIcon.Error
+                    );
+                    continue;
+                }
+
+                if (iscut)
+                    f.MoveTo(Path.Combine(folder, f.Name));
+                else
+                    f.CopyTo(Path.Combine(folder, f.Name));
+
+                this.AddFile(new Management.File(
+                    this,
+                    this.ProjectInfo.DirectoryName,
+                    PathHelpers.GetRelativePath(
+                        this.ProjectInfo.DirectoryName,
+                        Path.Combine(folder, f.Name)
+                        )
+                    ));
+            }
+
+            // Force the project to be saved now.
+            this.Save();
+        }
+
+        #endregion
     }
 
     public class FileEventArgs : EventArgs

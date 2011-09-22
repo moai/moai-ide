@@ -11,6 +11,7 @@ namespace MOAI.Cache
         private Scintilla p_ScintillaCache = null;
         private AutoComplete p_AutoComplete = null;
         private Context p_Context = null;
+        private UndoRedoCache p_UndoRedo = null;
 
         /// <summary>
         /// Creates a new cache manager, which manages all of the sub-caches.
@@ -23,6 +24,7 @@ namespace MOAI.Cache
             this.p_AutoComplete = new AutoComplete();
             this.p_AutoComplete.Import();
             this.p_Context = new Context();
+            this.p_UndoRedo = new UndoRedoCache();
 
             MOAI.Cache.Clipboard.Register(this.p_Manager);
         }
@@ -57,6 +59,17 @@ namespace MOAI.Cache
             get
             {
                 return this.p_Context;
+            }
+        }
+
+        /// <summary>
+        /// The undo-redo caching object.
+        /// </summary>
+        public UndoRedoCache UndoRedo
+        {
+            get
+            {
+                return this.p_UndoRedo;
             }
         }
     }

@@ -87,7 +87,7 @@ namespace MOAI.Menus.Definitions.Actions
 
     class Save : Action
     {
-        private Designer m_CurrentEditor = null;
+        private Operatables.ISavable m_CurrentSavable = null;
 
         public Save() : base() { }
         public Save(object context) : base(context) { }
@@ -111,7 +111,8 @@ namespace MOAI.Menus.Definitions.Actions
         /// </summary>
         public override void OnActivate()
         {
-            m_CurrentEditor.OnSaveFile();
+            if (this.m_CurrentSavable != null)
+                this.m_CurrentSavable.SaveFile();
         }
 
         /// <summary>
@@ -119,22 +120,22 @@ namespace MOAI.Menus.Definitions.Actions
         /// </summary>
         private void DesignersManager_DesignerChanged(object sender, MOAI.Designers.Manager.DesignerEventArgs e)
         {
-            if (e.Designer == null || e.Designer.File == null)
+            if (e.Designer == null || e.Designer.File == null || !(e.Designer is Operatables.ISavable))
             {
                 this.Enabled = false;
                 this.Text = "Save";
                 return;
             }
 
-            this.Enabled = e.Designer.CanSave;
-            this.m_CurrentEditor = e.Designer;
-            this.Text = "Save " + e.Designer.File.FileInfo.Name;
+            this.m_CurrentSavable = (e.Designer as Operatables.ISavable);
+            this.Enabled = this.m_CurrentSavable.CanSave;
+            this.Text = "Save " + this.m_CurrentSavable.SaveName;
         }
     }
 
     class SaveAs : Action
     {
-        private Designer m_CurrentEditor = null;
+        private Operatables.ISavable m_CurrentSavable = null;
 
         public SaveAs() : base() { }
         public SaveAs(object context) : base(context) { }
@@ -157,8 +158,11 @@ namespace MOAI.Menus.Definitions.Actions
         /// </summary>
         public override void OnActivate()
         {
-            m_CurrentEditor.OnSaveFileAs();
-            Program.Manager.DesignersManager.EmulateDesignerChange();
+            if (this.m_CurrentSavable != null)
+            {
+                this.m_CurrentSavable.SaveFileAs();
+                Program.Manager.DesignersManager.EmulateDesignerChange();
+            }
         }
 
         /// <summary>
@@ -166,16 +170,16 @@ namespace MOAI.Menus.Definitions.Actions
         /// </summary>
         private void DesignersManager_DesignerChanged(object sender, MOAI.Designers.Manager.DesignerEventArgs e)
         {
-            if (e.Designer == null || e.Designer.File == null)
+            if (e.Designer == null || e.Designer.File == null || !(e.Designer is Operatables.ISavable))
             {
                 this.Enabled = false;
                 this.Text = "Save as...";
                 return;
             }
 
-            this.Enabled = e.Designer.CanSave;
-            this.m_CurrentEditor = e.Designer;
-            this.Text = "Save " + e.Designer.File.FileInfo.Name + " as...";
+            this.m_CurrentSavable = (e.Designer as Operatables.ISavable);
+            this.Enabled = this.m_CurrentSavable.CanSave;
+            this.Text = "Save " + this.m_CurrentSavable.SaveName + " as...";
         }
     }
 
@@ -290,6 +294,14 @@ namespace MOAI.Menus.Definitions.Actions
             this.Enabled = (this.Context != null);
             this.Shortcut = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.X;
 
+            // Check Scintilla context.
+            if (this.Context is ScintillaNet.Scintilla &&
+                (this.Context as ScintillaNet.Scintilla).Selection.Length == 0)
+            {
+                this.Context = null;
+                this.Enabled = false;
+            }
+
             // Listen for global context changes if we are not
             // provided with a specific context.
             if (this.Context == null)
@@ -307,8 +319,8 @@ namespace MOAI.Menus.Definitions.Actions
         void Context_ContextChanged(object sender, MOAI.Cache.ContextEventArgs e)
         {
             // Set our context to the global context object.
-            if (e.Object is Management.Folder ||
-                e.Object is Management.File)
+            if (e.Object is Operatables.ICuttable &&
+                (e.Object as Operatables.ICuttable).CanCut)
                 this.Context = e.Object;
             else
                 this.Context = null;
@@ -321,49 +333,10 @@ namespace MOAI.Menus.Definitions.Actions
         /// </summary>
         public override void OnActivate()
         {
-            if (this.Context is Management.Folder || this.Context is Management.File)
+            if (this.Context is Operatables.ICuttable)
             {
-                // Add the selected file or folder to the list.
-                string[] files = null;
-                if (this.Context is Management.Folder)
-                    files = new string[] { (this.Context as Management.Folder).FolderInfo.FullName };
-                else if (this.Context is Management.File)
-                    files = new string[] { (this.Context as Management.File).FileInfo.FullName };
-
-                // This process is sourced from http://web.archive.org/web/20070218155439/http://blogs.wdevs.com/IDecember/archive/2005/10/27/10979.aspx.
-                System.Windows.IDataObject data = new System.Windows.DataObject(System.Windows.DataFormats.FileDrop, files);
-                MemoryStream stream = new MemoryStream(4);
-                byte[] bytes = new byte[] { 2, 0, 0, 0 };
-                stream.Write(bytes, 0, bytes.Length);
-                data.SetData("Preferred DropEffect", stream);
-                MOAI.Cache.Clipboard.Contents = data;
-
-                // Change the icon to faded, then listen to see if the clipboard
-                // gets overridden.
-                (this.Context as Management.File).ImageKey += ":Faded";
-                (this.Context as Management.File).SelectedImageKey += ":Faded";
-                EventHandler<MOAI.Cache.ClipboardEventArgs> ev = null;
-                Management.File o = this.Context as Management.File;
-                ev = (sender, e) =>
-                {
-                    string key = o.ImageKey;
-                    if (key.IndexOf(":Faded") == -1)
-                        return;
-                    key = key.Substring(0, key.IndexOf(":Faded"));
-                    o.ImageKey = key;
-                    o.SelectedImageKey = key;
-                    MOAI.Cache.Clipboard.ClipboardChanged -= ev;
-                };
-                MOAI.Cache.Clipboard.ClipboardChanged += ev;
-
-                // Now listen to see when the file disappears.
-                FileSystemWatcher watcher = new FileSystemWatcher(new FileInfo(files[0]).DirectoryName, new FileInfo(files[0]).Name);
-                watcher.Deleted += (sender, e) =>
-                {
-                    // Remove the file from the tree view.
-                    o.Project.RemoveFile(o);
-                };
-                watcher.EnableRaisingEvents = true;
+                // Ask the object to cut itself.
+                (this.Context as Operatables.ICuttable).Cut();
             }
         }
     }
@@ -383,6 +356,14 @@ namespace MOAI.Menus.Definitions.Actions
             this.Enabled = (this.Context != null);
             this.Shortcut = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.C;
 
+            // Check Scintilla context.
+            if (this.Context is ScintillaNet.Scintilla &&
+                (this.Context as ScintillaNet.Scintilla).Selection.Length == 0)
+            {
+                this.Context = null;
+                this.Enabled = false;
+            }
+
             // Listen for global context changes if we are not
             // provided with a specific context.
             if (this.Context == null)
@@ -400,8 +381,8 @@ namespace MOAI.Menus.Definitions.Actions
         void Context_ContextChanged(object sender, MOAI.Cache.ContextEventArgs e)
         {
             // Set our context to the global context object.
-            if (e.Object is Management.Folder ||
-                e.Object is Management.File)
+            if (e.Object is Operatables.ICopyable &&
+                (e.Object as Operatables.ICopyable).CanCopy)
                 this.Context = e.Object;
             else
                 this.Context = null;
@@ -414,23 +395,8 @@ namespace MOAI.Menus.Definitions.Actions
         /// </summary>
         public override void OnActivate()
         {
-            if (this.Context is Management.Folder || this.Context is Management.File)
-            {
-                // Add the selected file or folder to the list.
-                string[] files = null;
-                if (this.Context is Management.Folder)
-                    files = new string[] { (this.Context as Management.Folder).FolderInfo.FullName };
-                else if (this.Context is Management.File)
-                    files = new string[] { (this.Context as Management.File).FileInfo.FullName };
-
-                // This process is sourced from http://web.archive.org/web/20070218155439/http://blogs.wdevs.com/IDecember/archive/2005/10/27/10979.aspx.
-                System.Windows.IDataObject data = new System.Windows.DataObject(System.Windows.DataFormats.FileDrop, files);
-                MemoryStream stream = new MemoryStream(4);
-                byte[] bytes = new byte[] { 5, 0, 0, 0 };
-                stream.Write(bytes, 0, bytes.Length);
-                data.SetData("Preferred DropEffect", stream);
-                MOAI.Cache.Clipboard.Contents = data;
-            }
+            if (this.Context is Operatables.ICopyable)
+                (this.Context as Operatables.ICopyable).Copy();
         }
     }
 
@@ -466,8 +432,8 @@ namespace MOAI.Menus.Definitions.Actions
         void Context_ContextChanged(object sender, MOAI.Cache.ContextEventArgs e)
         {
             // Set our context to the global context object.
-            if (e.Object is Management.Project ||
-                e.Object is Management.Folder)
+            if (e.Object is Operatables.IPastable &&
+                (e.Object as Operatables.IPastable).CanPaste)
                 this.Context = e.Object;
             else
                 this.Context = null;
@@ -480,73 +446,8 @@ namespace MOAI.Menus.Definitions.Actions
         /// </summary>
         public override void OnActivate()
         {
-            if (this.Context is Management.Project || this.Context is Management.Folder)
-            {
-                // We are copying a set of files or folders into a project using the solution
-                // explorer.
-                System.Windows.IDataObject data = MOAI.Cache.Clipboard.Contents;
-                if (!data.GetDataPresent(System.Windows.DataFormats.FileDrop))
-                    return;
-
-                // Check to see whether we are doing a cut or copy.
-                bool iscut = false;
-                if (data.GetDataPresent("Preferred DropEffect"))
-                    iscut = ((data.GetData("Preferred DropEffect") as MemoryStream).ReadByte() == 2);
-
-                // Get the target folder.
-                string folder = null;
-                if (this.Context is Management.Project)
-                    folder = (this.Context as Management.Project).ProjectInfo.DirectoryName;
-                else if (this.Context is Management.Folder)
-                    folder = (this.Context as Management.Folder).FolderInfo.FullName;
-
-                // Move or copy the selected files.
-                string[] files = data.GetData(System.Windows.DataFormats.FileDrop) as string[];
-                foreach (FileInfo f in files.Select(input => new FileInfo(input)))
-                {
-                    // Check to make sure the file doesn't already exist in the destination.
-                    if (File.Exists(Path.Combine(folder, f.Name)))
-                    {
-                        System.Windows.Forms.MessageBox.Show(
-                            f.Name + " already exists in the destination folder.  It will not be copied or moved.",
-                            "File Already Exists",
-                            System.Windows.Forms.MessageBoxButtons.OK,
-                            System.Windows.Forms.MessageBoxIcon.Error
-                        );
-                        continue;
-                    }
-
-                    if (iscut)
-                        f.MoveTo(Path.Combine(folder, f.Name));
-                    else
-                        f.CopyTo(Path.Combine(folder, f.Name));
-
-                    if (this.Context is Management.Project)
-                        (this.Context as Management.Project).AddFile(new Management.File(
-                            this.Context as Management.Project,
-                            (this.Context as Management.Project).ProjectInfo.DirectoryName,
-                            PathHelpers.GetRelativePath(
-                                (this.Context as Management.Project).ProjectInfo.DirectoryName,
-                                Path.Combine(folder, f.Name)
-                                )
-                            ));
-                    else if (this.Context is Management.Folder)
-                        (this.Context as Management.Folder).AddWithoutEvent(new Management.File(
-                            (this.Context as Management.Folder).Project,
-                            (this.Context as Management.Folder).Project.ProjectInfo.DirectoryName,
-                            PathHelpers.GetRelativePath(
-                                (this.Context as Management.Folder).Project.ProjectInfo.DirectoryName,
-                                Path.Combine(folder, f.Name)
-                                )
-                            ));
-                }
-
-                // Force the project to be saved now.
-                if (this.Context is Management.Project)
-                    (this.Context as Management.Project).Save();
-                else if (this.Context is Management.Folder)
-                    (this.Context as Management.Folder).Project.Save();
-            }
+            if (this.Context is Operatables.IPastable)
+                (this.Context as Operatables.IPastable).Paste();
         }
     }
 
@@ -560,10 +461,54 @@ namespace MOAI.Menus.Definitions.Actions
         /// </summary>
         public override void OnInitialize()
         {
-            this.Implemented = false;
             this.ItemIcon = null;
             this.Text = "Delete";
-            this.Enabled = false;
+            this.Enabled = (this.Context != null);
+
+            // Check Scintilla context.
+            if (this.Context is ScintillaNet.Scintilla &&
+                (this.Context as ScintillaNet.Scintilla).Selection.Length == 0)
+            {
+                this.Context = null;
+                this.Enabled = false;
+            }
+
+            // Listen for global context changes if we are not
+            // provided with a specific context.
+            if (this.Context == null)
+            {
+                Program.Manager.CacheManager.Context.ContextChanged += new EventHandler<MOAI.Cache.ContextEventArgs>(Context_ContextChanged);
+
+                // Simulate a context change initially.
+                this.Context_ContextChanged(this, new MOAI.Cache.ContextEventArgs(Program.Manager.CacheManager.Context.Object));
+            }
+        }
+
+        /// <summary>
+        /// This event is raised when the global context changes.
+        /// </summary>
+        void Context_ContextChanged(object sender, MOAI.Cache.ContextEventArgs e)
+        {
+            // Set our context to the global context object.
+            if (e.Object is ScintillaNet.Scintilla &&
+                (e.Object as ScintillaNet.Scintilla).Selection.Length > 0)
+                this.Context = e.Object;
+            else
+                this.Context = null;
+
+            this.Enabled = (this.Context != null);
+        }
+
+        /// <summary>
+        /// This event is raised when the menu item is clicked or otherwise activated.
+        /// </summary>
+        public override void OnActivate()
+        {
+            if (this.Context is ScintillaNet.Scintilla)
+            {
+                // Delete the selected text.
+                (this.Context as ScintillaNet.Scintilla).NativeInterface.DeleteBack();
+            }
         }
     }
 

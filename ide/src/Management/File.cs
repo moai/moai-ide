@@ -6,10 +6,11 @@ using MOAI.Collections;
 using System.IO;
 using System.Drawing;
 using System.Windows.Forms;
+using MOAI.Operatables;
 
 namespace MOAI.Management
 {
-    public class File : System.Windows.Forms.TreeNode
+    public class File : System.Windows.Forms.TreeNode, ICuttable, ICopyable, IRemovable, IRenamable
     {
         private Project p_Project = null;
         private FileInfo p_FileInfo = null;
@@ -47,6 +48,136 @@ namespace MOAI.Management
         }
 
         /// <summary>
+        /// The FileInfo object that represents this file on-disk.
+        /// </summary>
+        public FileInfo FileInfo
+        {
+            get
+            {
+                return this.p_FileInfo;
+            }
+        }
+
+        /// <summary>
+        /// The project that owns this file.
+        /// </summary>
+        public Project Project
+        {
+            get
+            {
+                return this.p_Project;
+            }
+        }
+
+        /// <summary>
+        /// Performs the FileRenamed event.  Used by external code that renames
+        /// files on disk so that any relevant aspects of the IDE get updated.
+        /// </summary>
+        public void PerformRenamed()
+        {
+            if (this.p_Project != null)
+                this.p_Project.PerformRename(this);
+        }
+
+        #region Operation Implementions
+
+        /// <summary>
+        /// Boolean value indicating whether this file can be cut.
+        /// </summary>
+        bool ICuttable.CanCut
+        {
+            get { return true; }
+        }
+
+        /// <summary>
+        /// Boolean value indicating whether this file can be copied.
+        /// </summary>
+        bool ICopyable.CanCopy
+        {
+            get { return true; }
+        }
+
+        /// <summary>
+        /// Called when the user wants to cut this file.
+        /// </summary>
+        void ICuttable.Cut()
+        {
+            // Add the selected file to the list.
+            string[] files = new string[] { this.FileInfo.FullName };
+
+            // This process is sourced from http://web.archive.org/web/20070218155439/http://blogs.wdevs.com/IDecember/archive/2005/10/27/10979.aspx.
+            System.Windows.IDataObject data = new System.Windows.DataObject(System.Windows.DataFormats.FileDrop, files);
+            MemoryStream stream = new MemoryStream(4);
+            byte[] bytes = new byte[] { 2, 0, 0, 0 };
+            stream.Write(bytes, 0, bytes.Length);
+            data.SetData("Preferred DropEffect", stream);
+            MOAI.Cache.Clipboard.Contents = data;
+
+            // Change the icon to faded, then listen to see if the clipboard
+            // gets overridden.
+            this.ImageKey += ":Faded";
+            this.SelectedImageKey += ":Faded";
+            EventHandler<MOAI.Cache.ClipboardEventArgs> ev = null;
+            ev = (sender, e) =>
+            {
+                string key = this.ImageKey;
+                if (key.IndexOf(":Faded") == -1)
+                    return;
+                key = key.Substring(0, key.IndexOf(":Faded"));
+                this.ImageKey = key;
+                this.SelectedImageKey = key;
+                MOAI.Cache.Clipboard.ClipboardChanged -= ev;
+            };
+            MOAI.Cache.Clipboard.ClipboardChanged += ev;
+
+            // Now listen to see when the file disappears.
+            FileSystemWatcher watcher = new FileSystemWatcher(new FileInfo(files[0]).DirectoryName, new FileInfo(files[0]).Name);
+            watcher.Deleted += (sender, e) =>
+            {
+                // Remove the file from the tree view.
+                this.Project.RemoveFile(this);
+            };
+            watcher.EnableRaisingEvents = true;
+        }
+
+        /// <summary>
+        /// Called when the user wants to copy this file.
+        /// </summary>
+        void ICopyable.Copy()
+        {
+            // Add the selected file or folder to the list.
+            string[] files = new string[] { this.FileInfo.FullName };
+
+            // This process is sourced from http://web.archive.org/web/20070218155439/http://blogs.wdevs.com/IDecember/archive/2005/10/27/10979.aspx.
+            System.Windows.IDataObject data = new System.Windows.DataObject(System.Windows.DataFormats.FileDrop, files);
+            MemoryStream stream = new MemoryStream(4);
+            byte[] bytes = new byte[] { 5, 0, 0, 0 };
+            stream.Write(bytes, 0, bytes.Length);
+            data.SetData("Preferred DropEffect", stream);
+            MOAI.Cache.Clipboard.Contents = data;
+        }
+
+        /// <summary>
+        /// Called when the user wants to remove this file from it's container.
+        /// </summary>
+        void IRemovable.Remove()
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Called when the user wants to rename this file.
+        /// </summary>
+        void IRenamable.Rename()
+        {
+            throw new NotImplementedException();
+        }
+
+        #endregion
+
+        #region Tree Node Functionality
+
+        /// <summary>
         /// Associates this file with a tree node.
         /// </summary>
         /// <param name="node"></param>
@@ -82,28 +213,6 @@ namespace MOAI.Management
         {
             get { return base.Name; }
             set { base.Name = value; }
-        }
-
-        /// <summary>
-        /// The FileInfo object that represents this file on-disk.
-        /// </summary>
-        public FileInfo FileInfo
-        {
-            get
-            {
-                return this.p_FileInfo;
-            }
-        }
-
-        /// <summary>
-        /// The project that owns this file.
-        /// </summary>
-        public Project Project
-        {
-            get
-            {
-                return this.p_Project;
-            }
         }
 
         /// <summary>
@@ -145,14 +254,6 @@ namespace MOAI.Management
             return this.FileInfo.Name;
         }
 
-        /// <summary>
-        /// Performs the FileRenamed event.  Used by external code that renames
-        /// files on disk so that any relevant aspects of the IDE get updated.
-        /// </summary>
-        public void PerformRenamed()
-        {
-            if (this.p_Project != null)
-                this.p_Project.PerformRename(this);
-        }
+        #endregion
     }
 }
