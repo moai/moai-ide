@@ -198,14 +198,7 @@ namespace MOAI.Designers.Code
         /// <param name="e">The event information.</param>
         void c_CodeEditor_SelectionChanged(object sender, EventArgs e)
         {
-            this.Manager.CacheManager.Context.Object = this.c_CodeEditor as ScintillaNet.Scintilla;
-
-            /*
-            if (this.c_CodeEditor.Selection.Length != 0)
-                this.Manager.CacheManager.Context.Object = new Selection(this.c_CodeEditor.Selection, this.c_CodeEditor);
-            else
-                this.Manager.CacheManager.Context.Object = new Cursor(this.c_CodeEditor.Selection);
-             */
+            this.Manager.CacheManager.Context.Object = this;
         }
 
         /// <summary>
@@ -215,7 +208,7 @@ namespace MOAI.Designers.Code
         /// <param name="e">The event information.</param>
         void c_CodeEditor_GotFocus(object sender, EventArgs e)
         {
-            this.Manager.CacheManager.Context.Object = this.c_CodeEditor as ScintillaNet.Scintilla;
+            this.Manager.CacheManager.Context.Object = this;
         }
 
         /// <summary>

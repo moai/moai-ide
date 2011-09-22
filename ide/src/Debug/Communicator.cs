@@ -24,6 +24,8 @@ namespace MOAI.Debug
     {
         private TcpListener m_Listener = null;
         private Thread m_Thread = null;
+        private Queue<Message> m_MessageQueue = null;
+
         public event EventHandler<MessageEventArgs> MessageArrived;
 
         /// <summary>
@@ -45,6 +47,15 @@ namespace MOAI.Debug
             this.m_Listener.Stop();
         }
 
+        /// <summary>
+        /// Sends a message to the game via the debugging interface.
+        /// </summary>
+        /// <param name="m">The message to send.</param>
+        public void Send(Message m)
+        {
+            this.m_MessageQueue.Enqueue(m);
+        }
+
         private void ListenThread()
         {
             byte[] bytes = new byte[256];
@@ -61,8 +72,25 @@ namespace MOAI.Debug
 
                 // Read the data from the stream as it arrives.
                 int i = 0;
-                while ((i = stream.Read(bytes, 0, bytes.Length)) != 0)
+                while (i = stream.Read(bytes, 0, bytes.Length))
                 {
+                    // First check if we need to send any data back to
+                    // the game (such as any messages we want to send).
+                    if (this.m_MessageQueue.Count > 0)
+                    {
+                        Message msg = this.m_MessageQueue.Dequeue();
+                        string data = JsonConvert.SerializeObject(m);
+                        byte[] wbytes = data
+
+                        stream.Write(
+                    }
+
+                    // Once we have done that, check to see whether this
+                    // was an empty read loop (as in, the client didn't
+                    // or hasn't actually sent us a message).
+                    if (i == 0)
+                        continue;
+
                     // Append the data that was read.
                     data += Encoding.ASCII.GetString(bytes, 0, bytes.Length);
 
@@ -97,7 +125,7 @@ namespace MOAI.Debug
                         Type[] types = Assembly.GetExecutingAssembly().GetTypes();
                         Type real = null;
                         foreach (Type t in types)
-                            if (t.BaseType.FullName.EndsWith("MOAI.Debug.Message"))
+                            if (t.BaseType != null && t.BaseType.FullName.EndsWith("MOAI.Debug.Message"))
                                 if ((string)t.GetProperty("StaticID").GetValue(null, null) == msgbase.ID)
                                 {
                                     real = t;

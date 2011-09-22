@@ -547,8 +547,6 @@
     <Compile Include="Debug\Messages\ExcpUserMessage.cs" />
     <Compile Include="Debug\Messages\WaitMessage.cs" />
     <Compile Include="Debug\Messages\ExcpInternalMessage.cs" />
-    <Compile Include="Designers\Code\Cursor.cs" />
-    <Compile Include="Designers\Code\Selection.cs" />
     <Compile Include="Operatables\IRemovable.cs" />
     <Compile Include="Operatables\IRenamable.cs" />
     <Compile Include="Management\NewFileForm.cs">

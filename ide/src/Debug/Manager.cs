@@ -98,7 +98,17 @@ namespace MOAI.Debug
             // Invoke the message handling on the IDE's thread.
             this.p_Parent.IDEWindow.Invoke(new Action(() =>
             {
-                if (e.Message is ExcpInternalMessage)
+                if (e.Message is WaitMessage)
+                {
+                    // This is the game signalling that it is ready to receive
+                    // message requests such as setting breakpoints before the
+                    // game starts executing.
+
+                    // After we have set breakpoints, we must tell the game to
+                    // continue executing.
+                    this.m_Communicator.
+                }
+                else if (e.Message is ExcpInternalMessage)
                 {
                     ExcpInternalMessage m = e.Message as ExcpInternalMessage;
                     ExceptionDialog d = new ExceptionDialog();
