@@ -7,6 +7,7 @@ using System.IO;
 using System.Windows.Forms;
 using MOAI.Tools;
 using MOAI.Debug.Messages;
+using MOAI.Designers;
 
 namespace MOAI.Debug
 {
@@ -14,11 +15,14 @@ namespace MOAI.Debug
     {
         private MOAI.Manager p_Parent = null;
         private OutputTool m_OutputTool = null;
+        private bool p_Paused = false;
 
         private Process m_Process = null;
         private Communicator m_Communicator = null;
 
         public event EventHandler DebugStart;
+        public event EventHandler DebugPause;
+        public event EventHandler DebugContinue;
         public event EventHandler DebugStop;
 
         /// <summary>
@@ -36,6 +40,17 @@ namespace MOAI.Debug
         /// <param name="project">The project to run under the debugger.</param>
         public bool Start(MOAI.Management.Project project)
         {
+            // Check to see whether we are paused or not.
+            if (this.p_Paused)
+            {
+                // Unpause.
+                this.m_Communicator.Send(new ContinueMessage());
+                this.p_Paused = false;
+                if (this.DebugContinue != null)
+                    this.DebugContinue(this, new EventArgs());
+            }
+
+            // Otherwise make sure we have no process running.
             if (this.m_Process != null)
             {
                 // Can't run.
@@ -59,15 +74,62 @@ namespace MOAI.Debug
             this.m_Process.StartInfo.FileName = Path.Combine(Program.Manager.Settings["RootPath"], "Engines\\Win32\\Debug\\moai.exe");
             this.m_Process.StartInfo.WorkingDirectory = project.ProjectInfo.Directory.FullName;
             this.m_Process.StartInfo.UseShellExecute = false;
-            this.m_Process.StartInfo.RedirectStandardOutput = true;
+            //this.m_Process.StartInfo.RedirectStandardOutput = true;
             this.m_Process.StartInfo.Arguments = "Main.lua";
-            this.m_Process.OutputDataReceived += new DataReceivedEventHandler(m_Process_OutputDataReceived);
+            //this.m_Process.OutputDataReceived += new DataReceivedEventHandler(m_Process_OutputDataReceived);
             this.m_Process.EnableRaisingEvents = true;
             this.m_Process.Exited += new EventHandler(m_Process_Exited);
 
             this.m_Process.Start();
-            this.m_Process.BeginOutputReadLine();
+            //this.m_Process.BeginOutputReadLine();
+
+            this.p_Paused = false;
             return true;
+        }
+
+        /// <summary>
+        /// Runs the specified project without debugging.
+        /// </summary>
+        /// <param name="project">The project to run without the debugger.</param>
+        public bool StartWithout(MOAI.Management.Project project)
+        {
+            if (this.m_Process != null)
+            {
+                // Can't run.
+                return false;
+            }
+
+            // Fire the event to say that debugging has started (even though
+            // technically no debug events will be fired).
+            if (this.DebugStart != null)
+                this.DebugStart(this, new EventArgs());
+
+            // Clear the existing output log.
+            this.m_OutputTool = this.p_Parent.ToolsManager.Get(typeof(OutputTool)) as OutputTool;
+            if (this.m_OutputTool != null)
+                this.m_OutputTool.ClearLog();
+
+            // Start the process.
+            this.m_Process = new Process();
+            this.m_Process.StartInfo.FileName = Path.Combine(Program.Manager.Settings["RootPath"], "Engines\\Win32\\Debug\\moai.exe");
+            this.m_Process.StartInfo.WorkingDirectory = project.ProjectInfo.Directory.FullName;
+            this.m_Process.StartInfo.UseShellExecute = false;
+            this.m_Process.StartInfo.Arguments = "Main.lua";
+            this.m_Process.EnableRaisingEvents = true;
+            this.m_Process.Exited += new EventHandler(m_Process_Exited);
+
+            this.m_Process.Start();
+            this.p_Paused = false;
+            return true;
+        }
+
+        /// <summary>
+        /// Stops the debugging process that is currently underway.
+        /// </summary>
+        public void Pause()
+        {
+            if (this.m_Communicator != null)
+                this.m_Communicator.Send(new PauseMessage());
         }
 
         /// <summary>
@@ -80,7 +142,8 @@ namespace MOAI.Debug
             if (!this.m_Process.HasExited)
                 this.m_Process.Kill();
             this.m_Process = null;
-            this.m_Communicator.Close();
+            if (this.m_Communicator != null)
+                this.m_Communicator.Close();
             this.m_Communicator = null;
 
             // Fire the event to say that debugging has stopped.
@@ -106,7 +169,27 @@ namespace MOAI.Debug
 
                     // After we have set breakpoints, we must tell the game to
                     // continue executing.
-                    this.m_Communicator.
+                    this.m_Communicator.Send(new ContinueMessage());
+                }
+                else if (e.Message is BreakMessage)
+                {
+                    // This is the game signalling that it has hit a breakpoint
+                    // and is now paused.
+
+                    // Open the designer window for the specified file.
+                    Management.File f = this.p_Parent.ActiveProject.GetByPath((e.Message as BreakMessage).FileName);
+                    Designer d = this.p_Parent.DesignersManager.OpenDesigner(f);
+                    if (d is IDebuggable)
+                    {
+                        // We can only go to a specific line in the file if the
+                        // designer supports it.
+                        (d as IDebuggable).Debug(f, (e.Message as BreakMessage).LineNumber);
+                    }
+
+                    // Inform the IDE that the game is now paused.
+                    this.p_Paused = true;
+                    if (this.DebugPause != null)
+                        this.DebugPause(this, new EventArgs());
                 }
                 else if (e.Message is ExcpInternalMessage)
                 {
@@ -176,6 +259,18 @@ namespace MOAI.Debug
             get
             {
                 return this.p_Parent;
+            }
+        }
+        
+        /// <summary>
+        /// Whether the program is currently paused (only applies if
+        /// the program is running).
+        /// </summary>
+        public bool Paused
+        {
+            get
+            {
+                return this.p_Paused;
             }
         }
     }

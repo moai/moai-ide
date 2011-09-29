@@ -11,7 +11,7 @@ using MOAI.Operatables;
 
 namespace MOAI.Designers.Code
 {
-    public partial class Designer : MOAI.Designers.Designer, ICuttable, ICopyable, IPastable, IDeletable, ISavable
+    public partial class Designer : MOAI.Designers.Designer, ICuttable, ICopyable, IPastable, IDeletable, ISavable, IDebuggable
     {
         private List<LuaError> m_Errors = new List<LuaError>();
         private CodeEditor c_CodeEditor = null;
@@ -325,6 +325,21 @@ namespace MOAI.Designers.Code
                 this.File = new File(null, null, sfd.FileName);
                 (this as ISavable).SaveFile();
             }
+        }
+
+        #endregion
+
+        #region Debugging Interface
+
+        /// <summary>
+        /// Called when a breakpoint has been hit and we should highlight it.
+        /// </summary>
+        /// <param name="file">The file that the breakpoint occurred in (should be the same as the file owned by the debugger).</param>
+        /// <param name="line">The line number the breakpoint occurred on.</param>
+        public void Debug(File file, uint line)
+        {
+            this.c_CodeEditor.Lines[(int)line - 1].Range.SetIndicator(1);
+            this.c_CodeEditor.Lines[(int)line - 1].AddMarker(2);
         }
 
         #endregion

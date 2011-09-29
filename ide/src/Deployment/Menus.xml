@@ -84,8 +84,8 @@
       <menuitem text="Publish..." action="Solution.Publish" />
     </menuitem>
     <menuitem text="Debug">
-      <menuitem text="Start Debugging" action="Solution.StartWithDebug" />
-      <menuitem text="Start Without Debugging" action="Solution.StartWithoutDebug" />
+      <menuitem text="Start Debugging" action="Debugging.Start" />
+      <menuitem text="Start Without Debugging" action="Debugging.StartWithout" />
     </menuitem>
     <menuitem text="Tools">
       <menuitem text="Manage Tools" action="Tools.Manage" />
@@ -160,7 +160,9 @@
       <dynamic />
     </toolitem>
     <toolseperator />
-    <toolitem text="Debug" action="Solution.StartWithDebug" />
+    <toolitem text="Pause" action="Debugging.Start" />
+    <toolitem text="Pause" action="Debugging.Pause" />
+    <toolitem text="Stop" action="Debugging.Stop" />
     <toolcombo text="Build Mode" action="Selection.BuildMode" editable="false">
       <text type="MOAI.Compilation.BuildMode" value="MOAI.Compilation.BuildMode.DEBUG">Debug</text>
       <text type="MOAI.Compilation.BuildMode" value="MOAI.Compilation.BuildMode.RELEASE">Release</text>

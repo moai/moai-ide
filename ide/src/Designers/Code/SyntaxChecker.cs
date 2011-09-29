@@ -210,7 +210,7 @@ namespace MOAI.Designers.Code
         SCE_LUA_WORD_UNUSED = 15,
         SCE_LUA_WORD_MOAI_CLASSES = 16,
         SCE_LUA_WORD_CLASS_KEYWORDS = 17,
-        SCE_LUA_WORD7 = 18,
+        SCE_LUA_WORD_DEBUGGER = 18,
         SCE_LUA_WORD8 = 19
     }
 

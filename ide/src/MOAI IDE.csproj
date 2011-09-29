@@ -443,33 +443,6 @@
     <Content Include="Deployment\Completion Cache\root.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Deployment\Engines\Win32\Debug\glewinfo.exe">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Deployment\Engines\Win32\Debug\glut32.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Deployment\Engines\Win32\Debug\hexdump.exe">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Deployment\Engines\Win32\Debug\lua-5.1.3.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Deployment\Engines\Win32\Debug\lua.exe">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Deployment\Engines\Win32\Debug\luac.exe">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Deployment\Engines\Win32\Debug\moai-untz.exe">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Deployment\Engines\Win32\Debug\moai.exe">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Deployment\Engines\Win32\Debug\visualinfo.exe">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <Content Include="Deployment\Menus.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -516,9 +489,20 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="icon.ico" />
+    <None Include="Resources\current_line_s.png" />
+    <None Include="Resources\breakpoint_s.png" />
+    <None Include="Resources\breakpoint_ls.png" />
+    <None Include="Resources\current_line.png" />
+    <None Include="Resources\breakpoint.png" />
+    <None Include="Resources\stop.png" />
+    <None Include="Resources\pause.png" />
     <Compile Include="Cache\Clipboard.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Debug\Messages\PauseMessage.cs" />
+    <Compile Include="Debug\Messages\StopMessage.cs" />
+    <Compile Include="Designers\IDebuggable.cs" />
+    <Compile Include="Menus\Definitions\Debugging.cs" />
     <Compile Include="Operatables\ICopyable.cs" />
     <Compile Include="Operatables\ICuttable.cs" />
     <Compile Include="Operatables\IDeletable.cs" />
@@ -662,9 +646,6 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Deployment\Engines\Win32\Release\" />
-    <Folder Include="Deployment\Engines\Win64\Debug\" />
-    <Folder Include="Deployment\Engines\Win64\Release\" />
     <Folder Include="Designers\Image\" />
     <Folder Include="Designers\Model\" />
   </ItemGroup>

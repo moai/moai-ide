@@ -74,9 +74,9 @@ namespace MOAI.Designers.Code
                 this.ConfigurationManager.Language = "lua";
             else
                 this.ConfigurationManager.Language = "null";
-            this.Styles.LineNumber.BackColor = Color.White;
-            this.NativeInterface.SetFoldMarginColour(true, 0xE6F0FA); // Color.FromArgb(250, 240, 230)
-            this.NativeInterface.SetFoldMarginHiColour(true, 0xF5F5F5); // Color.FromArgb(245, 245, 245)
+            this.Styles.LineNumber.BackColor = Color.FromArgb(245, 245, 245); // Color.White;
+            this.NativeInterface.SetFoldMarginColour(true, 0xFFFFFF); // 0xE6F0FA Color.FromArgb(250, 240, 230)
+            this.NativeInterface.SetFoldMarginHiColour(true, 0xFFFFFF); // Color.FromArgb(245, 245, 245)
 
             // Configure autocomplete.
             this.CharAdded += new EventHandler<ScintillaNet.CharAddedEventArgs>(CodeEditor_CharAdded);
@@ -162,6 +162,14 @@ namespace MOAI.Designers.Code
             // Configure indicators.
             this.Indicators[0].Style = ScintillaNet.IndicatorStyle.Squiggle;
             this.Indicators[0].Color = Color.Red;
+            this.Indicators[1].Style = ScintillaNet.IndicatorStyle.RoundBox;
+            this.Indicators[1].Color = Color.FromArgb(255, 255, 127, 0);
+            this.Indicators[1].IsDrawnUnder = true;
+
+            // Configure markers.
+            this.Markers[0].SetImage(Properties.Resources.breakpoint_s);
+            this.Markers[1].SetImage(Properties.Resources.breakpoint_ls);
+            this.Markers[2].SetImage(Properties.Resources.current_line_s);
 
             if (highlight)
             {
