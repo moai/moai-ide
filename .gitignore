@@ -1,0 +1,7 @@
+ide/libraries/Scintilla.NET/.hg*
+ide/libraries/Scintilla.NET/Branches/*
+ide/libraries/Scintilla.NET/Releases/*
+ide/libraries/Scintilla.NET/Trunk/SCide/*
+ide/libraries/Scintilla.NET/Trunk/ScintillaNetSetup/*
+/ide/libraries/Scintilla.NET/Trunk/ScintillaNET/bin
+/ide/libraries/Scintilla.NET/Trunk/ScintillaNET/obj
