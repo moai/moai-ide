@@ -72,8 +72,8 @@ namespace MOAI
             this.c_ToolStripContainer.TopToolStripPanel.Controls.Add(this.p_Manager.MenuManager.GetToolBar());
 
             // Set up the workspace.
-            this.p_Manager.ToolsManager.Show(typeof(Tools.OutputTool));
             this.p_Manager.ToolsManager.Show(typeof(Tools.ErrorListTool));
+            this.p_Manager.ToolsManager.Show(typeof(Tools.ImmediateWindowTool));
             this.p_Manager.ToolsManager.Show(typeof(Tools.SolutionExplorerTool));
 
             // Show the start page.

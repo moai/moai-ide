@@ -47,3 +47,5 @@ end
 
 thread = MOAIThread.new ()
 thread:run ( twirlingTowardsFreedom )
+
+

@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.21022</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{5BA158DE-7E14-42BD-8ABE-2FFBCD1CC268}</ProjectGuid>
     <OutputType>WinExe</OutputType>
@@ -33,26 +33,6 @@
     <BootstrapperEnabled>true</BootstrapperEnabled>
     <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
     <ApplicationIcon>icon.ico</ApplicationIcon>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>..\bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <UseVSHostingProcess>true</UseVSHostingProcess>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>..\bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <UseVSHostingProcess>true</UseVSHostingProcess>
-    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
     <DebugSymbols>true</DebugSymbols>
@@ -97,10 +77,6 @@
     </Reference>
     <Reference Include="PresentationCore">
       <RequiredTargetFramework>3.0</RequiredTargetFramework>
-    </Reference>
-    <Reference Include="ScintillaNet, Version=2.2.3581.19319, Culture=neutral, PublicKeyToken=948d6c9751444115, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\libraries\Scintilla.NET\ScintillaNet.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
@@ -212,6 +188,10 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Tools\ConsoleTool.resx">
       <DependentUpon>ConsoleTool.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Tools\ImmediateWindowTool.resx">
+      <DependentUpon>ImmediateWindowTool.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Tools\ErrorListTool.resx">
@@ -429,6 +409,10 @@
       <Project>{B2886585-F158-4870-95A5-564007987F45}</Project>
       <Name>DockPanelSuite</Name>
     </ProjectReference>
+    <ProjectReference Include="..\libraries\Scintilla.NET\Trunk\ScintillaNET\ScintillaNET.csproj">
+      <Project>{F9B6DABD-BBC1-4638-8CE6-A5C9506BFDCB}</Project>
+      <Name>ScintillaNET</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Deployment\Completion Cache\Engine.Collections.xml">
@@ -489,6 +473,10 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="icon.ico" />
+    <None Include="Resources\breakpoint_s.bmp" />
+    <None Include="Resources\current_line_s.gif" />
+    <None Include="Resources\breakpoint_s.gif" />
+    <None Include="Resources\breakpoint_ls.gif" />
     <None Include="Resources\current_line_s.png" />
     <None Include="Resources\breakpoint_s.png" />
     <None Include="Resources\breakpoint_ls.png" />
@@ -609,6 +597,12 @@
     <Compile Include="Templates\Solutions\BaseTemplate.cs" />
     <Compile Include="Templates\Solutions\SolutionCreationData.cs" />
     <Compile Include="Templates\Solutions\StandardTemplate.cs" />
+    <Compile Include="Tools\ImmediateWindowTool.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Tools\ImmediateWindowTool.Designer.cs">
+      <DependentUpon>ImmediateWindowTool.cs</DependentUpon>
+    </Compile>
     <Compile Include="Tools\Tool.cs">
       <SubType>Form</SubType>
     </Compile>

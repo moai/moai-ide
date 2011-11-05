@@ -9,5 +9,6 @@ namespace MOAI.Designers
     public interface IDebuggable
     {
         void Debug(File file, uint line);
+        void EndDebug();
     }
 }

@@ -400,16 +400,7 @@
   <data name="breakpoint" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\breakpoint.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="breakpoint_ls" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\breakpoint_ls.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="breakpoint_s" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\breakpoint_s.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="current_line" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\current_line.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="current_line_s" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\current_line_s.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

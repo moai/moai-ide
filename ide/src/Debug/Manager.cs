@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using MOAI.Tools;
 using MOAI.Debug.Messages;
 using MOAI.Designers;
+using System.Threading;
 
 namespace MOAI.Debug
 {
@@ -16,6 +17,7 @@ namespace MOAI.Debug
         private MOAI.Manager p_Parent = null;
         private OutputTool m_OutputTool = null;
         private bool p_Paused = false;
+        private List<Breakpoint> p_Breakpoints = new List<Breakpoint>();
 
         private Process m_Process = null;
         private Communicator m_Communicator = null;
@@ -24,6 +26,9 @@ namespace MOAI.Debug
         public event EventHandler DebugPause;
         public event EventHandler DebugContinue;
         public event EventHandler DebugStop;
+
+        private IDebuggable m_ActiveDesigner = null;
+        private Breakpoint m_ActiveBreakpoint = null;
 
         /// <summary>
         /// Creates a new Manager class for managing debugging.
@@ -43,7 +48,16 @@ namespace MOAI.Debug
             // Check to see whether we are paused or not.
             if (this.p_Paused)
             {
-                // Unpause.
+                // Unpause, optionally sending an EndDebug call to
+                // the appropriate place.
+                if (this.m_ActiveDesigner != null)
+                {
+                    // Inform them we have stopped debugging.
+                    this.m_ActiveDesigner.EndDebug();
+                    this.m_ActiveDesigner = null;
+                }
+
+                // Now send the continue message.
                 this.m_Communicator.Send(new ContinueMessage());
                 this.p_Paused = false;
                 if (this.DebugContinue != null)
@@ -67,18 +81,40 @@ namespace MOAI.Debug
                 this.m_OutputTool.ClearLog();
 
             // Start the debug listening service.
-            this.m_Communicator = new Communicator(7018);
+            try
+            {
+                this.m_Communicator = new Communicator(7018);
+            }
+            catch (ConnectionFailureException)
+            {
+                // It seems we can't start the debugging communicator.  Stop debugging
+                // (forcibly terminate the process) and alert the user.
+                if (this.DebugStop != null)
+                    this.DebugStop(this, new EventArgs());
+                MessageBox.Show(@"MOAI was unable to start debugging because it could not
+listen or connect to the debugging socket.  Ensure there
+are no other instances of the MOAI engine running in debug
+mode and try again.", "Debugging Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
+            }
             this.m_Communicator.MessageArrived += new EventHandler<MessageEventArgs>(m_Communicator_MessageArrived);
 
             this.m_Process = new Process();
             this.m_Process.StartInfo.FileName = Path.Combine(Program.Manager.Settings["RootPath"], "Engines\\Win32\\Debug\\moai.exe");
             this.m_Process.StartInfo.WorkingDirectory = project.ProjectInfo.Directory.FullName;
             this.m_Process.StartInfo.UseShellExecute = false;
-            //this.m_Process.StartInfo.RedirectStandardOutput = true;
             this.m_Process.StartInfo.Arguments = "Main.lua";
-            //this.m_Process.OutputDataReceived += new DataReceivedEventHandler(m_Process_OutputDataReceived);
             this.m_Process.EnableRaisingEvents = true;
             this.m_Process.Exited += new EventHandler(m_Process_Exited);
+
+            // FIXME: Find some way to make this work.  We need the MOAI output to be completely unbuffered,
+            //        and changing things around in .NET and on the engine side seems to make absolutely no
+            //        difference what-so-ever.  My suggestion is to make the engine-side of the debugger replace
+            //        the Lua print() function and send it over the network directly back to the IDE (this
+            //        means that print would work even during remote debugging!)
+            //
+            // this.m_Process.StartInfo.RedirectStandardOutput = true;
+            // this.m_Process.OutputDataReceived += new DataReceivedEventHandler(m_Process_OutputDataReceived);
 
             this.m_Process.Start();
             //this.m_Process.BeginOutputReadLine();
@@ -137,6 +173,13 @@ namespace MOAI.Debug
         /// </summary>
         public void Stop()
         {
+            if (this.m_ActiveDesigner != null)
+            {
+                // Inform them we have stopped debugging.
+                this.m_ActiveDesigner.EndDebug();
+                this.m_ActiveDesigner = null;
+            }
+
             if (this.m_Process == null)
                 return;
             if (!this.m_Process.HasExited)
@@ -145,10 +188,70 @@ namespace MOAI.Debug
             if (this.m_Communicator != null)
                 this.m_Communicator.Close();
             this.m_Communicator = null;
+            this.p_Paused = false;
 
             // Fire the event to say that debugging has stopped.
             if (this.DebugStop != null)
                 this.DebugStop(this, new EventArgs());
+        }
+
+        /// <summary>
+        /// Evaluates the specified Lua string by sending a message to the engine while
+        /// debugging is paused.  If the engine is not paused, this method raises InvalidOperationException.
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public string Evaluate(string value)
+        {
+            // Check to make sure we're paused.
+            if (!this.Paused || !this.Running)
+                throw new InvalidOperationException();
+
+            // Attach a callback for MessageArrived.
+            object lck = new object();
+            bool waiting = true;
+            string result = null;
+            EventHandler<MessageEventArgs> ev = null;
+            ev = new EventHandler<MessageEventArgs>((sender, e) =>
+            {
+                // Ensure we don't get two callbacks on this event handler.
+                lock (lck)
+                {
+                    if (!waiting)
+                        return;
+
+                    // Check to see whether it's a ResultMessage.
+                    if (e.Message is ResultMessage)
+                    {
+                        result = (e.Message as ResultMessage).Value;
+                        waiting = false;
+
+                        // Unregister the event.
+                        this.m_Communicator.MessageArrived -= ev;
+                    }
+                }
+            });
+            this.m_Communicator.MessageArrived += ev;
+
+            // Ask the engine to evaluate something (we will get a
+            // response back via MessageArrived).
+            this.m_Communicator.Send(new EvaluateMessage { Evaluation = value });
+
+            // Do a short sleep in case we get the value back really
+            // quickly.
+            Thread.Sleep(100);
+
+            // Wait until we have a value, or when the time difference is greater
+            // than 10 seconds (after which we stop).
+            int seconds = 0;
+            while (seconds < 10 && waiting)
+            {
+                Thread.Sleep(1000);
+                seconds += 1;
+            }
+
+            // Return the result.
+            return result;
         }
 
         /// <summary>
@@ -166,6 +269,14 @@ namespace MOAI.Debug
                     // This is the game signalling that it is ready to receive
                     // message requests such as setting breakpoints before the
                     // game starts executing.
+                    foreach (Breakpoint b in this.p_Breakpoints)
+                    {
+                        BreakpointSetAlwaysMessage bm = new BreakpointSetAlwaysMessage();
+                        bm.FileName = b.SourceFile;
+                        bm.LineNumber = b.SourceLine;
+                        this.m_Communicator.Send(bm);
+                        Thread.Sleep(10); // Give the game a little bit of time to receive the message.
+                    }
 
                     // After we have set breakpoints, we must tell the game to
                     // continue executing.
@@ -184,6 +295,10 @@ namespace MOAI.Debug
                         // We can only go to a specific line in the file if the
                         // designer supports it.
                         (d as IDebuggable).Debug(f, (e.Message as BreakMessage).LineNumber);
+
+                        // Set current active line information so when we resume we can
+                        // send the EndDebug call.
+                        this.m_ActiveDesigner = d as IDebuggable;
                     }
 
                     // Inform the IDE that the game is now paused.
@@ -261,16 +376,39 @@ namespace MOAI.Debug
                 return this.p_Parent;
             }
         }
+
+        /// <summary>
+        /// Whether the program is currently running (either executing or
+        /// in a paused state).
+        /// </summary>
+        public bool Running
+        {
+            get
+            {
+                return (this.m_Process != null);
+            }
+        }
         
         /// <summary>
-        /// Whether the program is currently paused (only applies if
-        /// the program is running).
+        /// Whether the program is currently paused or not running.
         /// </summary>
         public bool Paused
         {
             get
             {
-                return this.p_Paused;
+                return (this.m_Process == null) || this.p_Paused;
+            }
+        }
+
+        /// <summary>
+        /// A list of breakpoints that should be used during the
+        /// execution of a program.
+        /// </summary>
+        public List<Breakpoint> Breakpoints
+        {
+            get
+            {
+                return this.p_Breakpoints;
             }
         }
     }

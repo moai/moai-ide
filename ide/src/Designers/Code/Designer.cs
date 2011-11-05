@@ -8,6 +8,7 @@ using System.Text;
 using System.Windows.Forms;
 using MOAI.Management;
 using MOAI.Operatables;
+using MOAI.Debug;
 
 namespace MOAI.Designers.Code
 {
@@ -18,6 +19,7 @@ namespace MOAI.Designers.Code
         private ToolTip c_ToolTip = new ToolTip();
         private string m_SavedText = null;
         private bool p_CanSave = false;
+        private int m_ActiveLine = 0;
 
         /// <summary>
         /// Creates a new code editor.
@@ -55,6 +57,7 @@ namespace MOAI.Designers.Code
             this.c_CodeEditor.SelectionChanged += new EventHandler(c_CodeEditor_SelectionChanged);
             this.c_CodeEditor.GotFocus += new EventHandler(c_CodeEditor_GotFocus);
             this.c_CodeEditor.LostFocus += new EventHandler(c_CodeEditor_LostFocus);
+            this.c_CodeEditor.MarginClick += new EventHandler<ScintillaNet.MarginClickEventArgs>(c_CodeEditor_MarginClick);
 
             // Initalize the context menu for the code editor.
             this.c_CodeEditor.ContextMenuStrip = new ContextMenuStrip();
@@ -74,6 +77,14 @@ namespace MOAI.Designers.Code
                 this.c_CodeEditor.Text = reader.ReadToEnd();
             }
             this.m_SavedText = this.c_CodeEditor.Text;
+
+            // Load the breakpoints.
+            string relname = PathHelpers.GetRelativePath(this.File.Project.ProjectInfo.DirectoryName, this.File.FileInfo.FullName);
+            List<Breakpoint> breakpoints = Program.Manager.DebugManager.Breakpoints.Where(result => result.SourceFile == relname).ToList();
+            foreach (Breakpoint b in breakpoints)
+            {
+                this.c_CodeEditor.Lines[(int)b.SourceLine - 1].AddMarker(0);
+            }
 
             // Detect if this file is read-only.
             this.p_CanSave = !this.File.FileInfo.IsReadOnly;
@@ -221,6 +232,42 @@ namespace MOAI.Designers.Code
             this.Manager.CacheManager.Context.Object = null;
         }
 
+        /// <summary>
+        /// This event is raised when the left-side margin is clicked (i.e.
+        /// the user wants to toggle breakpoint status of that line).
+        /// </summary>
+        /// <param name="sender">The sender of the event.</param>
+        /// <param name="e">The margin event information.</param>
+        void c_CodeEditor_MarginClick(object sender, ScintillaNet.MarginClickEventArgs e)
+        {
+            // Check to make sure we are not the fold margin.
+            if (e.Margin.IsFoldMargin)
+                return;
+
+            // Get the relative filename path.
+            string relname = PathHelpers.GetRelativePath(this.File.Project.ProjectInfo.DirectoryName, this.File.FileInfo.FullName);
+
+            // Check to see whether we are currently debugging (we can't add breakpoints during
+            // execution at this time).
+            if (Program.Manager.DebugManager.Running)
+                return;
+
+            // Check to see whether we should add or remove a breakpoint from this line.
+            if (Program.Manager.DebugManager.Breakpoints.Count(result => result.SourceFile == relname && result.SourceLine == e.Line.Number + 1) == 0)
+            {
+                // Add breakpoint.
+                Program.Manager.DebugManager.Breakpoints.Add(new Breakpoint(relname, (uint)e.Line.Number + 1));
+                e.Line.DeleteAllMarkers();
+                e.Line.AddMarker(0);
+            }
+            else
+            {
+                // Remove breakpoint.
+                Program.Manager.DebugManager.Breakpoints.RemoveAll(result => result.SourceFile == relname && result.SourceLine == e.Line.Number + 1);
+                e.Line.DeleteAllMarkers();
+            }
+        }
+
         #endregion
 
         #region Operation Implementions
@@ -338,8 +385,19 @@ namespace MOAI.Designers.Code
         /// <param name="line">The line number the breakpoint occurred on.</param>
         public void Debug(File file, uint line)
         {
-            this.c_CodeEditor.Lines[(int)line - 1].Range.SetIndicator(1);
+            this.c_CodeEditor.Lines[(int)line - 1].AddMarker(1);
             this.c_CodeEditor.Lines[(int)line - 1].AddMarker(2);
+            this.c_CodeEditor.GetRange(this.c_CodeEditor.Lines[(int)line - 1].StartPosition, this.c_CodeEditor.Lines[(int)line - 1].StartPosition).Select();
+            this.m_ActiveLine = (int)line - 1;
+        }
+
+        /// <summary>
+        /// Called when the breakpoint has continued and we should no longer highlight it.
+        /// </summary>
+        public void EndDebug()
+        {
+            this.c_CodeEditor.Lines[(int)this.m_ActiveLine].DeleteMarker(1);
+            this.c_CodeEditor.Lines[(int)this.m_ActiveLine].DeleteMarker(2);
         }
 
         #endregion

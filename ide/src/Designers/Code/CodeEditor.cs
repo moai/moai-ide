@@ -65,6 +65,9 @@ namespace MOAI.Designers.Code
             this.Margins.Left = 5;
             this.Margins[0].Width = 45;
             this.Margins[2].Width = 16;
+            this.Margins[0].IsClickable = false;
+            this.Margins[1].IsClickable = true;
+            this.Margins[2].IsClickable = true;
 
             // Set the dwell time.
             this.NativeInterface.SetMouseDwellTime(200);
@@ -80,7 +83,8 @@ namespace MOAI.Designers.Code
 
             // Configure autocomplete.
             this.CharAdded += new EventHandler<ScintillaNet.CharAddedEventArgs>(CodeEditor_CharAdded);
-            this.AutoComplete.RegisterImages(Program.Manager.CacheManager.AutoComplete.Images, Color.Black);
+            // TODO: Make the AutoComplete images less than 56 colours.
+            //this.AutoComplete.RegisterImages(Program.Manager.CacheManager.AutoComplete.Images, Color.Black);
 
             // Configure keywords.
             this.SetKeywords(LexerKeywordGroupConstants.LUA_KEYWORDS,
@@ -167,9 +171,10 @@ namespace MOAI.Designers.Code
             this.Indicators[1].IsDrawnUnder = true;
 
             // Configure markers.
-            this.Markers[0].SetImage(Properties.Resources.breakpoint_s);
-            this.Markers[1].SetImage(Properties.Resources.breakpoint_ls);
-            this.Markers[2].SetImage(Properties.Resources.current_line_s);
+            this.Markers[0].SetImage(Properties.Resources.breakpoint);
+            this.Markers[1].SetImage(Properties.Resources.current_line);
+            this.Markers[2].Symbol = ScintillaNet.MarkerSymbol.Background;
+            this.Markers[2].BackColor = Color.Yellow;
 
             if (highlight)
             {

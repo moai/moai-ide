@@ -8,7 +8,7 @@ namespace MOAI.Debug
     public class Breakpoint
     {
         private string p_SourceFile;
-        private int p_SourceLine;
+        private uint p_SourceLine;
 
         /// <summary>
         /// Creates a new Breakpoint object that represents a debugging
@@ -16,7 +16,7 @@ namespace MOAI.Debug
         /// </summary>
         /// <param name="file">The file which the breakpoint should be placed in.</param>
         /// <param name="line">The line number on which to break.</param>
-        public Breakpoint(string file, int line)
+        public Breakpoint(string file, uint line)
         {
             this.p_SourceFile = file;
             this.p_SourceLine = line;
@@ -36,7 +36,7 @@ namespace MOAI.Debug
         /// <summary>
         /// The line on which this breakpoint will be triggered.
         /// </summary>
-        public int SourceLine
+        public uint SourceLine
         {
             get
             {

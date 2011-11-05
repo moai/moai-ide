@@ -61,6 +61,14 @@ namespace MOAI.Debug
         }
     }
 
+    public class ConnectionFailureException : Exception
+    {
+        public ConnectionFailureException(SocketException e)
+            : base("The debugging communicator was unable to listen or connect to the interface.", e)
+        {
+        }
+    }
+
     public class Communicator
     {
         private TcpListener m_Listener = null;
@@ -76,7 +84,14 @@ namespace MOAI.Debug
         public Communicator(int port)
         {
             this.m_Listener = new TcpListener(port);
-            this.m_Listener.Start();
+            try
+            {
+                this.m_Listener.Start();
+            }
+            catch (SocketException e)
+            {
+                throw new ConnectionFailureException(e);
+            }
 
             this.m_Thread = new Thread(ListenThread);
             this.m_Thread.Start();
