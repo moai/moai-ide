@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using DockPanelSuite;
+using Newtonsoft.Json.Linq;
 
 namespace MOAI.Tools
 {
@@ -29,7 +30,7 @@ namespace MOAI.Tools
         /// </summary>
         void DebugManager_DebugStart(object sender, EventArgs e)
         {
-            this.c_ImmediateTextBox.Enabled = false;
+            this.c_ImmediateTextBox.ReadOnly = true;
         }
 
         /// <summary>
@@ -38,7 +39,7 @@ namespace MOAI.Tools
         /// </summary>
         void DebugManager_DebugContinue(object sender, EventArgs e)
         {
-            this.c_ImmediateTextBox.Enabled = false;
+            this.c_ImmediateTextBox.ReadOnly = true;
         }
 
         /// <summary>
@@ -47,7 +48,7 @@ namespace MOAI.Tools
         /// </summary>
         void DebugManager_DebugPause(object sender, EventArgs e)
         {
-            this.c_ImmediateTextBox.Enabled = true;
+            this.c_ImmediateTextBox.ReadOnly = false;
         }
 
         /// <summary>
@@ -56,7 +57,7 @@ namespace MOAI.Tools
         /// </summary>
         void DebugManager_DebugStop(object sender, EventArgs e)
         {
-            this.c_ImmediateTextBox.Enabled = false;
+            this.c_ImmediateTextBox.ReadOnly = true;
         }
 
         /// <summary>
@@ -77,26 +78,117 @@ namespace MOAI.Tools
         private void c_ImmediateTextBox_KeyDown(object sender, KeyEventArgs e)
         {
             // Only pass keystrokes in if the user is typing on the last line of the control.
-            if (this.c_ImmediateTextBox.GetLineFromCharIndex(this.c_ImmediateTextBox.SelectionStart) != this.c_ImmediateTextBox.Lines.Count() - 1 ||
-                this.c_ImmediateTextBox.SelectionLength != 0)
+            if ((this.c_ImmediateTextBox.GetLineFromCharIndex(this.c_ImmediateTextBox.SelectionStart) != this.c_ImmediateTextBox.Lines.Count() - 1 &&
+                this.c_ImmediateTextBox.Lines.Count() != 0 )||
+                this.c_ImmediateTextBox.SelectionLength != 0 ||
+                this.c_ImmediateTextBox.ReadOnly ||
+                (e.KeyCode == Keys.Back &&
+                this.c_ImmediateTextBox.Lines[this.c_ImmediateTextBox.GetLineFromCharIndex(this.c_ImmediateTextBox.SelectionStart)].Length == 0))
             {
-                e.SuppressKeyPress = true;
-                return;
+                if (e.KeyCode != Keys.Up &&
+                    e.KeyCode != Keys.Down &&
+                    e.KeyCode != Keys.Left &&
+                    e.KeyCode != Keys.Right &&
+                    e.KeyCode != Keys.Home &&
+                    e.KeyCode != Keys.End &&
+                    e.KeyCode != Keys.PageUp &&
+                    e.KeyCode != Keys.PageDown)
+                {
+                    e.SuppressKeyPress = true;
+                    return;
+                }
             }
 
             // If the user pressed enter on the last line, evaluate the expression.
             if (e.KeyCode == Keys.Enter)
             {
                 string value = this.c_ImmediateTextBox.Lines[this.c_ImmediateTextBox.GetLineFromCharIndex(this.c_ImmediateTextBox.SelectionStart)];
-                string result = Program.Manager.DebugManager.Evaluate(value);
-                this.c_ImmediateTextBox.Text += "\r\n";
-                if (result == null)
-                    this.c_ImmediateTextBox.Text += "Evaluation timed out.";
+                if (!Program.Manager.DebugManager.Paused || !Program.Manager.DebugManager.Running)
+                    this.c_ImmediateTextBox.AppendText("\r\nYou can't execute statements while the game is not paused.");
                 else
-                    this.c_ImmediateTextBox.Text += result;
+                {
+                    // Set the immediate window to readonly.
+                    this.c_ImmediateTextBox.AppendText("\r\n");
+                    this.c_ImmediateTextBox.ReadOnly = true;
+
+                    // Ask for the expression to be evaluated with a callback.
+                    Program.Manager.DebugManager.Evaluate(value, (result) =>
+                    {
+                        this.Invoke(new Action<object>(this.HandleCallback), result);
+                    });
+                }
                 e.SuppressKeyPress = true;
                 return;
             }
+        }
+
+        private void HandleCallback(object result)
+        {
+            try
+            {
+                string data = this.FormatResult(result);
+                if (!data.EndsWith("\r\n")) data += "\r\n";
+                this.c_ImmediateTextBox.ReadOnly = false;
+                this.c_ImmediateTextBox.AppendText(data);
+            }
+            catch (Exception e)
+            {
+                this.c_ImmediateTextBox.AppendText("\r\n");
+                this.c_ImmediateTextBox.ReadOnly = false;
+            }
+        }
+
+        /// <summary>
+        /// Formats the specified JSON object as a string.
+        /// </summary>
+        /// <param name="result">The JSON object to format.</param>
+        /// <returns></returns>
+        private string FormatResult(object result)
+        {
+            return this.FormatResult(result, "");
+        }
+
+        /// <summary>
+        /// Formats the specified JSON object as a string.
+        /// </summary>
+        /// <param name="result">The JSON object to format.</param>
+        /// <param name="indent">The indent of the string.</param>
+        /// <returns></returns>
+        private string FormatResult(object result, string indent)
+        {
+            if (result == null) return "null";
+            JToken json = (result as JToken);
+            if (json == null) return result.ToString();
+
+            if (json is JProperty)
+            {
+                return (json as JProperty).Name + ": " + this.FormatResult((json as JProperty).Value, indent).Trim();
+            }
+            else if (json is JContainer)
+            {
+                if ((json as JContainer).Count() == 0)
+                {
+                    if (indent == "")
+                        return "nil";
+                    else
+                        return "{}";
+                }
+                int i = 0;
+                string s = "";
+                s += indent + "{\r\n";
+                foreach (object o in (json as JContainer))
+                {
+                    s += indent + "    " + this.FormatResult(o, indent + "    ");
+                    i += 1;
+                    if (i < (json as JContainer).Count())
+                        s += ",";
+                    s += "\r\n";
+                }
+                s += indent + "}\r\n";
+                return s;
+            }
+            else
+                return json.ToString();
         }
     }
 }

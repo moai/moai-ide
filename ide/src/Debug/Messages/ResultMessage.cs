@@ -7,7 +7,7 @@ namespace MOAI.Debug.Messages
 {
     public class ResultMessage : Message
     {
-        private string p_Value = null;
+        private object p_Value = null;
 
         /// <summary>
         /// The identifier for this type of message.
@@ -18,7 +18,7 @@ namespace MOAI.Debug.Messages
         /// <summary>
         /// The Lua value attached to this result.
         /// </summary>
-        public string Value
+        public object Value
         {
             get
             {

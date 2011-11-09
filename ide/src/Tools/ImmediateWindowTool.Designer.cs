@@ -40,6 +40,7 @@
             this.c_ImmediateTextBox.Location = new System.Drawing.Point(0, 0);
             this.c_ImmediateTextBox.Multiline = true;
             this.c_ImmediateTextBox.Name = "c_ImmediateTextBox";
+            this.c_ImmediateTextBox.ReadOnly = true;
             this.c_ImmediateTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.c_ImmediateTextBox.Size = new System.Drawing.Size(802, 210);
             this.c_ImmediateTextBox.TabIndex = 0;

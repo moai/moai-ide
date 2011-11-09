@@ -173,11 +173,14 @@ mode and try again.", "Debugging Failed", MessageBoxButtons.OK, MessageBoxIcon.E
         /// </summary>
         public void Stop()
         {
-            if (this.m_ActiveDesigner != null)
+            if (this.m_ActiveDesigner != null && !Program.Manager.IDEWindow.IsDisposed)
             {
                 // Inform them we have stopped debugging.
-                this.m_ActiveDesigner.EndDebug();
-                this.m_ActiveDesigner = null;
+                (this.m_ActiveDesigner as Designer).Invoke(new Action(() =>
+                    {
+                        this.m_ActiveDesigner.EndDebug();
+                        this.m_ActiveDesigner = null;
+                    }));
             }
 
             if (this.m_Process == null)
@@ -199,59 +202,35 @@ mode and try again.", "Debugging Failed", MessageBoxButtons.OK, MessageBoxIcon.E
         /// Evaluates the specified Lua string by sending a message to the engine while
         /// debugging is paused.  If the engine is not paused, this method raises InvalidOperationException.
         /// </summary>
-        /// <param name="value"></param>
-        /// <returns></returns>
-        public string Evaluate(string value)
+        /// <param name="expression">The expression to evaluate.</param>
+        /// <param name="callback">The callback to issue when the expression has been evaluated.</param>
+        public void Evaluate(string expression, Action<object> callback)
         {
             // Check to make sure we're paused.
             if (!this.Paused || !this.Running)
                 throw new InvalidOperationException();
 
             // Attach a callback for MessageArrived.
-            object lck = new object();
-            bool waiting = true;
-            string result = null;
             EventHandler<MessageEventArgs> ev = null;
             ev = new EventHandler<MessageEventArgs>((sender, e) =>
             {
-                // Ensure we don't get two callbacks on this event handler.
-                lock (lck)
+                // Check to see whether it's a ResultMessage.
+                if (e.Message is ResultMessage)
                 {
-                    if (!waiting)
-                        return;
+                    // Unregister the event.
+                    this.m_Communicator.MessageArrived -= ev;
 
-                    // Check to see whether it's a ResultMessage.
-                    if (e.Message is ResultMessage)
-                    {
-                        result = (e.Message as ResultMessage).Value;
-                        waiting = false;
-
-                        // Unregister the event.
-                        this.m_Communicator.MessageArrived -= ev;
-                    }
+                    // TODO: It would be good if the ResultMessage included the
+                    //       original expression so we can be sure that the value
+                    //       belongs to us.
+                    callback((e.Message as ResultMessage).Value);
                 }
             });
             this.m_Communicator.MessageArrived += ev;
 
             // Ask the engine to evaluate something (we will get a
             // response back via MessageArrived).
-            this.m_Communicator.Send(new EvaluateMessage { Evaluation = value });
-
-            // Do a short sleep in case we get the value back really
-            // quickly.
-            Thread.Sleep(100);
-
-            // Wait until we have a value, or when the time difference is greater
-            // than 10 seconds (after which we stop).
-            int seconds = 0;
-            while (seconds < 10 && waiting)
-            {
-                Thread.Sleep(1000);
-                seconds += 1;
-            }
-
-            // Return the result.
-            return result;
+            this.m_Communicator.Send(new EvaluateMessage { Evaluation = expression });
         }
 
         /// <summary>
