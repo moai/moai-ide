@@ -185,7 +185,7 @@ namespace MOAI.Management
             string[] files = new string[] { this.FolderInfo.FullName };
 
             // This process is sourced from http://web.archive.org/web/20070218155439/http://blogs.wdevs.com/IDecember/archive/2005/10/27/10979.aspx.
-            System.Windows.IDataObject data = new System.Windows.DataObject(System.Windows.DataFormats.FileDrop, files);
+            System.Windows.Forms.IDataObject data = new System.Windows.Forms.DataObject(System.Windows.Forms.DataFormats.FileDrop, files);
             MemoryStream stream = new MemoryStream(4);
             byte[] bytes = new byte[] { 2, 0, 0, 0 };
             stream.Write(bytes, 0, bytes.Length);
@@ -228,7 +228,7 @@ namespace MOAI.Management
             string[] files = new string[] { this.FolderInfo.FullName };
 
             // This process is sourced from http://web.archive.org/web/20070218155439/http://blogs.wdevs.com/IDecember/archive/2005/10/27/10979.aspx.
-            System.Windows.IDataObject data = new System.Windows.DataObject(System.Windows.DataFormats.FileDrop, files);
+            System.Windows.Forms.IDataObject data = new System.Windows.Forms.DataObject(System.Windows.Forms.DataFormats.FileDrop, files);
             MemoryStream stream = new MemoryStream(4);
             byte[] bytes = new byte[] { 5, 0, 0, 0 };
             stream.Write(bytes, 0, bytes.Length);
@@ -243,8 +243,8 @@ namespace MOAI.Management
         {
             // We are copying a set of files or folders into a project using the solution
             // explorer.
-            System.Windows.IDataObject data = MOAI.Cache.Clipboard.Contents;
-            if (!data.GetDataPresent(System.Windows.DataFormats.FileDrop))
+            System.Windows.Forms.IDataObject data = MOAI.Cache.Clipboard.Contents;
+            if (!data.GetDataPresent(System.Windows.Forms.DataFormats.FileDrop))
                 return;
 
             // Check to see whether we are doing a cut or copy.
@@ -256,7 +256,7 @@ namespace MOAI.Management
             string folder = this.FolderInfo.FullName;
 
             // Move or copy the selected files.
-            string[] files = data.GetData(System.Windows.DataFormats.FileDrop) as string[];
+            string[] files = data.GetData(System.Windows.Forms.DataFormats.FileDrop) as string[];
             foreach (FileInfo f in files.Select(input => new FileInfo(input)))
             {
                 // Check to make sure the file doesn't already exist in the destination.

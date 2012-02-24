@@ -106,7 +106,7 @@ namespace MOAI.Management
             string[] files = new string[] { this.FileInfo.FullName };
 
             // This process is sourced from http://web.archive.org/web/20070218155439/http://blogs.wdevs.com/IDecember/archive/2005/10/27/10979.aspx.
-            System.Windows.IDataObject data = new System.Windows.DataObject(System.Windows.DataFormats.FileDrop, files);
+            System.Windows.Forms.IDataObject data = new System.Windows.Forms.DataObject(System.Windows.Forms.DataFormats.FileDrop, files);
             MemoryStream stream = new MemoryStream(4);
             byte[] bytes = new byte[] { 2, 0, 0, 0 };
             stream.Write(bytes, 0, bytes.Length);
@@ -149,7 +149,7 @@ namespace MOAI.Management
             string[] files = new string[] { this.FileInfo.FullName };
 
             // This process is sourced from http://web.archive.org/web/20070218155439/http://blogs.wdevs.com/IDecember/archive/2005/10/27/10979.aspx.
-            System.Windows.IDataObject data = new System.Windows.DataObject(System.Windows.DataFormats.FileDrop, files);
+            System.Windows.Forms.IDataObject data = new System.Windows.Forms.DataObject(System.Windows.Forms.DataFormats.FileDrop, files);
             MemoryStream stream = new MemoryStream(4);
             byte[] bytes = new byte[] { 5, 0, 0, 0 };
             stream.Write(bytes, 0, bytes.Length);

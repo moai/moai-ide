@@ -5,7 +5,6 @@ using System.Text;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using System.IO;
-using System.Windows.Media.Imaging;
 using System.Collections.Specialized;
 using System.Security;
 
@@ -40,15 +39,15 @@ namespace MOAI.Cache
         /// <summary>
         /// Gets or sets the contents of the clipboard.
         /// </summary>
-        public static System.Windows.IDataObject Contents
+        public static System.Windows.Forms.IDataObject Contents
         {
             get
             {
-                return System.Windows.Clipboard.GetDataObject();
+                return System.Windows.Forms.Clipboard.GetDataObject();
             }
             set
             {
-                System.Windows.Clipboard.SetDataObject(value, true);
+                System.Windows.Forms.Clipboard.SetDataObject(value, true);
             }
         }
 
@@ -59,14 +58,14 @@ namespace MOAI.Cache
         {
             get
             {
-                if (System.Windows.Clipboard.ContainsAudio())
-                    return System.Windows.Clipboard.GetAudioStream();
+                if (System.Windows.Forms.Clipboard.ContainsAudio())
+                    return System.Windows.Forms.Clipboard.GetAudioStream();
                 else
                     return null;
             }
             set
             {
-                System.Windows.Clipboard.SetAudio(value);
+                System.Windows.Forms.Clipboard.SetAudio(value);
             }
         }
 
@@ -77,14 +76,14 @@ namespace MOAI.Cache
         {
             get
             {
-                if (System.Windows.Clipboard.ContainsFileDropList())
-                    return System.Windows.Clipboard.GetFileDropList();
+                if (System.Windows.Forms.Clipboard.ContainsFileDropList())
+                    return System.Windows.Forms.Clipboard.GetFileDropList();
                 else
                     return null;
             }
             set
             {
-                System.Windows.Clipboard.SetFileDropList(value);
+                System.Windows.Forms.Clipboard.SetFileDropList(value);
             }
         }
 
@@ -95,14 +94,14 @@ namespace MOAI.Cache
         {
             get
             {
-                if (System.Windows.Clipboard.ContainsText())
-                    return System.Windows.Clipboard.GetText();
+                if (System.Windows.Forms.Clipboard.ContainsText())
+                    return System.Windows.Forms.Clipboard.GetText();
                 else
                     return null;
             }
             set
             {
-                System.Windows.Clipboard.SetText(value);
+                System.Windows.Forms.Clipboard.SetText(value);
             }
         }
 
@@ -111,7 +110,7 @@ namespace MOAI.Cache
         /// </summary>
         public static void Clear()
         {
-            System.Windows.Clipboard.Clear();
+            System.Windows.Forms.Clipboard.Clear();
         }
     }
 
@@ -120,9 +119,9 @@ namespace MOAI.Cache
     /// </summary>
     public class ClipboardEventArgs : EventArgs
     {
-        public System.Windows.IDataObject DataObject { get; protected set; }
+        public System.Windows.Forms.IDataObject DataObject { get; protected set; }
 
-        public ClipboardEventArgs(System.Windows.IDataObject data)
+        public ClipboardEventArgs(System.Windows.Forms.IDataObject data)
         {
             this.DataObject = data;
         }
