@@ -132,7 +132,7 @@ namespace MOAI.Cache
                     t = Tree.FromXml(reader);
                 }
             }
-            catch (FileNotFoundException) { }
+            catch (Exception) { }
 
             if (t == null)
                 // TODO: Add some error handling here.
