@@ -170,10 +170,6 @@
       <DependentUpon>ImmediateWindowTool.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Tools\ErrorListTool.resx">
-      <DependentUpon>ErrorListTool.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="Tools\OutputTool.resx">
       <DependentUpon>OutputTool.cs</DependentUpon>
       <SubType>Designer</SubType>
