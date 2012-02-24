@@ -8,8 +8,8 @@
     <ProjectGuid>{5BA158DE-7E14-42BD-8ABE-2FFBCD1CC268}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Moai.IDE</RootNamespace>
-    <AssemblyName>Moai.IDE</AssemblyName>
+    <RootNamespace>Moai</RootNamespace>
+    <AssemblyName>Moai</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetZone>LocalIntranet</TargetZone>

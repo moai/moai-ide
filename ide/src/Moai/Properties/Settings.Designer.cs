@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Moai.IDE.Properties {
+namespace Moai.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]

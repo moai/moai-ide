@@ -15,7 +15,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Moai.Portability.Mono", "..
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Moai.Portability.Windows", "..\ide\src\Moai.Portability.Windows\Moai.Portability.Windows.csproj", "{ADD65F3B-E510-4BC2-BD3F-D8C4E8D2D752}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Moai.IDE", "..\ide\src\Moai\Moai.IDE.csproj", "{5BA158DE-7E14-42BD-8ABE-2FFBCD1CC268}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Moai", "..\ide\src\Moai\Moai.csproj", "{5BA158DE-7E14-42BD-8ABE-2FFBCD1CC268}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
