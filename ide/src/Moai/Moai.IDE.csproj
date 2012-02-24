@@ -377,11 +377,11 @@
     <None Include="Resources\information.png" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\MOAI.Versioning\Moai.Versioning.csproj">
+    <ProjectReference Include="..\Moai.Versioning\Moai.Versioning.csproj">
       <Project>{788589BB-501E-4645-9805-BE2DC1FC73C0}</Project>
       <Name>Moai.Versioning</Name>
     </ProjectReference>
-    <ProjectReference Include="..\MOAI.Portability\Moai.Portability.csproj">
+    <ProjectReference Include="..\Moai.Portability\Moai.Portability.csproj">
       <Project>{2DBB5C1E-84C9-4FDB-8284-4D8AA53C2887}</Project>
       <Name>Moai.Portability</Name>
     </ProjectReference>

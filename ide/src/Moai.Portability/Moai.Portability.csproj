@@ -55,7 +55,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\MOAI.Versioning\Moai.Versioning.csproj">
+    <ProjectReference Include="..\Moai.Versioning\Moai.Versioning.csproj">
       <Project>{788589BB-501E-4645-9805-BE2DC1FC73C0}</Project>
       <Name>Moai.Versioning</Name>
     </ProjectReference>
