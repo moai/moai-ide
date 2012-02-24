@@ -7,15 +7,15 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DockPanelSuite", "..\ide\li
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScintillaNET", "..\ide\libraries\Scintilla.NET\Trunk\ScintillaNET\ScintillaNET.csproj", "{F9B6DABD-BBC1-4638-8CE6-A5C9506BFDCB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Moai.Versioning", "..\ide\src\MOAI.Versioning\Moai.Versioning.csproj", "{788589BB-501E-4645-9805-BE2DC1FC73C0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Moai.Versioning", "..\ide\src\Moai.Versioning\Moai.Versioning.csproj", "{788589BB-501E-4645-9805-BE2DC1FC73C0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Moai.Portability", "..\ide\src\MOAI.Portability\Moai.Portability.csproj", "{2DBB5C1E-84C9-4FDB-8284-4D8AA53C2887}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Moai.Portability", "..\ide\src\Moai.Portability\Moai.Portability.csproj", "{2DBB5C1E-84C9-4FDB-8284-4D8AA53C2887}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Moai.Portability.Mono", "..\ide\src\MOAI.Portability.Mono\Moai.Portability.Mono.csproj", "{90D64BDF-E595-46C8-AC42-8DCE675428ED}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Moai.Portability.Mono", "..\ide\src\Moai.Portability.Mono\Moai.Portability.Mono.csproj", "{90D64BDF-E595-46C8-AC42-8DCE675428ED}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Moai.Portability.Windows", "..\ide\src\MOAI.Portability.Windows\Moai.Portability.Windows.csproj", "{ADD65F3B-E510-4BC2-BD3F-D8C4E8D2D752}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Moai.Portability.Windows", "..\ide\src\Moai.Portability.Windows\Moai.Portability.Windows.csproj", "{ADD65F3B-E510-4BC2-BD3F-D8C4E8D2D752}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Moai.IDE", "..\ide\src\MOAI\Moai.IDE.csproj", "{5BA158DE-7E14-42BD-8ABE-2FFBCD1CC268}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Moai.IDE", "..\ide\src\Moai\Moai.IDE.csproj", "{5BA158DE-7E14-42BD-8ABE-2FFBCD1CC268}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -75,6 +75,6 @@ Global
 		{F9B6DABD-BBC1-4638-8CE6-A5C9506BFDCB} = {F580CEAF-50F5-4088-9240-CD3FAB7389AC}
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
-		StartupItem = ..\ide\src\MOAI\MOAI.csproj
+		StartupItem = ..\ide\src\Moai\Moai.csproj
 	EndGlobalSection
 EndGlobal
