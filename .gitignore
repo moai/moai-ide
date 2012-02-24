@@ -5,3 +5,9 @@ ide/libraries/Scintilla.NET/Trunk/SCide/*
 ide/libraries/Scintilla.NET/Trunk/ScintillaNetSetup/*
 /ide/libraries/Scintilla.NET/Trunk/ScintillaNET/bin
 /ide/libraries/Scintilla.NET/Trunk/ScintillaNET/obj
+vs2008/moai-harness/Debug/BuildLog.htm
+*.idb
+*.pdb
+*.user
+*.suo
+*.ncb

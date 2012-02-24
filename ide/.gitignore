@@ -3,10 +3,10 @@
 
 /libraries/*/bin
 /libraries/*/obj
-/src/Deployment/Engines/*
-/src/Deployment/Framework/*
-/src/bin/*
-/src/obj/*
+/src/MOAI/Deployment/Engines/*
+/src/MOAI/Deployment/Framework/*
+/src/*/bin/*
+/src/*/obj/*
 
 *.ncb
 *.suo

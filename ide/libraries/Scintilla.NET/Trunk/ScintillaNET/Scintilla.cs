@@ -1057,8 +1057,7 @@ namespace ScintillaNet
 			Encoding.GetEncoding(932),	//	shift_jis - Japanese (Shift-JIS) 
 			Encoding.GetEncoding(936),	//	gb2312 - Chinese Simplified (GB2312)
 			Encoding.GetEncoding(949),	//	ks_c_5601-1987  - Korean
-			Encoding.GetEncoding(950),	//	big5 - Chinese Traditional (Big5) 
-			Encoding.GetEncoding(1361)	//	Johab - Korean (Johab)
+			Encoding.GetEncoding(950) 	//	big5 - Chinese Traditional (Big5) 
 		};
 
 		private Encoding _encoding;
