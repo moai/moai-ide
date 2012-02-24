@@ -125,10 +125,14 @@ namespace MOAI.Cache
         public void Import()
         {
             Tree t = null;
-            using (XmlReader reader = XmlReader.Create(Program.Manager.Settings["RootPath"] + "\\Completion Cache\\root.xml"))
+            try
             {
-                t = Tree.FromXml(reader);
+                using (XmlReader reader = XmlReader.Create(Program.Manager.Settings["RootPath"] + "\\Completion Cache\\root.xml"))
+                {
+                    t = Tree.FromXml(reader);
+                }
             }
+            catch (FileNotFoundException) { }
 
             if (t == null)
                 // TODO: Add some error handling here.

@@ -111,13 +111,13 @@
     <Compile Include="Management\NewImageForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Management\NewImageForm.designer.cs">
+    <Compile Include="Management\NewImageForm.Designer.cs">
       <DependentUpon>NewImageForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Management\NewSolutionForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Management\NewSolutionForm.designer.cs">
+    <Compile Include="Management\NewSolutionForm.Designer.cs">
       <DependentUpon>NewSolutionForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Management\Project.cs" />
