@@ -127,7 +127,7 @@ namespace MOAI.Cache
             Tree t = null;
             try
             {
-                using (XmlReader reader = XmlReader.Create(Program.Manager.Settings["RootPath"] + "\\Completion Cache\\root.xml"))
+                using (XmlReader reader = XmlReader.Create(Program.Manager.Settings["RootPath"] + Path.DirectorySeparatorChar + "Completion Cache" + Path.DirectorySeparatorChar + "root.xml"))
                 {
                     t = Tree.FromXml(reader);
                 }
@@ -189,7 +189,7 @@ namespace MOAI.Cache
             Tree t = null;
             try
             {
-                using (XmlReader reader = XmlReader.Create(Program.Manager.Settings["RootPath"] + "\\Completion Cache\\" + bas + this.p_Name + ".xml"))
+                using (XmlReader reader = XmlReader.Create(Program.Manager.Settings["RootPath"] + Path.DirectorySeparatorChar + "Completion Cache" + Path.DirectorySeparatorChar + bas + this.p_Name + ".xml"))
                 {
                     t = Tree.FromXml(reader);
                 }

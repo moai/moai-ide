@@ -43,12 +43,12 @@ namespace MOAI
             this.p_Settings = new Dictionary<string, string>();
             this.p_Settings["RootPath"] = Environment.CurrentDirectory;
             this.p_Settings["DefaultProjectArea"] = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)
-                                                + "\\MOAI Projects";
+                                                + Path.DirectorySeparatorChar + "MOAI Projects";
 
             // This is a special check that detects whether we're running underneath a debugger, and adjusts the working directory
             // if required.
             if (Debugger.IsAttached || Directory.Exists("Deployment"))
-                this.p_Settings["RootPath"] = Environment.CurrentDirectory + "\\Deployment";
+                this.p_Settings["RootPath"] = Environment.CurrentDirectory + Path.DirectorySeparatorChar + "Deployment";
         }
 
         /// <summary>

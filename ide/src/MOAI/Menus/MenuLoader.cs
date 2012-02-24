@@ -26,7 +26,7 @@ namespace MOAI.Menus
         {
             this.m_Manager = manager;
 
-            if (!File.Exists(Program.Manager.Settings["RootPath"] + "\\Menus.xml"))
+            if (!File.Exists(Program.Manager.Settings["RootPath"] + Path.DirectorySeparatorChar + "Menus.xml"))
             {
                 throw new Exception("Menu information file was not found.  Please make sure Menus.xml exists in the application directory.");
             }
@@ -36,7 +36,7 @@ namespace MOAI.Menus
             //this.MainMenu.Renderer = new MenuRenderer();
             //this.ToolBar.Renderer = new ToolBarRenderer();
 
-            this.m_Reader = XmlReader.Create(new StreamReader(Program.Manager.Settings["RootPath"] + "\\Menus.xml"));
+            this.m_Reader = XmlReader.Create(new StreamReader(Program.Manager.Settings["RootPath"] + Path.DirectorySeparatorChar + "Menus.xml"));
             
             while (this.m_Reader.Read())
             {

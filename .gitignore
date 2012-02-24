@@ -11,3 +11,6 @@ vs2008/moai-harness/Debug/BuildLog.htm
 *.user
 *.suo
 *.ncb
+*.pidb
+*.userprefs
+*.resources

@@ -221,7 +221,7 @@ namespace MOAI.Management
                     string path = "";
                     foreach (string s in sf)
                     {
-                        path += s + "\\";
+                        path += s + Path.DirectorySeparatorChar;
                         bool handled = false;
                         if (ff == null)
                         {

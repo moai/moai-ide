@@ -100,7 +100,7 @@ mode and try again.", "Debugging Failed", MessageBoxButtons.OK, MessageBoxIcon.E
             this.m_Communicator.MessageArrived += new EventHandler<MessageEventArgs>(m_Communicator_MessageArrived);
 
             this.m_Process = new Process();
-            this.m_Process.StartInfo.FileName = Path.Combine(Program.Manager.Settings["RootPath"], "Engines\\Win32\\Debug\\moai.exe");
+            this.m_Process.StartInfo.FileName = Path.Combine(Program.Manager.Settings["RootPath"], "Engines" + Path.DirectorySeparatorChar + "Win32" + Path.DirectorySeparatorChar + "Debug" + Path.DirectorySeparatorChar + "moai.exe");
             this.m_Process.StartInfo.WorkingDirectory = project.ProjectInfo.Directory.FullName;
             this.m_Process.StartInfo.UseShellExecute = false;
             this.m_Process.StartInfo.Arguments = "Main.lua";
@@ -147,7 +147,7 @@ mode and try again.", "Debugging Failed", MessageBoxButtons.OK, MessageBoxIcon.E
 
             // Start the process.
             this.m_Process = new Process();
-            this.m_Process.StartInfo.FileName = Path.Combine(Program.Manager.Settings["RootPath"], "Engines\\Win32\\Debug\\moai.exe");
+            this.m_Process.StartInfo.FileName = Path.Combine(Program.Manager.Settings["RootPath"], "Engines" + Path.DirectorySeparatorChar + "Win32" + Path.DirectorySeparatorChar + "Debug" + Path.DirectorySeparatorChar + "moai.exe");
             this.m_Process.StartInfo.WorkingDirectory = project.ProjectInfo.Directory.FullName;
             this.m_Process.StartInfo.UseShellExecute = false;
             this.m_Process.StartInfo.Arguments = "Main.lua";

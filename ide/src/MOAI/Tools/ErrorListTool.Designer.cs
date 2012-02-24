@@ -36,7 +36,6 @@
             this.c_TextColumnColumn = new System.Windows.Forms.ColumnHeader();
             this.c_ErrorDescriptionColumn = new System.Windows.Forms.ColumnHeader();
             this.c_ErrorProjectColumn = new System.Windows.Forms.ColumnHeader();
-            this.c_Images = new System.Windows.Forms.ImageList(this.components);
             this.SuspendLayout();
             // 
             // c_ErrorList
@@ -54,7 +53,6 @@
             this.c_ErrorList.MultiSelect = false;
             this.c_ErrorList.Name = "c_ErrorList";
             this.c_ErrorList.Size = new System.Drawing.Size(802, 210);
-            this.c_ErrorList.SmallImageList = this.c_Images;
             this.c_ErrorList.Sorting = System.Windows.Forms.SortOrder.Descending;
             this.c_ErrorList.TabIndex = 0;
             this.c_ErrorList.UseCompatibleStateImageBehavior = false;
@@ -85,14 +83,6 @@
             this.c_ErrorProjectColumn.Text = "Project";
             this.c_ErrorProjectColumn.Width = 120;
             // 
-            // c_Images
-            // 
-            this.c_Images.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("c_Images.ImageStream")));
-            this.c_Images.TransparentColor = System.Drawing.Color.Transparent;
-            this.c_Images.Images.SetKeyName(0, "Error");
-            this.c_Images.Images.SetKeyName(1, "Warning");
-            this.c_Images.Images.SetKeyName(2, "Info");
-            // 
             // ToolErrorList
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -104,7 +94,6 @@
                         | DockPanelSuite.DockAreas.DockTop)
                         | DockPanelSuite.DockAreas.DockBottom)));
             this.DoubleBuffered = true;
-            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "ToolErrorList";
             this.TabText = "Error List";
             this.Text = "Error List";
@@ -120,7 +109,6 @@
         private System.Windows.Forms.ColumnHeader c_TextLineNumberColumn;
         private System.Windows.Forms.ColumnHeader c_TextColumnColumn;
         private System.Windows.Forms.ColumnHeader c_ErrorProjectColumn;
-        private System.Windows.Forms.ImageList c_Images;
         public System.Windows.Forms.ListView c_ErrorList;
 
     }
