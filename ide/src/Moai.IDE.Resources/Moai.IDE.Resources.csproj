@@ -1,0 +1,368 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{E654F97D-3D97-4288-958E-A805A0B79E2C}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Moai.IDE.Resources</RootNamespace>
+    <AssemblyName>Moai.IDE.Resources</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Xml.Linq">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data.DataSetExtensions">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Images.Designer.cs">
+      <DependentUpon>Images.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="add.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="application.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="application_add.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="application_double.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="application_link.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="application_side_contract.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="application_split.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="application_tile_horizontal.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="application_tile_vertical.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="application_view_list.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="application_view_tile.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="application_xp_terminal.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="arrow_redo.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="arrow_undo.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="back.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="book_key.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="book_open.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="box.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="breakpoint.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="breakpoint_ls.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="breakpoint_s.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="brick_link.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="bricks.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="bug.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="building_error.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="bullet_delete.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="cancel.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="color_palette.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="current_line.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="current_line_s.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="cut.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="database.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="database_add.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="debug_without.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="disk.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="disk_multiple.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="draw_above.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="draw_below.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="draw_interpolate.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="draw_overwrite.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="drive_web.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="error.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="error_list.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="folder.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="folder_error.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="folder_find.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="folder_page.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="help.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="image.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="image_add.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="image_import.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="image_new.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="image_transparency_tile.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="information.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="irrlicht_font.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="keyboard_magnify.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="lightning.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="magnifier.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="map.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="map_add.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="new_class.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="new_solution.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="object_browser.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="open_solution.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="package.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="page.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="page_copy.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="page_paste.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="page_white_code.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="page_white_cplusplus.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="page_white_error.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="page_white_h.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="page_white_world.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="paintbrush.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="paintcan.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="pause.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="pencil.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="pencil_continous.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="pencil_per_pixel.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="plugin.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="plugin_add.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="plugin_link.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="progress_inside.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="progress_outside.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="properties_window.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="report.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="resultset_next.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="save_solution.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="script_add.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="solution_explorer.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="sound.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="sound_add.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="stop.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="table_multiple.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="telephone.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="telephone_go.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="toolbox.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="world.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="world_add.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Images.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Images.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

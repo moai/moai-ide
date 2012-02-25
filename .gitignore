@@ -13,5 +13,9 @@ vs2008/moai-harness/Debug/BuildLog.htm
 *.ncb
 *.pidb
 *.userprefs
-*.resources
 ide/src/Moai.IDE/Deployment/Engines/*
+ide/src/Moai.IDE/Deployment/Framework/*
+ide/libraries/*/bin
+ide/libraries/*/obj
+ide/src/*/bin/*
+ide/src/*/obj/*
