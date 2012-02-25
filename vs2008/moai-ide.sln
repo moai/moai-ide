@@ -9,13 +9,19 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScintillaNET", "..\ide\libr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Moai.Versioning", "..\ide\src\Moai.Versioning\Moai.Versioning.csproj", "{788589BB-501E-4645-9805-BE2DC1FC73C0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Moai.Portability", "..\ide\src\Moai.Portability\Moai.Portability.csproj", "{2DBB5C1E-84C9-4FDB-8284-4D8AA53C2887}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Moai.IDE", "..\ide\src\Moai.IDE\Moai.IDE.csproj", "{364D1421-54F1-4A9C-8577-1663D1E8ACFC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Moai.Portability.Mono", "..\ide\src\Moai.Portability.Mono\Moai.Portability.Mono.csproj", "{90D64BDF-E595-46C8-AC42-8DCE675428ED}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Moai.Contracts", "..\ide\src\Moai.Contracts\Moai.Contracts.csproj", "{C63B6FC1-09CE-4CCB-8369-E4AB09BE1633}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Moai.Portability.Windows", "..\ide\src\Moai.Portability.Windows\Moai.Portability.Windows.csproj", "{ADD65F3B-E510-4BC2-BD3F-D8C4E8D2D752}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Moai.IDE.Resources", "..\ide\src\Moai.IDE.Resources\Moai.IDE.Resources.csproj", "{E654F97D-3D97-4288-958E-A805A0B79E2C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Moai", "..\ide\src\Moai\Moai.csproj", "{5BA158DE-7E14-42BD-8ABE-2FFBCD1CC268}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Moai.IDE.Templates", "..\ide\src\Moai.IDE.Templates\Moai.IDE.Templates.csproj", "{C9B29E96-9028-4FA6-B93E-E69A7A3AB876}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Moai.Platform", "..\ide\src\Moai.Platform\Moai.Platform.csproj", "{2DBB5C1E-84C9-4FDB-8284-4D8AA53C2887}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Moai.Platform.Windows", "..\ide\src\Moai.Platform.Windows\Moai.Platform.Windows.csproj", "{ADD65F3B-E510-4BC2-BD3F-D8C4E8D2D752}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Moai.Platform.Linux", "..\ide\src\Moai.Platform.Linux\Moai.Platform.Linux.csproj", "{90D64BDF-E595-46C8-AC42-8DCE675428ED}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -42,30 +48,48 @@ Global
 		{788589BB-501E-4645-9805-BE2DC1FC73C0}.Jenkins|Any CPU.Build.0 = Debug|Any CPU
 		{788589BB-501E-4645-9805-BE2DC1FC73C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{788589BB-501E-4645-9805-BE2DC1FC73C0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{364D1421-54F1-4A9C-8577-1663D1E8ACFC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{364D1421-54F1-4A9C-8577-1663D1E8ACFC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{364D1421-54F1-4A9C-8577-1663D1E8ACFC}.Jenkins|Any CPU.ActiveCfg = Release|Any CPU
+		{364D1421-54F1-4A9C-8577-1663D1E8ACFC}.Jenkins|Any CPU.Build.0 = Release|Any CPU
+		{364D1421-54F1-4A9C-8577-1663D1E8ACFC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{364D1421-54F1-4A9C-8577-1663D1E8ACFC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C63B6FC1-09CE-4CCB-8369-E4AB09BE1633}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C63B6FC1-09CE-4CCB-8369-E4AB09BE1633}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C63B6FC1-09CE-4CCB-8369-E4AB09BE1633}.Jenkins|Any CPU.ActiveCfg = Release|Any CPU
+		{C63B6FC1-09CE-4CCB-8369-E4AB09BE1633}.Jenkins|Any CPU.Build.0 = Release|Any CPU
+		{C63B6FC1-09CE-4CCB-8369-E4AB09BE1633}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C63B6FC1-09CE-4CCB-8369-E4AB09BE1633}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E654F97D-3D97-4288-958E-A805A0B79E2C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E654F97D-3D97-4288-958E-A805A0B79E2C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E654F97D-3D97-4288-958E-A805A0B79E2C}.Jenkins|Any CPU.ActiveCfg = Release|Any CPU
+		{E654F97D-3D97-4288-958E-A805A0B79E2C}.Jenkins|Any CPU.Build.0 = Release|Any CPU
+		{E654F97D-3D97-4288-958E-A805A0B79E2C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E654F97D-3D97-4288-958E-A805A0B79E2C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C9B29E96-9028-4FA6-B93E-E69A7A3AB876}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C9B29E96-9028-4FA6-B93E-E69A7A3AB876}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C9B29E96-9028-4FA6-B93E-E69A7A3AB876}.Jenkins|Any CPU.ActiveCfg = Release|Any CPU
+		{C9B29E96-9028-4FA6-B93E-E69A7A3AB876}.Jenkins|Any CPU.Build.0 = Release|Any CPU
+		{C9B29E96-9028-4FA6-B93E-E69A7A3AB876}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C9B29E96-9028-4FA6-B93E-E69A7A3AB876}.Release|Any CPU.Build.0 = Release|Any CPU
 		{2DBB5C1E-84C9-4FDB-8284-4D8AA53C2887}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{2DBB5C1E-84C9-4FDB-8284-4D8AA53C2887}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2DBB5C1E-84C9-4FDB-8284-4D8AA53C2887}.Jenkins|Any CPU.ActiveCfg = Debug|Any CPU
-		{2DBB5C1E-84C9-4FDB-8284-4D8AA53C2887}.Jenkins|Any CPU.Build.0 = Debug|Any CPU
+		{2DBB5C1E-84C9-4FDB-8284-4D8AA53C2887}.Jenkins|Any CPU.ActiveCfg = Release|Any CPU
+		{2DBB5C1E-84C9-4FDB-8284-4D8AA53C2887}.Jenkins|Any CPU.Build.0 = Release|Any CPU
 		{2DBB5C1E-84C9-4FDB-8284-4D8AA53C2887}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2DBB5C1E-84C9-4FDB-8284-4D8AA53C2887}.Release|Any CPU.Build.0 = Release|Any CPU
-		{90D64BDF-E595-46C8-AC42-8DCE675428ED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{90D64BDF-E595-46C8-AC42-8DCE675428ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{90D64BDF-E595-46C8-AC42-8DCE675428ED}.Jenkins|Any CPU.ActiveCfg = Debug|Any CPU
-		{90D64BDF-E595-46C8-AC42-8DCE675428ED}.Jenkins|Any CPU.Build.0 = Debug|Any CPU
-		{90D64BDF-E595-46C8-AC42-8DCE675428ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{90D64BDF-E595-46C8-AC42-8DCE675428ED}.Release|Any CPU.Build.0 = Release|Any CPU
 		{ADD65F3B-E510-4BC2-BD3F-D8C4E8D2D752}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{ADD65F3B-E510-4BC2-BD3F-D8C4E8D2D752}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{ADD65F3B-E510-4BC2-BD3F-D8C4E8D2D752}.Jenkins|Any CPU.ActiveCfg = Debug|Any CPU
-		{ADD65F3B-E510-4BC2-BD3F-D8C4E8D2D752}.Jenkins|Any CPU.Build.0 = Debug|Any CPU
+		{ADD65F3B-E510-4BC2-BD3F-D8C4E8D2D752}.Jenkins|Any CPU.ActiveCfg = Release|Any CPU
+		{ADD65F3B-E510-4BC2-BD3F-D8C4E8D2D752}.Jenkins|Any CPU.Build.0 = Release|Any CPU
 		{ADD65F3B-E510-4BC2-BD3F-D8C4E8D2D752}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ADD65F3B-E510-4BC2-BD3F-D8C4E8D2D752}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5BA158DE-7E14-42BD-8ABE-2FFBCD1CC268}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5BA158DE-7E14-42BD-8ABE-2FFBCD1CC268}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5BA158DE-7E14-42BD-8ABE-2FFBCD1CC268}.Jenkins|Any CPU.ActiveCfg = Debug|Any CPU
-		{5BA158DE-7E14-42BD-8ABE-2FFBCD1CC268}.Jenkins|Any CPU.Build.0 = Debug|Any CPU
-		{5BA158DE-7E14-42BD-8ABE-2FFBCD1CC268}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5BA158DE-7E14-42BD-8ABE-2FFBCD1CC268}.Release|Any CPU.Build.0 = Release|Any CPU
+		{90D64BDF-E595-46C8-AC42-8DCE675428ED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{90D64BDF-E595-46C8-AC42-8DCE675428ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{90D64BDF-E595-46C8-AC42-8DCE675428ED}.Jenkins|Any CPU.ActiveCfg = Release|Any CPU
+		{90D64BDF-E595-46C8-AC42-8DCE675428ED}.Jenkins|Any CPU.Build.0 = Release|Any CPU
+		{90D64BDF-E595-46C8-AC42-8DCE675428ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{90D64BDF-E595-46C8-AC42-8DCE675428ED}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,0 +1,152 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{2DBB5C1E-84C9-4FDB-8284-4D8AA53C2887}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Moai.Platform</RootNamespace>
+    <AssemblyName>Moai.Platform</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml.Linq">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data.DataSetExtensions">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\VersionInfo.cs">
+      <Link>Properties\VersionInfo.cs</Link>
+    </Compile>
+    <Compile Include="Cache\Context.cs" />
+    <Compile Include="Cache\IAutoComplete.cs" />
+    <Compile Include="Cache\ICacheManager.cs" />
+    <Compile Include="Central.cs" />
+    <Compile Include="Collections\Node.cs" />
+    <Compile Include="Collections\Tree.cs" />
+    <Compile Include="Debug\Breakpoint.cs" />
+    <Compile Include="Debug\IBreakpoint.cs" />
+    <Compile Include="Debug\IDebuggable.cs" />
+    <Compile Include="Debug\IDebugManager.cs" />
+    <Compile Include="Designers\IStartDesigner.cs" />
+    <Compile Include="Designers\ICodeDesigner.cs" />
+    <Compile Include="Designers\IDesignerManager.cs" />
+    <Compile Include="FileEventArgs.cs" />
+    <Compile Include="Management\Associations.cs" />
+    <Compile Include="Management\File.cs" />
+    <Compile Include="Management\Folder.cs" />
+    <Compile Include="Management\Project.cs" />
+    <Compile Include="Management\Solution.cs" />
+    <Compile Include="Menus\Action.cs" />
+    <Compile Include="Menus\Definitions\Actions.cs" />
+    <Compile Include="Menus\Definitions\Debugging.cs" />
+    <Compile Include="Menus\Definitions\Help.cs" />
+    <Compile Include="Menus\Definitions\Project.cs" />
+    <Compile Include="Menus\Definitions\Solution.cs" />
+    <Compile Include="Menus\Definitions\Tools.cs" />
+    <Compile Include="Menus\Definitions\Views.cs" />
+    <Compile Include="Menus\Definitions\Window.cs" />
+    <Compile Include="Menus\EnumWrapper.cs" />
+    <Compile Include="Menus\MenusManager.cs" />
+    <Compile Include="Menus\MenuLoader.cs" />
+    <Compile Include="Path.cs" />
+    <Compile Include="PlatformDetection.cs" />
+    <Compile Include="Designers\IDesigner.cs" />
+    <Compile Include="IIDE.cs" />
+    <Compile Include="IManager.cs" />
+    <Compile Include="IRootManager.cs" />
+    <Compile Include="IPlatform.cs" />
+    <Compile Include="Clipboard\ClipboardContentType.cs" />
+    <Compile Include="Clipboard\IClipboard.cs" />
+    <Compile Include="IPlatformProvider.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Templates\Files\BaseTemplate.cs" />
+    <Compile Include="Templates\Files\FileCreationData.cs" />
+    <Compile Include="Templates\Solutions\BaseTemplate.cs" />
+    <Compile Include="Templates\Solutions\SolutionCreationData.cs" />
+    <Compile Include="Tools\IOutputTool.cs" />
+    <Compile Include="Tools\IToolsManager.cs" />
+    <Compile Include="UI\IForm.cs" />
+    <Compile Include="UI\Segments\IHasInvoke.cs" />
+    <Compile Include="UI\ToolPosition.cs" />
+    <Compile Include="UI\ITab.cs" />
+    <Compile Include="UI\ITool.cs" />
+    <Compile Include="UI\IToolStripComboBox.cs" />
+    <Compile Include="UI\IToolStripDropDownButton.cs" />
+    <Compile Include="UI\IProxable.cs" />
+    <Compile Include="UI\IToolStripDropDownMenu.cs" />
+    <Compile Include="UI\IToolStripDropDown.cs" />
+    <Compile Include="UI\IComponent.cs" />
+    <Compile Include="UI\IContextMenuStrip.cs" />
+    <Compile Include="UI\IControl.cs" />
+    <Compile Include="UI\IImageList.cs" />
+    <Compile Include="UI\IScrollableControl.cs" />
+    <Compile Include="UI\IToolStripDropDownItem.cs" />
+    <Compile Include="UI\IToolStripItem.cs" />
+    <Compile Include="UI\IMenuStrip.cs" />
+    <Compile Include="UI\IToolStrip.cs" />
+    <Compile Include="UI\IToolStripMenuItem.cs" />
+    <Compile Include="UI\ITreeNode.cs" />
+    <Compile Include="UI\IUIProvider.cs" />
+    <Compile Include="UI\Keys.cs" />
+    <Compile Include="UI\MessageBoxButtons.cs" />
+    <Compile Include="UI\MessageBoxIcon.cs" />
+    <Compile Include="UI\PickingData.cs" />
+    <Compile Include="UI\Segments\IHasBasics.cs" />
+    <Compile Include="UI\Segments\IHasImageList.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Moai.Contracts\Moai.Contracts.csproj">
+      <Project>{C63B6FC1-09CE-4CCB-8369-E4AB09BE1633}</Project>
+      <Name>Moai.Contracts</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Moai.IDE.Resources\Moai.IDE.Resources.csproj">
+      <Project>{E654F97D-3D97-4288-958E-A805A0B79E2C}</Project>
+      <Name>Moai.IDE.Resources</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Moai.Versioning\Moai.Versioning.csproj">
+      <Project>{788589BB-501E-4645-9805-BE2DC1FC73C0}</Project>
+      <Name>Moai.Versioning</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

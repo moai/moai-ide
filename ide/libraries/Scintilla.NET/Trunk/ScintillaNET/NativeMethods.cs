@@ -30,7 +30,7 @@ namespace ScintillaNet
 		internal static extern bool GetUpdateRect(IntPtr hWnd, out RECT lpRect, bool bErase);
 
 		[DllImport("shell32.dll")]
-		internal static extern uint DragQueryFile(IntPtr hDrop, uint iFile, [Out] StringBuilder lpszFile, uint cch);
+		internal static extern uint DragQueryFile(IntPtr hDrop, uint File, [Out] StringBuilder lpszFile, uint cch);
 
 		[DllImport("shell32.dll")]
 		internal static extern int DragFinish(IntPtr hDrop);
