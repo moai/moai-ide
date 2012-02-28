@@ -134,8 +134,8 @@ namespace Moai.Platform.UI
         RControlKey,
         LAltKey,
         RAltKey,
-        Shift,
-        Control,
-        Alt
+        Shift = 0x10000,
+        Control = 0x20000,
+        Alt = 0x40000
     }
 }

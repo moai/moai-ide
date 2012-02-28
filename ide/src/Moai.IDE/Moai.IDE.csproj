@@ -92,6 +92,10 @@
       <Project>{E654F97D-3D97-4288-958E-A805A0B79E2C}</Project>
       <Name>Moai.IDE.Resources</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Moai.IDE.Templates\Moai.IDE.Templates.csproj">
+      <Project>{C9B29E96-9028-4FA6-B93E-E69A7A3AB876}</Project>
+      <Name>Moai.IDE.Templates</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Moai.Platform.Linux\Moai.Platform.Linux.csproj">
       <Project>{90D64BDF-E595-46C8-AC42-8DCE675428ED}</Project>
       <Name>Moai.Platform.Linux</Name>

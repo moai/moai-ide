@@ -23,7 +23,7 @@ namespace Moai.Platform
         IDebugManager DebugManager { get; }
         IDesignerManager DesignersManager { get; }
         MenusManager MenuManager { get; }
-        IToolsManager ToolsManager { get; }
+        IToolsManager ToolsManager { get; set; }
         IIDE IDE { get; }
         Dictionary<string, string> Settings { get; }
 

@@ -10,11 +10,11 @@ using Moai.Platform.Menus;
 
 namespace Moai.Platform.Management
 {
-    public class File : ICuttable, ICopyable, IRemovable, IRenamable
+    public class File : ICuttable, ICopyable, IRemovable, IRenamable, ISyncable
     {
         private Project p_Project = null;
         private FileInfo p_FileInfo = null;
-        protected ITreeNode p_BackingNode = Central.Platform.UI.CreateTreeNode();
+        protected bool m_IsFaded = false;
 
         /// <summary>
         /// A protected constructor so that derived classes such as Folder only have
@@ -106,31 +106,17 @@ namespace Moai.Platform.Management
             // Add the selected file to the list.
             string[] files = new string[] { this.FileInfo.FullName };
 
-            throw new NotImplementedException();
-
             Central.Platform.Clipboard.Cut(ClipboardContentType.FileDrop, files);
-
-            // This process is sourced from http://web.archive.org/web/20070218155439/http://blogs.wdevs.com/IDecember/archive/2005/10/27/10979.aspx.
-            /*System.Windows.Forms.IDataObject data = new System.Windows.Forms.DataObject(System.Windows.Forms.DataFormats.FileDrop, files);
-            MemoryStream stream = new MemoryStream(4);
-            byte[] bytes = new byte[] { 2, 0, 0, 0 };
-            stream.Write(bytes, 0, bytes.Length);
-            data.SetData("Preferred DropEffect", stream);
-            Moai.Cache.Clipboard.Contents = data;*/
 
             // Change the icon to faded, then listen to see if the clipboard
             // gets overridden.
-            this.p_BackingNode.ImageKey += ":Faded";
-            this.p_BackingNode.SelectedImageKey += ":Faded";
+            this.m_IsFaded = true;
+            this.OnSyncDataChanged();
             EventHandler ev = null;
             ev = (sender, e) =>
             {
-                string key = this.p_BackingNode.ImageKey;
-                if (key.IndexOf(":Faded") == -1)
-                    return;
-                key = key.Substring(0, key.IndexOf(":Faded"));
-                this.p_BackingNode.ImageKey = key;
-                this.p_BackingNode.SelectedImageKey = key;
+                this.m_IsFaded = false;
+                this.OnSyncDataChanged();
                 Central.Platform.Clipboard.ContentsChanged -= ev;
             };
             Central.Platform.Clipboard.ContentsChanged += ev;
@@ -153,17 +139,7 @@ namespace Moai.Platform.Management
             // Add the selected file or folder to the list.
             string[] files = new string[] { this.FileInfo.FullName };
 
-            throw new NotImplementedException();
-
             Central.Platform.Clipboard.Copy(ClipboardContentType.FileDrop, files);
-
-            // This process is sourced from http://web.archive.org/web/20070218155439/http://blogs.wdevs.com/IDecember/archive/2005/10/27/10979.aspx.
-            /*System.Windows.Forms.IDataObject data = new System.Windows.Forms.DataObject(System.Windows.Forms.DataFormats.FileDrop, files);
-            MemoryStream stream = new MemoryStream(4);
-            byte[] bytes = new byte[] { 5, 0, 0, 0 };
-            stream.Write(bytes, 0, bytes.Length);
-            data.SetData("Preferred DropEffect", stream);
-            Moai.Cache.Clipboard.Contents = data;*/
         }
 
         /// <summary>
@@ -184,61 +160,32 @@ namespace Moai.Platform.Management
 
         #endregion
 
-        #region Tree Node Functionality
-
-        public object BackingNode
-        {
-            get
-            {
-                return this.p_BackingNode;
-            }
-        }
-
-        /// <summary>
-        /// Associates this file with a tree node.
-        /// </summary>
-        /// <param name="node"></param>
-        public virtual void Associate(ITreeNode node)
-        {
-            // Set properties.
-            this.p_BackingNode.Text = this.ToString();
-            if (this.p_FileInfo.Extension != "")
-                this.p_BackingNode.ImageKey = Associations.GetImageKey(this.p_FileInfo.Extension.Substring(1));
-            else
-                this.p_BackingNode.ImageKey = null;
-            this.p_BackingNode.SelectedImageKey = this.p_BackingNode.ImageKey;
-
-            // Add this file to the node.
-            node.Nodes.Add(this.p_BackingNode);
-        }
-
         /// <summary>
         /// Returns the context menu for this file.
         /// </summary>
-        public virtual IContextMenuStrip ContextMenuStrip
+        public virtual Moai.Platform.Menus.Action[] ContextActions
         {
             get
             {
-                // Set the context menu for the node.
-                IContextMenuStrip ret = Central.Platform.UI.CreateContextMenuStrip();
-                ret.Items.AddRange(new IToolStripItem[] {
-                    MenusManager.WrapAction(new Menus.Definitions.Actions.Open(this)),
-                    Central.Platform.UI.CreateToolStripSeperator(),
-                    MenusManager.WrapAction(new Menus.Definitions.Views.Code(this)),
-                    MenusManager.WrapAction(new Menus.Definitions.Views.Designer(this)),
-                    Central.Platform.UI.CreateToolStripSeperator(),
-                    MenusManager.WrapAction(new Menus.Definitions.Actions.Exclude(this)),
-                    Central.Platform.UI.CreateToolStripSeperator(),
-                    MenusManager.WrapAction(new Menus.Definitions.Actions.Cut(this)),
-                    MenusManager.WrapAction(new Menus.Definitions.Actions.Copy(this)),
-                    MenusManager.WrapAction(new Menus.Definitions.Actions.Delete(this)),
-                    MenusManager.WrapAction(new Menus.Definitions.Actions.Rename(this)),
-                    Central.Platform.UI.CreateToolStripSeperator(),
-                    MenusManager.WrapAction(new Menus.Definitions.Actions.OpenInWindowsExplorer(this)),
-                    Central.Platform.UI.CreateToolStripSeperator(),
-                    MenusManager.WrapAction(new Menus.Definitions.Actions.Properties(this))
-                });
-                return ret;
+                // Create the context action list.
+                return new Moai.Platform.Menus.Action[]
+                {
+                    new Menus.Definitions.Actions.Open(this),
+                    new SeperatorAction(),
+                    new Menus.Definitions.Views.Code(this),
+                    new Menus.Definitions.Views.Designer(this),
+                    new SeperatorAction(),
+                    new Menus.Definitions.Actions.Exclude(this),
+                    new SeperatorAction(),
+                    new Menus.Definitions.Actions.Cut(this),
+                    new Menus.Definitions.Actions.Copy(this),
+                    new Menus.Definitions.Actions.Delete(this),
+                    new Menus.Definitions.Actions.Rename(this),
+                    new SeperatorAction(),
+                    new Menus.Definitions.Actions.OpenInWindowsExplorer(this),
+                    new SeperatorAction(),
+                    new Menus.Definitions.Actions.Properties(this)
+                };
             }
         }
 
@@ -249,6 +196,32 @@ namespace Moai.Platform.Management
         public override string ToString()
         {
             return this.FileInfo.Name;
+        }
+
+        #region ISyncable Members
+
+        public event EventHandler SyncDataChanged;
+
+        public virtual ISyncData GetSyncData()
+        {
+            // Set properties.
+            string key;
+            if (this.p_FileInfo.Extension != "")
+            {
+                key = Associations.GetImageKey(this.p_FileInfo.Extension.Substring(1));
+                if (this.m_IsFaded)
+                    key += ":Faded";
+            }
+            else
+                key = null;
+
+            return new FileSyncData { Text = this.ToString(), ImageKey = key };
+        }
+
+        protected void OnSyncDataChanged()
+        {
+            if (this.SyncDataChanged != null)
+                this.SyncDataChanged(this, new EventArgs());
         }
 
         #endregion

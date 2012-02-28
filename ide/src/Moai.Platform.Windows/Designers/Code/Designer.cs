@@ -12,6 +12,7 @@ using Moai.Platform.UI;
 using Moai.Platform.Debug;
 using Moai.Platform.Management;
 using Moai.Platform.Menus;
+using Moai.Platform.Windows.Menus;
 
 namespace Moai.Platform.Windows.Designers.Code
 {
@@ -62,16 +63,16 @@ namespace Moai.Platform.Windows.Designers.Code
             this.c_CodeEditor.MarginClick += new EventHandler<ScintillaNet.MarginClickEventArgs>(c_CodeEditor_MarginClick);
 
             // Initalize the context menu for the code editor.
-            this.c_CodeEditor.ContextMenuStrip = Central.Platform.UI.CreateContextMenuStrip().ProxyAs<ContextMenuStrip>();
-            this.c_CodeEditor.ContextMenuStrip.Items.AddRange(new ToolStripItem[] {
-                    MenusManager.WrapAction(new Menus.Definitions.Actions.Undo(this.c_CodeEditor)).ProxyAs<ToolStripItem>(),
-                    MenusManager.WrapAction(new Menus.Definitions.Actions.Redo(this.c_CodeEditor)).ProxyAs<ToolStripItem>(),
-                    new ToolStripSeparator(),
-                    MenusManager.WrapAction(new Menus.Definitions.Actions.Cut(this.c_CodeEditor)).ProxyAs<ToolStripItem>(),
-                    MenusManager.WrapAction(new Menus.Definitions.Actions.Copy(this.c_CodeEditor)).ProxyAs<ToolStripItem>(),
-                    MenusManager.WrapAction(new Menus.Definitions.Actions.Paste(this.c_CodeEditor)).ProxyAs<ToolStripItem>(),
-                    MenusManager.WrapAction(new Menus.Definitions.Actions.Delete(this.c_CodeEditor)).ProxyAs<ToolStripItem>()
-                });
+            this.c_CodeEditor.ContextMenuStrip = ActionWrapper.GetContextMenu(new Platform.Menus.Action[]
+            {
+                    new Platform.Menus.Definitions.Actions.Undo(this.c_CodeEditor),
+                    new Platform.Menus.Definitions.Actions.Redo(this.c_CodeEditor),
+                    new SeperatorAction(),
+                    new Platform.Menus.Definitions.Actions.Cut(this.c_CodeEditor),
+                    new Platform.Menus.Definitions.Actions.Copy(this.c_CodeEditor),
+                    new Platform.Menus.Definitions.Actions.Paste(this.c_CodeEditor),
+                    new Platform.Menus.Definitions.Actions.Delete(this.c_CodeEditor)
+            });
 
             // Now load the file data.
             using (System.IO.StreamReader reader = new System.IO.StreamReader(this.File.FileInfo.FullName))

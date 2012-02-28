@@ -8,7 +8,7 @@ using Moai.Platform.Menus;
 
 namespace Moai.Platform.Management
 {
-    public class Folder : File, ICuttable, ICopyable, IRemovable, IRenamable, IPastable
+    public class Folder : File, ICuttable, ICopyable, IRemovable, IRenamable, IPastable, ISyncable
     {
         private DirectoryInfo p_FolderInfo = null;
         private List<Management.File> p_Files = null;
@@ -181,32 +181,20 @@ namespace Moai.Platform.Management
         /// </summary>
         void ICuttable.Cut()
         {
-            // Add the selected folder to the list.
-            string[] files = new string[] { this.FolderInfo.FullName };
-            throw new NotImplementedException();
+            // Add the selected file to the list.
+            string[] files = new string[] { this.FileInfo.FullName };
 
-            // This process is sourced from http://web.archive.org/web/20070218155439/http://blogs.wdevs.com/IDecember/archive/2005/10/27/10979.aspx.
-            /* FIXME: Implement this.
-            System.Windows.Forms.IDataObject data = new System.Windows.Forms.DataObject(System.Windows.Forms.DataFormats.FileDrop, files);
-            MemoryStream stream = new MemoryStream(4);
-            byte[] bytes = new byte[] { 2, 0, 0, 0 };
-            stream.Write(bytes, 0, bytes.Length);
-            data.SetData("Preferred DropEffect", stream);
-            Moai.Cache.Clipboard.Contents = data;*/
+            Central.Platform.Clipboard.Cut(ClipboardContentType.FileDrop, files);
 
             // Change the icon to faded, then listen to see if the clipboard
             // gets overridden.
-            this.p_BackingNode.ImageKey += ":Faded";
-            this.p_BackingNode.SelectedImageKey += ":Faded";
+            this.m_IsFaded = true;
+            this.OnSyncDataChanged();
             EventHandler ev = null;
             ev = (sender, e) =>
             {
-                string key = this.p_BackingNode.ImageKey;
-                if (key.IndexOf(":Faded") == -1)
-                    return;
-                key = key.Substring(0, key.IndexOf(":Faded"));
-                this.p_BackingNode.ImageKey = key;
-                this.p_BackingNode.SelectedImageKey = key;
+                this.m_IsFaded = false;
+                this.OnSyncDataChanged();
                 Central.Platform.Clipboard.ContentsChanged -= ev;
             };
             Central.Platform.Clipboard.ContentsChanged += ev;
@@ -215,7 +203,7 @@ namespace Moai.Platform.Management
             FileSystemWatcher watcher = new FileSystemWatcher(new FileInfo(files[0]).DirectoryName, new FileInfo(files[0]).Name);
             watcher.Deleted += (sender, e) =>
             {
-                // Remove the folder from the tree view.
+                // Remove the file from the tree view.
                 this.Project.PerformRemove(this);
             };
             watcher.EnableRaisingEvents = true;
@@ -227,17 +215,9 @@ namespace Moai.Platform.Management
         void ICopyable.Copy()
         {
             // Add the selected file or folder to the list.
-            string[] files = new string[] { this.FolderInfo.FullName };
-            throw new NotImplementedException();
+            string[] files = new string[] { this.FileInfo.FullName };
 
-            // This process is sourced from http://web.archive.org/web/20070218155439/http://blogs.wdevs.com/IDecember/archive/2005/10/27/10979.aspx.
-            /* FIXME: Implement this.
-            System.Windows.Forms.IDataObject data = new System.Windows.Forms.DataObject(System.Windows.Forms.DataFormats.FileDrop, files);
-            MemoryStream stream = new MemoryStream(4);
-            byte[] bytes = new byte[] { 5, 0, 0, 0 };
-            stream.Write(bytes, 0, bytes.Length);
-            data.SetData("Preferred DropEffect", stream);
-            Moai.Cache.Clipboard.Contents = data; */
+            Central.Platform.Clipboard.Copy(ClipboardContentType.FileDrop, files);
         }
 
         /// <summary>
@@ -314,62 +294,46 @@ namespace Moai.Platform.Management
 
         #endregion
 
-        #region Tree Node Functionality
-
-        /// <summary>
-        /// Associates this folder with a tree node.
-        /// </summary>
-        /// <param name="node"></param>
-        public override void Associate(ITreeNode node)
-        {
-            // Set properties.
-            this.p_BackingNode.Text = this.ToString();
-            this.p_BackingNode.ImageKey = Associations.GetImageKey("folder");
-            this.p_BackingNode.SelectedImageKey = this.p_BackingNode.ImageKey;
-
-            // We also need to loop through the children of this folder
-            // to add them to.
-            this.p_BackingNode.Nodes.Clear();
-            foreach (File f in this.p_Files)
-                f.Associate(this.p_BackingNode);
-
-            // Add this file to the node.
-            node.Nodes.Add(this.p_BackingNode);
-        }
-
         /// <summary>
         /// Returns the context menu for this folder.
         /// </summary>
-        public override IContextMenuStrip ContextMenuStrip
+        public override Moai.Platform.Menus.Action[] ContextActions
         {
             get
             {
-                // Set the context menu for the node.
-                IContextMenuStrip ret = Central.Platform.UI.CreateContextMenuStrip();
-                ret.Items.AddRange(new IToolStripItem[] {
-                    Central.Platform.UI.CreateToolStripMenuItem("Add", null, new IToolStripItem[] {
-                        MenusManager.WrapAction(new Menus.Definitions.Project.AddNewItem(this)),
-                        MenusManager.WrapAction(new Menus.Definitions.Project.AddExistingItem(this)),
-                        MenusManager.WrapAction(new Menus.Definitions.Project.AddFolder(this)),
-                        Central.Platform.UI.CreateToolStripSeperator(),
-                        MenusManager.WrapAction(new Menus.Definitions.Project.AddScript(this)),
-                        MenusManager.WrapAction(new Menus.Definitions.Project.AddClass(this))
+                // Create the context action list.
+                return new Moai.Platform.Menus.Action[]
+                {
+                    new GroupAction("Add", null, new Moai.Platform.Menus.Action[]
+                    {
+                        new Menus.Definitions.Project.AddNewItem(this),
+                        new Menus.Definitions.Project.AddExistingItem(this),
+                        new Menus.Definitions.Project.AddFolder(this),
+                        new SeperatorAction(),
+                        new Menus.Definitions.Project.AddScript(this),
+                        new Menus.Definitions.Project.AddClass(this)
                     }),
-                    Central.Platform.UI.CreateToolStripSeperator(),
-                    MenusManager.WrapAction(new Menus.Definitions.Actions.Exclude(this)),
-                    Central.Platform.UI.CreateToolStripSeperator(),
-                    MenusManager.WrapAction(new Menus.Definitions.Actions.Cut(this)),
-                    MenusManager.WrapAction(new Menus.Definitions.Actions.Copy(this)),
-                    MenusManager.WrapAction(new Menus.Definitions.Actions.Paste(this)),
-                    MenusManager.WrapAction(new Menus.Definitions.Actions.Remove(this)),
-                    MenusManager.WrapAction(new Menus.Definitions.Actions.Rename(this)),
-                    Central.Platform.UI.CreateToolStripSeperator(),
-                    MenusManager.WrapAction(new Menus.Definitions.Actions.OpenInWindowsExplorer(this)),
-                    Central.Platform.UI.CreateToolStripSeperator(),
-                    MenusManager.WrapAction(new Menus.Definitions.Actions.Properties(this))
-                });
-                return ret;
+                    new SeperatorAction(),
+                    new Menus.Definitions.Actions.Exclude(this),
+                    new SeperatorAction(),
+                    new Menus.Definitions.Actions.Cut(this),
+                    new Menus.Definitions.Actions.Copy(this),
+                    new Menus.Definitions.Actions.Paste(this),
+                    new Menus.Definitions.Actions.Remove(this),
+                    new Menus.Definitions.Actions.Rename(this),
+                    new SeperatorAction(),
+                    new Menus.Definitions.Actions.OpenInWindowsExplorer(this),
+                    new SeperatorAction(),
+                    new Menus.Definitions.Actions.Properties(this)
+                };
             }
+        }
+
+        #region ISyncable Members
+
+        public override ISyncData GetSyncData()
+        {
+            return new FileSyncData { Text = this.ToString(), ImageKey = "folder" };
         }
 
         #endregion

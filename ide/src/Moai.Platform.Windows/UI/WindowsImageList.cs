@@ -54,7 +54,19 @@ namespace Moai.Platform.Windows.UI
 
         public T ProxyAs<T>() where T : class
         {
-            throw new NotImplementedException();
+            return this as T;
+        }
+
+        #endregion
+
+        #region IImageList Members
+
+        public T ConvertTo<T>() where T : class
+        {
+            if (typeof(T) == typeof(ImageList))
+                return this.m_ImageList as T;
+            else
+                return null;
         }
 
         #endregion

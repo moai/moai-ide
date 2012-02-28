@@ -122,14 +122,12 @@
       <menuitem text="Moai Forums" action="Help.Forums" />
       <menuitem text="Report a Bug" action="Help.ReportBug" />
       <menuseperator />
-      <menuitem text="Register Product" action="Help.Register" />
       <menuitem text="Check for Updates" action="Help.CheckUpdates" />
-      <menuitem text="Technical Support" action="Help.TechnicalSupport" />
-      <menuseperator />
-      <menuitem text="About Moai IDE" action="Help.About" />
+      <menuitem text="About Moai Engine" action="Help.AboutEngine" />
+      <menuitem text="About Moai IDE" action="Help.AboutIDE" />
     </menuitem>
   </menubar>
-  <toolbar>
+  <!--<toolbar>
     <toolitem text="New Project" action="Project.New" />
     <toolitem text="Add New Item" action="Project.AddFile" type="dropdown">
       <menuitem text="Add Model..." action="Project.AddModel" />
@@ -177,5 +175,5 @@
     <toolitem text="Properties Window" action="Tools.PropertiesWindow" />
     <toolitem text="Object Browser" action="Tools.ObjectBrowser" />
     <toolitem text="Toolbox" action="Tools.Toolbox" />
-  </toolbar>
+  </toolbar>-->
 </menus>

@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using DockPanelSuite;
 using Moai.Platform.UI;
 using Moai.Platform.Management;
+using Moai.Platform.Windows.UI;
 
 namespace Moai.Platform.Windows.Tools
 {
@@ -22,7 +23,7 @@ namespace Moai.Platform.Windows.Tools
             this.m_Manager = manager;
 
             // Set the image list.
-            this.c_SolutionTree.ImageList = Associations.ImageList.ProxyAs<ImageList>();
+            this.c_SolutionTree.ImageList = Associations.ImageList.ConvertTo<ImageList>();
 
             // Fill the solution explorer with the tree nodes.
             this.c_SolutionTree.Nodes.Clear();
@@ -57,7 +58,7 @@ namespace Moai.Platform.Windows.Tools
             // Fill the solution explorer with the tree nodes.
             c_SolutionTree.Nodes.Clear();
             if (Central.Manager.ActiveSolution != null)
-                c_SolutionTree.Nodes.Add(Central.Manager.ActiveSolution.ToTreeNode().ProxyAs<TreeNode>());
+                c_SolutionTree.Nodes.Add(this.Wrap(Central.Manager.ActiveSolution));
             c_SolutionTree.ExpandAll();
 
             // Search the tree node for events to listen to.
@@ -73,6 +74,44 @@ namespace Moai.Platform.Windows.Tools
                 }
             }
         }
+
+        #region TreeNode Wrapping
+
+        private TreeNode Wrap(Solution solution)
+        {
+            TreeNode tn = new SolutionTreeNode(solution);
+            foreach (Project p in solution.Projects)
+                tn.Nodes.Add(this.Wrap(p));
+            return tn;
+        }
+
+        private TreeNode Wrap(Project project)
+        {
+            TreeNode tn = new ProjectTreeNode(project);
+            foreach (File f in project.Files)
+            {
+                if (f is Folder)
+                    tn.Nodes.Add(this.Wrap(f as Folder));
+                else
+                    tn.Nodes.Add(new FileTreeNode(f));
+            }
+            return tn;
+        }
+
+        private TreeNode Wrap(Folder folder)
+        {
+            TreeNode tn = new FileTreeNode(folder);
+            foreach (File f in folder.Files)
+            {
+                if (f is Folder)
+                    tn.Nodes.Add(this.Wrap(f as Folder));
+                else
+                    tn.Nodes.Add(new FileTreeNode(f));
+            }
+            return tn;
+        }
+
+        #endregion
 
         void OnReloadRequired(object sender, EventArgs e)
         {

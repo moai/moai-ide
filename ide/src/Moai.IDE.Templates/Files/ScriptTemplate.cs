@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Drawing;
 using Moai.Platform.Management;
+using Moai.Platform.Templates.Files;
 
 namespace Moai.IDE.Templates.Files
 {

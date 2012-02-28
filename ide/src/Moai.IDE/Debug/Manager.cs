@@ -37,6 +37,7 @@ namespace Moai.Debug
         /// <param name="parent">The main Moai manager which owns this debugging manager.</param>
         public Manager()
         {
+            this.Breakpoints = new List<IBreakpoint>();
         }
 
         /// <summary>

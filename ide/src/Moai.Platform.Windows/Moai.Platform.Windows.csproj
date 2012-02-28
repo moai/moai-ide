@@ -57,6 +57,9 @@
     <Compile Include="..\..\VersionInfo.cs">
       <Link>Properties\VersionInfo.cs</Link>
     </Compile>
+    <Compile Include="Cache\ClipboardControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Cache\Scintilla.cs" />
     <None Include="Debug\ExceptionDialog.cs">
       <SubType>Form</SubType>
@@ -83,8 +86,12 @@
     <Compile Include="Designers\Start\Designer.Designer.cs">
       <DependentUpon>Designer.cs</DependentUpon>
     </Compile>
+    <Compile Include="Menus\ActionWrapper.cs" />
+    <Compile Include="UI\SolutionTreeNode.cs" />
+    <Compile Include="UI\ProjectTreeNode.cs" />
     <Compile Include="UI\KeyUtil.cs" />
     <Compile Include="UI\WindowsImageList.cs" />
+    <Compile Include="UI\FileTreeNode.cs" />
     <Compile Include="WindowsClipboard.cs" />
     <Compile Include="WindowsIDE.cs">
       <SubType>Form</SubType>

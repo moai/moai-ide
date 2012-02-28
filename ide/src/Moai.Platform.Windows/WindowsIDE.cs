@@ -11,6 +11,7 @@ using System.IO;
 using Moai.Designers;
 using Moai.Platform;
 using Moai.Platform.UI;
+using Moai.Platform.Windows.Menus;
 
 namespace Moai
 {
@@ -56,13 +57,14 @@ namespace Moai
         private void IDE_Load(object sender, EventArgs e)
         {
             // Load the main menu.
-            this.MainMenuStrip = Central.Manager.MenuManager.GetMainMenu().ProxyAs<MenuStrip>();
+            this.MainMenuStrip = ActionWrapper.GetMainMenu(Central.Manager.MenuManager.MainMenu);
             this.Controls.Add(this.MainMenuStrip);
 
             // Load the tool bar.
-            this.c_ToolStripContainer.TopToolStripPanel.Controls.Add(Central.Manager.MenuManager.GetToolBar() as ToolBar);
+            this.c_ToolStripContainer.TopToolStripPanel.Controls.Add(ActionWrapper.GetToolBar(Central.Manager.MenuManager.ToolBar));
 
             // Set up the workspace.
+            Central.Manager.ToolsManager = new Moai.Platform.Windows.Tools.Manager();
             Central.Manager.ToolsManager.Show(typeof(Moai.Platform.Windows.Tools.ErrorListTool));
             Central.Manager.ToolsManager.Show(typeof(Moai.Platform.Windows.Tools.ImmediateWindowTool));
             Central.Manager.ToolsManager.Show(typeof(Moai.Platform.Windows.Tools.SolutionExplorerTool));
@@ -155,6 +157,11 @@ namespace Moai
                 default:
                     throw new NotSupportedException();
             }
+        }
+
+        public void Exit()
+        {
+            Application.Exit();
         }
 
         #endregion

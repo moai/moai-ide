@@ -7,15 +7,14 @@ using Moai.Platform.UI;
 
 namespace Moai.Platform.Menus
 {
-    public abstract class Action
+    public abstract class Action : ISyncable
     {
         private Image p_ItemIcon = null;
         private string p_Text = null;
         private bool p_Enabled = false;
+        private bool p_Checked = false;
         private bool p_Implemented = true;
         private Keys p_Shortcut = Keys.None;
-        private IToolStripMenuItem m_MenuItem = null;
-        private IToolStripItem m_Item = null;
         private object p_Context = null;
 
         public Action() { }
@@ -35,6 +34,7 @@ namespace Moai.Platform.Menus
             protected set
             {
                 this.p_ItemIcon = value;
+                this.OnSyncDataChanged();
             }
         }
 
@@ -50,11 +50,7 @@ namespace Moai.Platform.Menus
             protected set
             {
                 this.p_Text = value;
-                if (this.m_MenuItem != null)
-                    if (this.m_MenuItem.Owner != null && this.m_MenuItem.Owner.InvokeRequired)
-                        this.m_MenuItem.Owner.Invoke(new System.Action(() => { this.m_MenuItem.Text = value; }));
-                    else
-                        this.m_MenuItem.Text = value;
+                this.OnSyncDataChanged();
             }
         }
 
@@ -70,19 +66,23 @@ namespace Moai.Platform.Menus
             protected set
             {
                 this.p_Enabled = value;
-                if (this.p_Implemented)
-                {
-                    if (this.m_Item != null)
-                        if (this.m_Item.Owner != null && this.m_Item.Owner.InvokeRequired)
-                            this.m_Item.Owner.Invoke(new System.Action(() => { this.m_Item.Enabled = value; }));
-                        else
-                            this.m_Item.Enabled = value;
-                }
-                else
-                    if (this.m_Item.Owner != null && this.m_Item.Owner.InvokeRequired)
-                        this.m_Item.Owner.Invoke(new System.Action(() => { this.m_Item.Enabled = false; }));
-                    else
-                        this.m_Item.Enabled = false;
+                this.OnSyncDataChanged();
+            }
+        }
+
+        /// <summary>
+        /// Whether this action is currently selected.
+        /// </summary>
+        public virtual bool Checked
+        {
+            get
+            {
+                return this.p_Checked;
+            }
+            protected set
+            {
+                this.p_Checked = value;
+                this.OnSyncDataChanged();
             }
         }
 
@@ -98,19 +98,7 @@ namespace Moai.Platform.Menus
             protected set
             {
                 this.p_Implemented = value;
-                if (this.p_Implemented)
-                {
-                    if (this.m_Item != null)
-                        if (this.m_Item.Owner != null && this.m_Item.Owner.InvokeRequired)
-                            this.m_Item.Owner.Invoke(new System.Action(() => { this.m_Item.Enabled = value; }));
-                        else
-                            this.m_Item.Enabled = value;
-                }
-                else
-                    if (this.m_Item.Owner != null && this.m_Item.Owner.InvokeRequired)
-                        this.m_Item.Owner.Invoke(new System.Action(() => { this.m_Item.Enabled = false; }));
-                    else
-                        this.m_Item.Enabled = false;
+                this.OnSyncDataChanged();
             }
         }
 
@@ -126,30 +114,7 @@ namespace Moai.Platform.Menus
             protected set
             {
                 this.p_Shortcut = value;
-                if (this.m_MenuItem != null)
-                    this.m_MenuItem.ShortcutKeys = value;
-            }
-        }
-
-        /// <summary>
-        /// The menu item associated with this action.
-        /// </summary>
-        protected IToolStripMenuItem MenuItem
-        {
-            get
-            {
-                return this.m_MenuItem;
-            }
-        }
-
-        /// <summary>
-        /// The tool strip item associated with this action.
-        /// </summary>
-        protected IToolStripItem Item
-        {
-            get
-            {
-                return this.m_Item;
+                this.OnSyncDataChanged();
             }
         }
 
@@ -168,15 +133,39 @@ namespace Moai.Platform.Menus
             }
         }
 
-        /// <summary>
-        /// Associates this action with the specified menu item and tool strip item.
-        /// </summary>
-        /// <param name="menuitem">The menu item.</param>
-        /// <param name="item">The tool strip item.</param>
-        public void SetItem(IToolStripMenuItem menuitem, IToolStripItem item)
+        #region ISyncable Members
+
+        public event EventHandler SyncDataChanged;
+
+        public ISyncData GetSyncData()
         {
-            this.m_MenuItem = menuitem;
-            this.m_Item = item;
+            return new ActionSyncData
+            {
+                ItemIcon = this.ItemIcon,
+                Text = this.Text,
+                Enabled = this.Enabled,
+                Implemented = this.Implemented,
+                Shortcut = this.Shortcut,
+                Checked = this.Checked
+            };
         }
+
+        protected void OnSyncDataChanged()
+        {
+            if (this.SyncDataChanged != null)
+                this.SyncDataChanged(this, new EventArgs());
+        }
+
+        public class ActionSyncData : ISyncData
+        {
+            public Image ItemIcon;
+            public string Text;
+            public bool Enabled;
+            public bool Implemented;
+            public Keys Shortcut;
+            public bool Checked;
+        }
+
+        #endregion
     }
 }

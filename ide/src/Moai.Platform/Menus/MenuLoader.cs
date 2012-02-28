@@ -12,13 +12,14 @@ namespace Moai.Platform.Menus
     class MenuLoader
     {
         private XmlReader m_Reader;
-        public IMenuStrip MainMenu = Central.Platform.UI.CreateMenuStrip();
-        public IToolStrip ToolBar = Central.Platform.UI.CreateToolStrip();
+        public DynamicGroupAction MainMenu = new DynamicGroupAction(null, null);
+        public DynamicGroupAction ToolBar = new DynamicGroupAction(null, null);
 
-        private IToolStripMenuItem c_ActiveMenuItem = null;
-        private IToolStripDropDownButton c_ActiveDropDown = null;
-        private IToolStripComboBox c_ActiveComboBox = null;
-        private IToolStripItem c_ActiveItem = null;
+        public DynamicGroupAction ActiveMenuStore;
+        public DynamicGroupAction ActiveToolStore;
+        public Stack<DynamicGroupAction> ParentMenuStores = new Stack<DynamicGroupAction>();
+        public Stack<DynamicGroupAction> ParentToolStores = new Stack<DynamicGroupAction>();
+
         private Assembly m_CurrentAssembly = Assembly.GetExecutingAssembly();
         private Menus.MenusManager m_Manager;
 
@@ -26,18 +27,16 @@ namespace Moai.Platform.Menus
         {
             this.m_Manager = manager;
 
+            // Check to make sure our menu information file exists.
             if (!File.Exists(Central.Manager.Settings["RootPath"] + Path.DirectorySeparatorChar + "Menus.xml"))
-            {
                 throw new Exception("Menu information file was not found.  Please make sure Menus.xml exists in the application directory.");
-            }
-
-            // style menubar and toolbar
-            // TODO: Finish style system.
-            //this.MainMenu.Renderer = new MenuRenderer();
-            //this.ToolBar.Renderer = new ToolBarRenderer();
-
-            this.m_Reader = XmlReader.Create(new StreamReader(Central.Manager.Settings["RootPath"] + Path.DirectorySeparatorChar + "Menus.xml"));
             
+            // Set the default stores.
+            this.ActiveMenuStore = this.MainMenu;
+            this.ActiveToolStore = this.ToolBar;
+
+            // Read our menu data.
+            this.m_Reader = XmlReader.Create(new StreamReader(Central.Manager.Settings["RootPath"] + Path.DirectorySeparatorChar + "Menus.xml"));
             while (this.m_Reader.Read())
             {
                 switch (this.m_Reader.NodeType)
@@ -51,37 +50,36 @@ namespace Moai.Platform.Menus
                                 // Nothing to do here.
                                 break;
                             case "menuitem":
-                                this.AddMenuItem(this.m_Reader.GetAttribute("text"));
-
-                                this.AddReflectionHandler(this.m_Reader.GetAttribute("action"));
-
-                                if (this.m_Reader.IsEmptyElement)
                                 {
-                                    // Automatically end element.
-                                    c_ActiveItem = c_ActiveItem.OwnerItem;
-                                    this.UpdateObjects();
+                                    // Check to see if this is an empty element.
+                                    if (this.m_Reader.IsEmptyElement)
+                                    {
+                                        // Use reflection to create an instance of the action.
+                                        Action a = this.GetActionByName(this.m_Reader.GetAttribute("action"));
 
-                                    // The parent had some menu items, therefore we
-                                    // enable it regardless of whether it has an action.
-                                    if (c_ActiveItem != null && !(c_ActiveItem is IToolStripDropDownButton))
-                                        c_ActiveItem.Enabled = true;
+                                        // Add it to the list of main menu items.
+                                        this.ActiveMenuStore.Add(a);
+                                    }
+                                    else
+                                    {
+                                        // This menu item contains other menu items, move the currently
+                                        // active menu store into the parent list and create a new active
+                                        // menu store.
+                                        this.ParentMenuStores.Push(this.ActiveMenuStore);
+                                        this.ActiveMenuStore = new DynamicGroupAction(this.m_Reader.GetAttribute("text"), null);
+                                    }
                                 }
                                 break;
                             case "menuseperator":
-                                this.AddMenuItem("-");
-
-                                if (this.m_Reader.IsEmptyElement)
                                 {
-                                    // Automatically end element.
-                                    c_ActiveItem = c_ActiveItem.OwnerItem;
-                                    this.UpdateObjects();
+                                    // Create a new SeperatorAction.
+                                    Action a = new SeperatorAction();
 
-                                    // The parent had some menu items, therefore we
-                                    // enable it regardless of whether it has an action.
-                                    if (c_ActiveItem != null && !(c_ActiveItem is IToolStripDropDownButton))
-                                        c_ActiveItem.Enabled = true;
+                                    // Add it to the list of main menu items.
+                                    this.ActiveMenuStore.Add(a);
                                 }
                                 break;
+                                /*
                             case "toolitem":
                                 if (this.m_Reader.GetAttribute("type") == "dropdown")
                                     this.AddToolDropDown(this.m_Reader.GetAttribute("text"));
@@ -123,7 +121,7 @@ namespace Moai.Platform.Menus
                                 /* FIXME: Implement this.
                                 if (this.m_Reader.GetAttribute("editable") == "false")
                                     c_ActiveComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
-                                 */
+                                 *
 
                                 //this.AddReflectionHandler(this.Reader.GetAttribute("action"));
 
@@ -173,6 +171,7 @@ namespace Moai.Platform.Menus
                                     }
                                 }
                                 break;
+                                 */
                         }
                         break;
                     case XmlNodeType.EndElement:
@@ -184,14 +183,17 @@ namespace Moai.Platform.Menus
                                 // Nothing to do here.
                                 break;
                             case "menuitem":
-                                c_ActiveItem = c_ActiveItem.OwnerItem;
-                                this.UpdateObjects();
-
-                                // The parent had some menu items, therefore we
-                                // enable it regardless of whether it has an action.
-                                if (c_ActiveItem != null && !(c_ActiveItem is IToolStripDropDownButton))
-                                    c_ActiveItem.Enabled = true;
+                                {
+                                    // Check to see if this is not an empty element.
+                                    if (!this.m_Reader.IsEmptyElement)
+                                    {
+                                        // Finish this menu section up.
+                                        this.ParentMenuStores.Peek().Add(this.ActiveMenuStore);
+                                        this.ActiveMenuStore = this.ParentMenuStores.Pop();
+                                    }
+                                }
                                 break;
+                                /*
                             case "toolitem":
                                 c_ActiveItem = c_ActiveItem.OwnerItem;
                                 this.UpdateObjects();
@@ -219,6 +221,7 @@ namespace Moai.Platform.Menus
                                 if (c_ActiveItem != null)
                                     c_ActiveItem.Enabled = true;
                                 break;
+                                 */
                         }
                         break;
                 }
@@ -227,6 +230,25 @@ namespace Moai.Platform.Menus
             this.m_Reader.Close();
         }
 
+        private Action GetActionByName(string name)
+        {
+            if (name != null)
+            {
+                // Use reflection to associate the menu item with a defined
+                // action.
+                Type type = m_CurrentAssembly.GetType("Moai.Platform.Menus.Definitions." + name);
+                if (type != null)
+                {
+                    object obj = Activator.CreateInstance(type);
+                    if (obj is Action)
+                        return obj as Action;
+                }
+            }
+
+            return null;
+        }
+
+        /*
         private void AddMenuItem(String text)
         {
             if (c_ActiveItem == null)
@@ -299,7 +321,7 @@ namespace Moai.Platform.Menus
                             // FIXME: else
                             // FIXME:     c_ActiveItem.ToolTipText = resString;
                         }
-                        action.SetItem(this.c_ActiveMenuItem, this.c_ActiveItem);
+                        // FIXME: action.SetItem(this.c_ActiveMenuItem, this.c_ActiveItem);
                         if (this.c_ActiveMenuItem != null)
                         {
                             this.c_ActiveMenuItem.ShortcutKeys = action.Shortcut;
@@ -342,7 +364,7 @@ namespace Moai.Platform.Menus
             if (c_ActiveItem is ToolStripComboBox)
                 c_ActiveComboBox = (ToolStripComboBox)c_ActiveItem;
             else
-                c_ActiveComboBox = null; */                  
-        }
+                c_ActiveComboBox = null; *             
+        }*/
     }
 }

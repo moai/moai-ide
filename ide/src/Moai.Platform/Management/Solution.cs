@@ -9,7 +9,7 @@ using Moai.Platform.Menus;
 
 namespace Moai.Platform.Management
 {
-    public class Solution
+    public class Solution : ISyncable
     {
         private List<Project> p_Projects = new List<Project>();
         private FileInfo p_SolutionInfo = null;
@@ -97,50 +97,37 @@ namespace Moai.Platform.Management
         #endregion
 
         /// <summary>
-        /// Converts the solution to a tree node for representation in the Solution Explorer.
+        /// Returns the context menu for this project.
         /// </summary>
-        /// <returns>A new TreeNode.</returns>
-        public ITreeNode ToTreeNode()
+        public virtual Moai.Platform.Menus.Action[] ContextActions
         {
-            // Construct the tree node.
-            ITreeNode node = Central.Platform.UI.CreateTreeNode();
-            node.Text = "Solution";
-            foreach (Project p in this.p_Projects)
-                node.Nodes.Add(p.ToTreeNode());
-            node.Tag = this;
-
-            // Create the sub-menu for adding items.
-            IToolStripMenuItem addsm = Central.Platform.UI.CreateToolStripMenuItem();
-            addsm.Text = "Add";
-            addsm.Image = null;
-            addsm.Items.AddRange(new IToolStripItem[] {
-                MenusManager.WrapAction(new Menus.Definitions.Project.New(this)),
-                MenusManager.WrapAction(new Menus.Definitions.Project.Existing(this))
-            });
-
-            // Set the context menu for the node.
-            node.ContextMenuStrip = Central.Platform.UI.CreateContextMenuStrip();
-            node.ContextMenuStrip.Items.AddRange(new IToolStripItem[] {
-                    MenusManager.WrapAction(new Menus.Definitions.Solution.Build(this)),
-                    MenusManager.WrapAction(new Menus.Definitions.Solution.Rebuild(this)),
-                    MenusManager.WrapAction(new Menus.Definitions.Solution.Clean(this)),
-                    Central.Platform.UI.CreateToolStripSeperator(),
-                    MenusManager.WrapAction(new Menus.Definitions.Project.ProjDependencies(this)),
-                    MenusManager.WrapAction(new Menus.Definitions.Project.ProjBuildOrder(this)),
-                    Central.Platform.UI.CreateToolStripSeperator(),
-                    addsm,
-                    Central.Platform.UI.CreateToolStripSeperator(),
-                    MenusManager.WrapAction(new Menus.Definitions.Solution.SetStartupProjects(this)),
-                    Central.Platform.UI.CreateToolStripSeperator(),
-                    MenusManager.WrapAction(new Menus.Definitions.Actions.Paste(this)),
-                    MenusManager.WrapAction(new Menus.Definitions.Actions.Rename(this)),
-                    Central.Platform.UI.CreateToolStripSeperator(),
-                    MenusManager.WrapAction(new Menus.Definitions.Actions.OpenInWindowsExplorer(this)),
-                    Central.Platform.UI.CreateToolStripSeperator(),
-                    MenusManager.WrapAction(new Menus.Definitions.Actions.Properties(this))
-                });
-
-            return node;
+            get
+            {
+                // Create the context action list.
+                return new Moai.Platform.Menus.Action[]
+                {
+                    new Menus.Definitions.Solution.Build(this),
+                    new Menus.Definitions.Solution.Rebuild(this),
+                    new Menus.Definitions.Solution.Clean(this),
+                    new SeperatorAction(),
+                    new Menus.Definitions.Project.ProjDependencies(this),
+                    new Menus.Definitions.Project.ProjBuildOrder(this),
+                    new SeperatorAction(),
+                    new GroupAction("Add", null, new Moai.Platform.Menus.Action[] {
+                        new Menus.Definitions.Project.New(this),
+                        new Menus.Definitions.Project.Existing(this)
+                    }),
+                    new SeperatorAction(),
+                    new Menus.Definitions.Solution.SetStartupProjects(this),
+                    new SeperatorAction(),
+                    new Menus.Definitions.Actions.Paste(this),
+                    new Menus.Definitions.Actions.Rename(this),
+                    new SeperatorAction(),
+                    new Menus.Definitions.Actions.OpenInWindowsExplorer(this),
+                    new SeperatorAction(),
+                    new Menus.Definitions.Actions.Properties(this)
+                };
+            }
         }
 
         /// <summary>
@@ -169,5 +156,16 @@ namespace Moai.Platform.Management
                 return this.p_SolutionInfo;
             }
         }
+
+        #region ISyncable Members
+
+        public event EventHandler SyncDataChanged;
+
+        public ISyncData GetSyncData()
+        {
+            return new FileSyncData { Text = (this.SolutionInfo != null) ? this.SolutionInfo.Name : "Solution", ImageKey = "solution" };
+        }
+
+        #endregion
     }
 }

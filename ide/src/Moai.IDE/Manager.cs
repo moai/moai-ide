@@ -137,11 +137,11 @@ namespace Moai.IDE
         }
 
         /// <summary>
-        /// Shuts down Roket3D IDE.NET.
+        /// Shuts down Moai IDE.
         /// </summary>
         public void Stop()
         {
-            // FIXME: System.Windows.Forms.Application.Exit();
+            this.IDE.Exit();
         }
 
         #region IRootManager Members
@@ -185,7 +185,7 @@ namespace Moai.IDE
         public Moai.Platform.Tools.IToolsManager ToolsManager
         {
             get;
-            private set;
+            set;
         }
 
         public IIDE IDE

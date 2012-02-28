@@ -16,7 +16,7 @@ namespace Moai.Platform.Menus.Definitions.Views
             this.ItemIcon = IDE.Resources.Images.view_code;
             this.Text = "Code";
             this.Enabled = false;
-            this.MenuItem.Checked = true;
+            this.Checked = true;
         }
     }
 
@@ -31,7 +31,7 @@ namespace Moai.Platform.Menus.Definitions.Views
             this.ItemIcon = IDE.Resources.Images.view_designer;
             this.Text = "Designer";
             this.Enabled = false;
-            this.MenuItem.Checked = false;
+            this.Checked = false;
         }
     }
 }

@@ -5,54 +5,17 @@ using System.Text;
 using System.Windows.Forms;
 using Moai.Platform.UI;
 using Moai.Platform.Windows.UI;
+using Moai.Platform.Windows.Management;
+using Moai.Platform.Designers;
+using Moai.Platform.Management;
 
 namespace Moai.Platform.Windows
 {
     public class WindowsUI : IUIProvider
     {
-        public IMenuStrip CreateMenuStrip()
-        {
-            throw new NotImplementedException();
-        }
-
-        public IToolStrip CreateToolStrip()
-        {
-            throw new NotImplementedException();
-        }
-
-        public IToolStripMenuItem CreateToolStripMenuItem()
-        {
-            throw new NotImplementedException();
-        }
-
-        public IToolStripMenuItem CreateToolStripMenuItem(string text, System.Drawing.Image image, IToolStripItem[] children)
-        {
-            throw new NotImplementedException();
-        }
-
         public IImageList CreateImageList()
         {
             return new WindowsImageList();
-        }
-
-        public ITreeNode CreateTreeNode()
-        {
-            throw new NotImplementedException();
-        }
-
-        public IContextMenuStrip CreateContextMenuStrip()
-        {
-            throw new NotImplementedException();
-        }
-
-        public IToolStripItem CreateToolStripSeperator()
-        {
-            throw new NotImplementedException();
-        }
-
-        public IToolStripComboBox CreateToolStripComboBox()
-        {
-            throw new NotImplementedException();
         }
 
         public void ShowMessage(string message, string title, Moai.Platform.UI.MessageBoxButtons buttons, Moai.Platform.UI.MessageBoxIcon icon)
@@ -111,12 +74,38 @@ namespace Moai.Platform.Windows
 
         public string PickExistingFile(PickingData data)
         {
-            throw new NotImplementedException();
+            OpenFileDialog ofd = new OpenFileDialog();
+            ofd.Filter = data.Filter;
+            ofd.CheckFileExists = data.CheckFileExists;
+            ofd.CheckPathExists = data.CheckPathExists;
+            ofd.RestoreDirectory = data.RestoreDirectory;
+            if (ofd.ShowDialog() == DialogResult.OK)
+                return ofd.FileName;
+            else
+                return null;
         }
 
         public Moai.Platform.Templates.Solutions.SolutionCreationData PickNewSolution()
         {
-            throw new NotImplementedException();
+            NewSolutionForm nsf = new NewSolutionForm();
+            if (nsf.ShowDialog() == DialogResult.OK)
+                return nsf.Result;
+            else
+                return null;
+        }
+
+        public Moai.Platform.Templates.Files.FileCreationData PickNewFile()
+        {
+            return this.PickNewFile(null);
+        }
+
+        public Moai.Platform.Templates.Files.FileCreationData PickNewFile(string preselected)
+        {
+            NewFileForm nff = new NewFileForm(preselected);
+            if (nff.ShowDialog() == DialogResult.OK)
+                return nff.Result;
+            else
+                return null;
         }
     }
 }

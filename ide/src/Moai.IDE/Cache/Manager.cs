@@ -11,7 +11,6 @@ namespace Moai.IDE.Cache
     {
         //private Scintilla p_ScintillaCache = null;
         private AutoComplete p_AutoComplete = null;
-        private Context p_Context = null;
         private UndoRedoCache p_UndoRedo = null;
 
         /// <summary>
@@ -22,7 +21,7 @@ namespace Moai.IDE.Cache
             //this.p_ScintillaCache = new Scintilla();
             this.p_AutoComplete = new AutoComplete();
             this.p_AutoComplete.Import();
-            this.p_Context = new Context();
+            this.Context = new Context();
             this.p_UndoRedo = new UndoRedoCache();
         }
 

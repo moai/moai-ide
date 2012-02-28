@@ -82,7 +82,7 @@ namespace Moai.Designers
                 return null;
 
             // Detect the type of designer to create by the file's extension.
-            Type t = Associations.GetDesignerType(file.FileInfo.Extension.Substring(1));
+            Type t = Central.Platform.GetDesignerTypeImplementing(Associations.GetDesignerType(file.FileInfo.Extension.Substring(1)));
             if (t == null)
             {
                 Central.Platform.UI.ShowMessage("There is no designer associated with this file type.", "No Designer", MessageBoxButtons.OK);

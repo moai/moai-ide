@@ -14,6 +14,6 @@ namespace Moai.Platform.Templates.Files
         public abstract string TemplateExtension { get; }
         public abstract Bitmap TemplateIcon { get; }
 
-        public abstract File Create(string name, Project project, File folder);
+        public abstract File Create(string name, Project project, Folder folder);
     }
 }

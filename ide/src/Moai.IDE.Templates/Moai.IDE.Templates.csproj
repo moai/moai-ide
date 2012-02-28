@@ -46,11 +46,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Files\BaseTemplate.cs" />
     <Compile Include="Files\FolderTemplate.cs" />
     <Compile Include="Files\ScriptTemplate.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Solutions\BaseTemplate.cs" />
     <Compile Include="Solutions\StandardTemplate.cs" />
   </ItemGroup>
   <ItemGroup>

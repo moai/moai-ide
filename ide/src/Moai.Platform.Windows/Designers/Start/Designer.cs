@@ -74,11 +74,11 @@ namespace Moai.Platform.Windows.Designers.Start
                         {
                             case "new":
                                 // Call the "New Solution" menu option.
-                                new Menus.Definitions.Solution.New().OnActivate();
+                                new Platform.Menus.Definitions.Solution.New().OnActivate();
                                 break;
                             case "open":
                                 // Call the "Open Solution" menu option.
-                                new Menus.Definitions.Solution.Open().OnActivate();
+                                new Platform.Menus.Definitions.Solution.Open().OnActivate();
                                 break;
                         }
                         break;

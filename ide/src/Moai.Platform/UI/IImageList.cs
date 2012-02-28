@@ -11,6 +11,8 @@ namespace Moai.Platform.UI
     {
         void Add(Image image);
         void Add(string name, Image image);
+        T ConvertTo<T>() where T : class;
+
         int Count { get; }
         Image this[int i] { get; }
         Image this[string n] { get; }

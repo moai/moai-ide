@@ -14,6 +14,7 @@ namespace Moai.Platform
         event EventHandler ResizeEnd;
 
         void Show();
+        void Exit();
 
         ITab ActiveTab { get; }
         bool IsDisposed { get; }

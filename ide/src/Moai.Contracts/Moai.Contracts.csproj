@@ -54,6 +54,7 @@
     <Compile Include="IRemovable.cs" />
     <Compile Include="IRenamable.cs" />
     <Compile Include="ISavable.cs" />
+    <Compile Include="ISyncable.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -21,42 +21,25 @@ namespace Moai.Platform.Menus
         }
 
         /// <summary>
-        /// Retrieves the main menu to be associated with the IDE window.
+        /// Retrieves the dynamic action group associated with the main menu system.
         /// </summary>
-        /// <returns>The main menu to be associated with the IDE window.</returns>
-        public IMenuStrip GetMainMenu()
+        public DynamicGroupAction MainMenu
         {
-            return this.m_Loader.MainMenu;
+            get
+            {
+                return this.m_Loader.MainMenu;
+            }
         }
 
         /// <summary>
-        /// Retrieves the toolbar to be associated with the IDE window.
+        /// Retrieves the dynamic action group associated with the toolbar system.
         /// </summary>
-        /// <returns>The toolbar to be associated with the IDE window.</returns>
-        public IToolStrip GetToolBar()
+        public DynamicGroupAction ToolBar
         {
-            return this.m_Loader.ToolBar;
-        }
-
-        /// <summary>
-        /// Wraps the specified action by assigning it's handlers and returning
-        /// the menu item related to it.
-        /// </summary>
-        /// <param name="action">The action to wrap.</param>
-        /// <returns>The menu item for the action.</returns>
-        public static IToolStripMenuItem WrapAction(Action action)
-        {
-            IToolStripMenuItem mi = Central.Platform.UI.CreateToolStripMenuItem();
-            action.SetItem(mi, mi);
-            action.OnInitialize();
-            mi.Text = action.Text;
-            mi.ShortcutKeys = action.Shortcut;
-            mi.ShowShortcutKeys = false;
-            mi.Enabled = action.Enabled;
-            if (action.ItemIcon != null)
-                mi.Image = action.ItemIcon;
-            mi.Click += new EventHandler((sender, e) => { action.OnActivate(); });
-            return mi;
+            get
+            {
+                return this.m_Loader.ToolBar;
+            }
         }
     }
 }

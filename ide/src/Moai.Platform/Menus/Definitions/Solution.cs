@@ -35,15 +35,6 @@ namespace Moai.Platform.Menus.Definitions.Solution
                 Management.Solution s = result.Template.Create(result);
                 Central.Manager.LoadSolution(s.SolutionInfo.FullName);
             }
-            /*
-            NewSolutionForm nsf = new NewSolutionForm();
-            if (nsf.ShowDialog() == DialogResult.OK)
-            {
-                // Request that the template create itself with the data provided.
-                Management.Solution s = nsf.Result.Template.Create(nsf.Result);
-                Central.Manager.LoadSolution(s.SolutionInfo.FullName);
-            }
-            */
         }
 
         /// <summary>
@@ -226,6 +217,23 @@ namespace Moai.Platform.Menus.Definitions.Solution
             this.Implemented = false;
             this.ItemIcon = null;
             this.Text = "Set Startup Projects...";
+            this.Enabled = false;
+        }
+    }
+
+    public class Publish : Action
+    {
+        public Publish() : base() { }
+        public Publish(object context) : base(context) { }
+
+        /// <summary>
+        /// This event is raied when the menu item is to be initalized.
+        /// </summary>
+        public override void OnInitialize()
+        {
+            this.Implemented = false;
+            this.ItemIcon = null;
+            this.Text = "Publish...";
             this.Enabled = false;
         }
     }

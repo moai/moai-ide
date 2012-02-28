@@ -12,7 +12,6 @@ namespace Moai.Platform.Windows
     {
         public WindowsPlatform()
         {
-            this.Clipboard = new WindowsClipboard();
             this.UI = new WindowsUI();
         }
 
@@ -46,8 +45,10 @@ namespace Moai.Platform.Windows
 
         public IClipboard Clipboard
         {
-            get;
-            private set;
+            get
+            {
+                return new WindowsClipboard();
+            }
         }
     }
 }

@@ -85,7 +85,7 @@ namespace Moai.Platform.Windows.Management
 
             // Use reflection to get a list of available templates in this IDE.
             this.m_TemplateTypes.Clear();
-            Type[] types = Assembly.GetExecutingAssembly().GetTypes();
+            Type[] types = Assembly.Load("Moai.IDE.Templates").GetTypes();
             foreach (Type t in types)
             {
                 if (t.BaseType == typeof(BaseTemplate))

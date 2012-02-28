@@ -5,6 +5,7 @@ using System.Text;
 using System.IO;
 using System.Drawing;
 using Moai.Platform.Management;
+using Moai.Platform.Templates.Files;
 
 namespace Moai.IDE.Templates.Files
 {

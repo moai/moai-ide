@@ -7,10 +7,12 @@ using System.Xml;
 using System.Threading;
 using Moai.Platform.Collections;
 using Moai.Platform.UI;
+using Moai.Platform.Menus;
+using Moai.Platform.Templates.Files;
 
 namespace Moai.Platform.Management
 {
-    public class Project : IPastable
+    public class Project : IPastable, ISyncable
     {
         private bool p_Initalized = false;
         private FileInfo p_ProjectInfo = null;
@@ -302,56 +304,45 @@ namespace Moai.Platform.Management
         }
 
         /// <summary>
-        /// Returns a TreeNode for TreeView that represents this project.
+        /// Returns the context menu for this project.
         /// </summary>
-        /// <returns></returns>
-        public ITreeNode ToTreeNode()
+        public virtual Moai.Platform.Menus.Action[] ContextActions
         {
-            // Construct the tree node.
-            throw new NotImplementedException();
-            /* FIXME:
-            System.Windows.Forms.TreeNode node = new System.Windows.Forms.TreeNode(
-                this.p_ProjectInfo.Name.Substring(0, this.p_ProjectInfo.Name.Length - this.p_ProjectInfo.Extension.Length)
-                );
-            foreach (File f in this.p_Files)
-                f.Associate(node);
-            node.Tag = this;
-
-            // Set the context menu for the node.
-            node.ContextMenuStrip = new ContextMenuStrip();
-            node.ContextMenuStrip.Items.AddRange(new ToolStripItem[] {
-                    Menus.Manager.WrapAction(new Menus.Definitions.Project.Build(this)),
-                    Menus.Manager.WrapAction(new Menus.Definitions.Project.Rebuild(this)),
-                    Menus.Manager.WrapAction(new Menus.Definitions.Project.Clean(this)),
-                    new ToolStripSeparator(),
-                    Menus.Manager.WrapAction(new Menus.Definitions.Project.ProjDependencies(this)),
-                    Menus.Manager.WrapAction(new Menus.Definitions.Project.ProjBuildOrder(this)),
-                    new ToolStripSeparator(),
-                    new ToolStripMenuItem("Add", null, new ToolStripItem[] {
-                        Menus.Manager.WrapAction(new Menus.Definitions.Project.AddNewItem(this)),
-                        Menus.Manager.WrapAction(new Menus.Definitions.Project.AddExistingItem(this)),
-                        Menus.Manager.WrapAction(new Menus.Definitions.Project.AddFolder(this)),
-                        new ToolStripSeparator(),
-                        Menus.Manager.WrapAction(new Menus.Definitions.Project.AddScript(this)),
-                        Menus.Manager.WrapAction(new Menus.Definitions.Project.AddClass(this))
+            get
+            {
+                // Create the context action list.
+                return new Moai.Platform.Menus.Action[]
+                {
+                    new Menus.Definitions.Project.Build(this),
+                    new Menus.Definitions.Project.Rebuild(this),
+                    new Menus.Definitions.Project.Clean(this),
+                    new SeperatorAction(),
+                    new Menus.Definitions.Project.ProjDependencies(this),
+                    new Menus.Definitions.Project.ProjBuildOrder(this),
+                    new SeperatorAction(),
+                    new GroupAction("Add", null, new Moai.Platform.Menus.Action[] {
+                        new Menus.Definitions.Project.AddNewItem(this),
+                        new Menus.Definitions.Project.AddExistingItem(this),
+                        new Menus.Definitions.Project.AddFolder(this),
+                        new SeperatorAction(),
+                        new Menus.Definitions.Project.AddScript(this),
+                        new Menus.Definitions.Project.AddClass(this)
                     }),
-                    Menus.Manager.WrapAction(new Menus.Definitions.Project.AddReference(this)),
-                    new ToolStripSeparator(),
-                    Menus.Manager.WrapAction(new Menus.Definitions.Project.SetAsStartupProject(this)),
-                    Menus.Manager.WrapAction(new Menus.Definitions.Project.StartWithDebug(this)),
-                    new ToolStripSeparator(),
-                    Menus.Manager.WrapAction(new Menus.Definitions.Actions.Cut(this)),
-                    Menus.Manager.WrapAction(new Menus.Definitions.Actions.Paste(this)),
-                    Menus.Manager.WrapAction(new Menus.Definitions.Actions.Remove(this)),
-                    Menus.Manager.WrapAction(new Menus.Definitions.Actions.Rename(this)),
-                    new ToolStripSeparator(),
-                    Menus.Manager.WrapAction(new Menus.Definitions.Actions.OpenInWindowsExplorer(this)),
-                    new ToolStripSeparator(),
-                    Menus.Manager.WrapAction(new Menus.Definitions.Actions.Properties(this))
-                });
-
-            return node;
-             */
+                    new Menus.Definitions.Project.AddReference(this),
+                    new SeperatorAction(),
+                    new Menus.Definitions.Project.SetAsStartupProject(this),
+                    new Menus.Definitions.Project.StartWithDebug(this),
+                    new SeperatorAction(),
+                    new Menus.Definitions.Actions.Cut(this),
+                    new Menus.Definitions.Actions.Paste(this),
+                    new Menus.Definitions.Actions.Remove(this),
+                    new Menus.Definitions.Actions.Rename(this),
+                    new SeperatorAction(),
+                    new Menus.Definitions.Actions.OpenInWindowsExplorer(this),
+                    new SeperatorAction(),
+                    new Menus.Definitions.Actions.Properties(this)
+                };
+            }
         }
 
         /// <summary>
@@ -384,13 +375,8 @@ namespace Moai.Platform.Management
         /// <param name="f">The folder to place the file in, or null for the project root.</param>
         public void AddFileInteractive(string preselected, Management.Folder f)
         {
-            throw new NotImplementedException();
-            /*NewFileForm nff = new NewFileForm(preselected);
-            if (nff.ShowDialog() == DialogResult.OK)
-            {
-                // Create the file.
-                nff.Result.Template.Create(nff.Result.Name, this, f);
-            }*/
+            FileCreationData fcd = Central.Platform.UI.PickNewFile();
+            fcd.Template.Create(fcd.Name, this, f);
         }
 
         /// <summary>
@@ -547,6 +533,21 @@ namespace Moai.Platform.Management
 
             // Force the project to be saved now.
             this.Save();*/
+        }
+
+        #endregion
+
+        #region ISyncable Members
+
+        public event EventHandler SyncDataChanged;
+
+        public ISyncData GetSyncData()
+        {
+            return new FileSyncData
+            {
+                Text = this.ProjectInfo.Name.Substring(0, this.ProjectInfo.Name.Length - this.ProjectInfo.Extension.Length),
+                ImageKey = "project"
+            };
         }
 
         #endregion
