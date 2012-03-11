@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Moai.Platform.UI
 {
-    public interface IComponent : IProxable
+    public interface IComponent
     {
     }
 }

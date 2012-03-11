@@ -7,7 +7,7 @@ using System.Collections.Specialized;
 
 namespace Moai.Platform.UI
 {
-    public interface IImageList : IProxable
+    public interface IImageList
     {
         void Add(Image image);
         void Add(string name, Image image);

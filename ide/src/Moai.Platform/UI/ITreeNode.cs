@@ -6,7 +6,7 @@ using Moai.Platform.UI.Segments;
 
 namespace Moai.Platform.UI
 {
-    public interface ITreeNode : IProxable, IHasImageList, IHasBasics
+    public interface ITreeNode : IHasImageList, IHasBasics
     {
         List<ITreeNode> Nodes { get; }
     }

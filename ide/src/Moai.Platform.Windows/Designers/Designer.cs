@@ -60,14 +60,5 @@ namespace Moai.Designers
         }
 
         #endregion
-
-        #region IProxable Members
-
-        public T ProxyAs<T>() where T : class
-        {
-            throw new NotSupportedException();
-        }
-
-        #endregion
     }
 }

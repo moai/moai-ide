@@ -59,12 +59,12 @@ namespace Moai.Platform.Windows
 
         public void ShowMessage(string message, string title, Moai.Platform.UI.MessageBoxButtons buttons)
         {
-            this.ShowMessage(message, "", Moai.Platform.UI.MessageBoxButtons.OK, Moai.Platform.UI.MessageBoxIcon.None);
+            this.ShowMessage(message, title, buttons, Moai.Platform.UI.MessageBoxIcon.None);
         }
 
         public void ShowMessage(string message, string title)
         {
-            this.ShowMessage(message, "", Moai.Platform.UI.MessageBoxButtons.OK, Moai.Platform.UI.MessageBoxIcon.None);
+            this.ShowMessage(message, title, Moai.Platform.UI.MessageBoxButtons.OK, Moai.Platform.UI.MessageBoxIcon.None);
         }
 
         public void ShowMessage(string message)

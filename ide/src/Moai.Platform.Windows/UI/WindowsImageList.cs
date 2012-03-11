@@ -50,15 +50,6 @@ namespace Moai.Platform.Windows.UI
 
         #endregion
 
-        #region IProxable Members
-
-        public T ProxyAs<T>() where T : class
-        {
-            return this as T;
-        }
-
-        #endregion
-
         #region IImageList Members
 
         public T ConvertTo<T>() where T : class

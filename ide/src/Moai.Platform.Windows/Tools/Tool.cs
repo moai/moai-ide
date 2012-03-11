@@ -24,14 +24,5 @@ namespace Moai.Platform.Windows.Tools
         public virtual void OnSolutionUnloaded()
         {
         }
-
-        #region IProxable Members
-
-        public T ProxyAs<T>() where T : class
-        {
-            throw new NotSupportedException();
-        }
-
-        #endregion
     }
 }
