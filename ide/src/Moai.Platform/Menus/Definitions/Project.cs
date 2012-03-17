@@ -88,6 +88,22 @@ namespace Moai.Platform.Menus.Definitions.Project
         }
     }
 
+    public class AddFile : Action
+    {
+        public AddFile() : base() { }
+        public AddFile(object context) : base(context) { }
+
+        /// <summary>
+        /// This event is raied when the menu item is to be initalized.
+        /// </summary>
+        public override void OnInitialize()
+        {
+            this.ItemIcon = IDE.Resources.Images.file_add;
+            this.Text = "Add File...";
+            this.Enabled = true;
+        }
+    }
+
     public class AddModel : Action
     {
         public AddModel() : base() { }

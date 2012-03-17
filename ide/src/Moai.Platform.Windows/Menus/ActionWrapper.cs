@@ -16,9 +16,9 @@ namespace Moai.Platform.Windows.Menus
         /// </summary>
         /// <param name="action">The action to wrap.</param>
         /// <returns>The menu item for the action.</returns>
-        private static ToolStripMenuItem WrapAction(Moai.Platform.Menus.Action action)
+        private static T WrapAction<T>(Moai.Platform.Menus.Action action) where T : ToolStripItem, new()
         {
-            ToolStripMenuItem mi = new ToolStripMenuItem();
+            T mi = new T();
             if (action == null)
             {
                 mi.Text = "ERROR! UNKNOWN ACTION";
@@ -35,14 +35,19 @@ namespace Moai.Platform.Windows.Menus
             return mi;
         }
 
-        private static void ActionSyncDataChanged(Moai.Platform.Menus.Action.ActionSyncData data, ToolStripMenuItem mi)
+        private static void ActionSyncDataChanged(Moai.Platform.Menus.Action.ActionSyncData data, ToolStripItem mi)
         {
             // Set properties.
             System.Action act = () =>
                 {
-                    mi.Text = data.Text;
-                    mi.ShortcutKeys = KeyUtil.FromPlatform(data.Shortcut);
-                    mi.ShowShortcutKeys = false;
+                    if (mi is ToolStripMenuItem && !(mi is ToolStripDropDownButton))
+                    {
+                        mi.Text = data.Text;
+                        (mi as ToolStripMenuItem).ShortcutKeys = KeyUtil.FromPlatform(data.Shortcut);
+                        (mi as ToolStripMenuItem).ShowShortcutKeys = false;
+                    }
+                    else
+                        mi.ToolTipText = data.Text;
                     mi.Enabled = data.Enabled && data.Implemented;
                     if (data.ItemIcon != null)
                         mi.Image = data.ItemIcon;
@@ -63,7 +68,7 @@ namespace Moai.Platform.Windows.Menus
                 else if (a is SeperatorAction)
                     ctx.Items.Add("-");
                 else
-                    ctx.Items.Add(ActionWrapper.WrapAction(a));
+                    ctx.Items.Add(ActionWrapper.WrapAction<ToolStripMenuItem>(a));
             }
             return ctx;
         }
@@ -78,14 +83,14 @@ namespace Moai.Platform.Windows.Menus
                 else if (a is SeperatorAction)
                     ms.Items.Add("-");
                 else
-                    ms.Items.Add(ActionWrapper.WrapAction(a));
+                    ms.Items.Add(ActionWrapper.WrapAction<ToolStripMenuItem>(a));
             }
             return ms;
         }
 
-        private static ToolStripItem GetMenuItems(DynamicGroupAction group)
+        private static ToolStripMenuItem GetMenuItems(DynamicGroupAction group)
         {
-            ToolStripMenuItem mi = ActionWrapper.WrapAction(group);
+            ToolStripMenuItem mi = ActionWrapper.WrapAction<ToolStripMenuItem>(group);
             mi.DropDown.Items.Clear();
             foreach (Moai.Platform.Menus.Action a in group.Actions)
             {
@@ -94,14 +99,40 @@ namespace Moai.Platform.Windows.Menus
                 else if (a is SeperatorAction)
                     mi.DropDown.Items.Add("-");
                 else
-                    mi.DropDown.Items.Add(ActionWrapper.WrapAction(a));
+                    mi.DropDown.Items.Add(ActionWrapper.WrapAction<ToolStripMenuItem>(a));
             }
             return mi;
         }
 
         internal static ToolStrip GetToolBar(DynamicGroupAction group)
         {
-            return new ToolStrip();
+            ToolStrip ts = new ToolStrip();
+            foreach (Moai.Platform.Menus.Action a in group.Actions)
+            {
+                if (a is DynamicGroupAction)
+                    ts.Items.Add(ActionWrapper.GetToolItems(a as DynamicGroupAction));
+                else if (a is SeperatorAction)
+                    ts.Items.Add("-");
+                else
+                    ts.Items.Add(ActionWrapper.WrapAction<ToolStripButton>(a));
+            }
+            return ts;
+        }
+
+        private static ToolStripDropDownButton GetToolItems(DynamicGroupAction group)
+        {
+            ToolStripDropDownButton mi = ActionWrapper.WrapAction<ToolStripDropDownButton>(group);
+            mi.DropDown.Items.Clear();
+            foreach (Moai.Platform.Menus.Action a in group.Actions)
+            {
+                if (a is DynamicGroupAction)
+                    mi.DropDown.Items.Add(ActionWrapper.GetMenuItems(a as DynamicGroupAction));
+                else if (a is SeperatorAction)
+                    mi.DropDown.Items.Add("-");
+                else
+                    mi.DropDown.Items.Add(ActionWrapper.WrapAction<ToolStripMenuItem>(a));
+            }
+            return mi;
         }
     }
 }

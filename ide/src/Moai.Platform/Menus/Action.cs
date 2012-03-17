@@ -31,7 +31,7 @@ namespace Moai.Platform.Menus
             {
                 return this.p_ItemIcon;
             }
-            protected set
+            protected internal set
             {
                 this.p_ItemIcon = value;
                 this.OnSyncDataChanged();
@@ -47,7 +47,7 @@ namespace Moai.Platform.Menus
             {
                 return this.p_Text;
             }
-            protected set
+            protected internal set
             {
                 this.p_Text = value;
                 this.OnSyncDataChanged();
@@ -63,7 +63,7 @@ namespace Moai.Platform.Menus
             {
                 return this.p_Enabled;
             }
-            protected set
+            protected internal set
             {
                 this.p_Enabled = value;
                 this.OnSyncDataChanged();
@@ -79,7 +79,7 @@ namespace Moai.Platform.Menus
             {
                 return this.p_Checked;
             }
-            protected set
+            protected internal set
             {
                 this.p_Checked = value;
                 this.OnSyncDataChanged();
@@ -95,7 +95,7 @@ namespace Moai.Platform.Menus
             {
                 return this.p_Implemented;
             }
-            protected set
+            protected internal set
             {
                 this.p_Implemented = value;
                 this.OnSyncDataChanged();
@@ -111,7 +111,7 @@ namespace Moai.Platform.Menus
             {
                 return this.p_Shortcut;
             }
-            protected set
+            protected internal set
             {
                 this.p_Shortcut = value;
                 this.OnSyncDataChanged();

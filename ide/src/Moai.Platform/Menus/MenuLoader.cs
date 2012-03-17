@@ -12,8 +12,8 @@ namespace Moai.Platform.Menus
     class MenuLoader
     {
         private XmlReader m_Reader;
-        public DynamicGroupAction MainMenu = new DynamicGroupAction(null, null);
-        public DynamicGroupAction ToolBar = new DynamicGroupAction(null, null);
+        public DynamicGroupAction MainMenu = new DynamicGroupAction();
+        public DynamicGroupAction ToolBar = new DynamicGroupAction();
 
         public DynamicGroupAction ActiveMenuStore;
         public DynamicGroupAction ActiveToolStore;
@@ -66,7 +66,7 @@ namespace Moai.Platform.Menus
                                         // active menu store into the parent list and create a new active
                                         // menu store.
                                         this.ParentMenuStores.Push(this.ActiveMenuStore);
-                                        this.ActiveMenuStore = new DynamicGroupAction(this.m_Reader.GetAttribute("text"), null);
+                                        this.ActiveMenuStore = new DynamicGroupAction(this.m_Reader.GetAttribute("text"));
                                     }
                                 }
                                 break;
@@ -77,6 +77,47 @@ namespace Moai.Platform.Menus
 
                                     // Add it to the list of main menu items.
                                     this.ActiveMenuStore.Add(a);
+                                }
+                                break;
+                            case "toolitem":
+                                {
+                                    // Check to see if this is an empty element.
+                                    if (this.m_Reader.IsEmptyElement)
+                                    {
+                                        // Use reflection to create an instance of the action.
+                                        Action a = this.GetActionByName(this.m_Reader.GetAttribute("action"));
+
+                                        // Add it to the list of main menu items.
+                                        this.ActiveToolStore.Add(a);
+                                    }
+                                    else if (this.m_Reader.GetAttribute("action") != null)
+                                    {
+                                        // Use reflection to create an instance of the action.
+                                        Action a = this.GetActionByName(this.m_Reader.GetAttribute("action"));
+
+                                        // This menu item contains other menu items, move the currently
+                                        // active menu store into the parent list and create a new active
+                                        // menu store.
+                                        this.ParentToolStores.Push(this.ActiveToolStore);
+                                        this.ActiveToolStore = new DynamicGroupAction(a);
+                                    }
+                                    else
+                                    {
+                                        // This menu item contains other menu items, move the currently
+                                        // active menu store into the parent list and create a new active
+                                        // menu store.
+                                        this.ParentToolStores.Push(this.ActiveToolStore);
+                                        this.ActiveToolStore = new DynamicGroupAction(this.m_Reader.GetAttribute("text"));
+                                    }
+                                }
+                                break;
+                            case "toolseperator":
+                                {
+                                    // Create a new SeperatorAction.
+                                    Action a = new SeperatorAction();
+
+                                    // Add it to the list of main menu items.
+                                    this.ActiveToolStore.Add(a);
                                 }
                                 break;
                                 /*
@@ -190,6 +231,17 @@ namespace Moai.Platform.Menus
                                         // Finish this menu section up.
                                         this.ParentMenuStores.Peek().Add(this.ActiveMenuStore);
                                         this.ActiveMenuStore = this.ParentMenuStores.Pop();
+                                    }
+                                }
+                                break;
+                            case "toolitem":
+                                {
+                                    // Check to see if this is not an empty element.
+                                    if (!this.m_Reader.IsEmptyElement)
+                                    {
+                                        // Finish this menu section up.
+                                        this.ParentToolStores.Peek().Add(this.ActiveToolStore);
+                                        this.ActiveToolStore = this.ParentToolStores.Pop();
                                     }
                                 }
                                 break;
