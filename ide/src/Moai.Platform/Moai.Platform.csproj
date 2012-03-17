@@ -109,7 +109,6 @@
     <Compile Include="UI\ITool.cs" />
     <Compile Include="UI\IToolStripComboBox.cs" />
     <Compile Include="UI\IToolStripDropDownButton.cs" />
-    <Compile Include="UI\IProxable.cs" />
     <Compile Include="UI\IToolStripDropDownMenu.cs" />
     <Compile Include="UI\IToolStripDropDown.cs" />
     <Compile Include="UI\IComponent.cs" />

@@ -20,7 +20,7 @@ namespace Moai.Platform.Linux
         {
             InitializeComponent();
             this.Title += " (" + Versioning.Version.GetVersionString() + ")";
-            this.Icon = LinuxImageList.ConvertToPixbuf(Moai.Platform.Linux.Properties.Resources.MoaiIcon);
+            this.Icon = LinuxImageList.ConvertToPixbuf(Properties.Resources.MoaiIcon);
         }
 
         /// <summary>
