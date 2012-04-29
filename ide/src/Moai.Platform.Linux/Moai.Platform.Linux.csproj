@@ -48,6 +48,12 @@
     </Reference>
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="qt-dotnet">
+      <HintPath>..\..\..\..\..\..\..\..\usr\lib\mono\gac\qt-dotnet\4.5.0.0__194a23ba31c08164\qt-dotnet.dll</HintPath>
+    </Reference>
+    <Reference Include="qscintilla">
+      <HintPath>..\..\..\..\..\..\..\..\usr\lib\mono\gac\qscintilla\2.2.0.0__194a23ba31c08164\qscintilla.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\VersionInfo.cs">

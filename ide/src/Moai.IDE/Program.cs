@@ -16,7 +16,8 @@ namespace Moai
         [STAThread]
         static void Main()
         {
-            Central.Initialize(new Manager(), PlatformDetection.Detect());
+            Central.InitializeLogger();
+            Central.InitializeSystem(new Manager(), PlatformDetection.Detect());
             Central.Manager.Initalize();
             Central.Manager.Start();
         }

@@ -17,6 +17,8 @@ namespace Moai.Versioning
                     return "Jenkins Build #" + (o as JenkinsAttribute).BuildNumber + Version.GetRevisionAppendingString();
                 else if (o is VisualStudio2008Attribute)
                     return "Visual Studio 2008 Build";
+                else if (o is MonoAttribute)
+                    return "Mono Build";
             }
             return "Unknown Build";
         }

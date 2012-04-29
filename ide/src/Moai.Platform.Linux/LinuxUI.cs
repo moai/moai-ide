@@ -54,8 +54,8 @@ namespace Moai.Platform.Linux
                     throw new NotSupportedException();
             }
 
-            MessageDialog dialog = new MessageDialog((Central.Manager.IDE as LinuxIDE), DialogFlags.Modal, nativeIcon, nativeButtons, message);
-            dialog.Show();
+            //MessageDialog dialog = new MessageDialog((Central.Manager.IDE as LinuxIDE), DialogFlags.Modal, nativeIcon, nativeButtons, message);
+            //dialog.Show();
         }
 
         public void ShowMessage(string message, string title, MessageBoxButtons buttons)
@@ -75,7 +75,8 @@ namespace Moai.Platform.Linux
 
         public string PickExistingFile(PickingData data)
         {
-            FileChooserDialog fcd = new FileChooserDialog(
+            throw new NotImplementedException();
+            /*FileChooserDialog fcd = new FileChooserDialog(
                 "Select File",
                 (Central.Manager.IDE as LinuxIDE),
                 FileChooserAction.Open,
@@ -89,7 +90,7 @@ namespace Moai.Platform.Linux
             if (fcd.Run() == (int)ResponseType.Accept)
                 result = fcd.Filename;
             fcd.Destroy();
-            return result;
+            return result;*/
         }
 
         public Moai.Platform.Templates.Solutions.SolutionCreationData PickNewSolution()

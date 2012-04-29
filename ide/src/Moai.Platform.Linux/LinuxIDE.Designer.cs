@@ -13,10 +13,10 @@ namespace Moai.Platform.Linux
         /// </summary>
         private void SetMainMenu(MenuBar menu)
         {
-            this.c_MenuBox.Remove(this.c_MainMenu);
+            /*this.c_MenuBox.Remove(this.c_MainMenu);
             this.c_MainMenu = menu;
             this.c_MenuBox.PackStart(this.c_MainMenu, false, true, 0);
-            this.c_MenuBox.ReorderChild(this.c_MainMenu, 0);
+            this.c_MenuBox.ReorderChild(this.c_MainMenu, 0);*/
         }
 
         /// <summary>
@@ -24,10 +24,10 @@ namespace Moai.Platform.Linux
         /// </summary>
         private void SetToolBar(Toolbar toolbar)
         {
-            this.c_MenuBox.Remove(this.c_ToolBar);
+            /*this.c_MenuBox.Remove(this.c_ToolBar);
             this.c_ToolBar = toolbar;
             this.c_MenuBox.PackStart(this.c_ToolBar, false, true, 0);
-            this.c_MenuBox.ReorderChild(this.c_ToolBar, 1);
+            this.c_MenuBox.ReorderChild(this.c_ToolBar, 1);*/
         }
 
         /// <summary>
@@ -35,7 +35,7 @@ namespace Moai.Platform.Linux
         /// </summary>
         private void InitializeComponent()
         {
-            this.c_MenuBox = new VBox();
+            /*this.c_MenuBox = new VBox();
             this.c_MainMenu = new MenuBar();
             this.c_ToolBar = new Toolbar();
             this.c_FrameBox = new HBox();
@@ -69,15 +69,16 @@ namespace Moai.Platform.Linux
             this.Add(this.c_MenuBox);
             this.DeleteEvent += (sender, e) => { this.Exit(); };
             this.Shown += new EventHandler(IDE_Shown);
+            */
         }
 
-        VBox c_MenuBox = null;
+        /*VBox c_MenuBox = null;
         MenuBar c_MainMenu = null;
         Toolbar c_ToolBar = null;
         HBox c_FrameBox = null;
         Notebook c_RightTools = null;
         Notebook c_BottomTools = null;
         VBox c_DocumentBox = null;
-        Notebook c_DocumentNotebook = null;
+        Notebook c_DocumentNotebook = null;*/
     }
 }

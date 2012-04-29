@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Gtk;
+using Qyoto;
 
 namespace Moai.Platform.Linux
 {
@@ -10,8 +10,9 @@ namespace Moai.Platform.Linux
     {
         public LinuxPlatform()
         {
+            new QApplication(new string[] { });
             this.UI = new LinuxUI();
-            Application.Init();
+            //Application.Init();
         }
 
         public IIDE CreateIDE()
@@ -21,9 +22,9 @@ namespace Moai.Platform.Linux
 
         public void RunIDE(IIDE ide)
         {
-            (ide as LinuxIDE).Maximize();
-            (ide as LinuxIDE).ShowAll();
-            Application.Run();
+            //(ide as LinuxIDE).Maximize();
+            //(ide as LinuxIDE).ShowAll();
+            QApplication.Exec();
         }
 
         public Type GetDesignerTypeImplementing(Type type)

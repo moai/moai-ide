@@ -44,7 +44,7 @@ namespace Moai.Platform.Linux.Menus
                 //mi.ShortcutKeys = KeyUtil.FromPlatform(data.Shortcut);
                 //mi.ShowShortcutKeys = false;
                 mi.Sensitive = data.Enabled && data.Implemented;
-                mi.Image = LinuxImageList.ConvertToGtk(data.ItemIcon);
+                //mi.Image = LinuxImageList.ConvertToGtk(data.ItemIcon);
             };
             /*if (mi.Parent != null && (mi.Window.InvokeRequired)
                 mi.Parent.Invoke(act);

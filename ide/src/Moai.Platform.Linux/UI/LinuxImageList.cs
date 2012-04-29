@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Collections.Specialized;
 using Moai.Platform.UI;
 using System.IO;
+using Qyoto;
 
 namespace Moai.Platform.Linux.UI
 {
@@ -14,41 +15,29 @@ namespace Moai.Platform.Linux.UI
         private OrderedDictionary m_Images = new OrderedDictionary();
 
         #region Conversion Methods
-
-        internal static Gtk.Image ConvertToGtk(Image image)
+    	
+        internal static QIcon ConvertToQIcon(Icon icon)
         {
-            if (image == null) return null;
-            return new Gtk.Image(LinuxImageList.ConvertToPixbuf(image));
+            // FIXME: On Linux systems we should use some sort of
+            // icon caching mechanism so we're not writing out the
+            // every single time we want to use it.
+            string fname = Path.GetTempFileName();
+            icon.ToBitmap().Save(fname, System.Drawing.Imaging.ImageFormat.Png);
+            QIcon result = new QIcon(fname);
+            File.Delete(fname);
+            return result;
         }
-
-        internal static Gtk.Image ConvertToGtk(Icon icon)
+        
+        internal static QImage ConvertToQImage(Image image)
         {
-            if (icon == null) return null;
-            return new Gtk.Image(LinuxImageList.ConvertToPixbuf(icon));
-        }
-
-        internal static Gdk.Pixbuf ConvertToPixbuf(Image image)
-        {
-            if (image == null) return null;
-            using (MemoryStream stream = new MemoryStream())
-            {
-                image.Save(stream, System.Drawing.Imaging.ImageFormat.Png);
-                stream.Position = 0;
-                Gdk.Pixbuf pixbuf = new Gdk.Pixbuf(stream);
-                return pixbuf;
-            }
-        }
-
-        internal static Gdk.Pixbuf ConvertToPixbuf(Icon icon)
-        {
-            if (icon == null) return null;
-            using (MemoryStream stream = new MemoryStream())
-            {
-                icon.ToBitmap().Save(stream, System.Drawing.Imaging.ImageFormat.Png);
-                stream.Position = 0;
-                Gdk.Pixbuf pixbuf = new Gdk.Pixbuf(stream);
-                return pixbuf;
-            }
+            // FIXME: On Linux systems we should use some sort of
+            // icon caching mechanism so we're not writing out the
+            // every single time we want to use it.
+            string fname = Path.GetTempFileName();
+            image.Save(fname, System.Drawing.Imaging.ImageFormat.Png);
+            QImage result = new QImage(fname);
+            File.Delete(fname);
+            return result;
         }
 
         #endregion
