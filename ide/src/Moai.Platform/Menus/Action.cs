@@ -16,6 +16,7 @@ namespace Moai.Platform.Menus
         private bool p_Implemented = true;
         private Keys p_Shortcut = Keys.None;
         private object p_Context = null;
+        private ActionUserData p_UserData = new ActionUserData();
 
         public Action() { }
         public Action(object context) { this.p_Context = context; }
@@ -119,6 +120,22 @@ namespace Moai.Platform.Menus
         }
 
         /// <summary>
+        /// The platform userdata associated with this action.
+        /// </summary>
+        public virtual object UserData
+        {
+            get
+            {
+                return this.p_UserData.Object;
+            }
+            protected internal set
+            {
+                this.p_UserData.Object = value;
+                this.OnSyncDataChanged();
+            }
+        }
+
+        /// <summary>
         /// The context data associated with this action.
         /// </summary>
         protected object Context
@@ -146,7 +163,8 @@ namespace Moai.Platform.Menus
                 Enabled = this.Enabled,
                 Implemented = this.Implemented,
                 Shortcut = this.Shortcut,
-                Checked = this.Checked
+                Checked = this.Checked,
+                UserData = this.p_UserData
             };
         }
 
@@ -164,6 +182,12 @@ namespace Moai.Platform.Menus
             public bool Implemented;
             public Keys Shortcut;
             public bool Checked;
+            public ActionUserData UserData;
+        }
+
+        public class ActionUserData
+        {
+            public object Object;
         }
 
         #endregion

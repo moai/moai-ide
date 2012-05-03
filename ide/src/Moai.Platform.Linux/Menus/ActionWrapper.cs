@@ -2,106 +2,153 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Gtk;
 using Moai.Platform.Menus;
 using Moai.Platform.Linux.UI;
+using Qyoto;
+using log4net;
 
 namespace Moai.Platform.Linux.Menus
 {
     public static class ActionWrapper
     {
+        private static readonly ILog m_Log = LogManager.GetLogger(typeof(ActionWrapper));
+
+        private class QSyncableAction : QAction
+        {
+            public Moai.Platform.Menus.Action Target
+            {
+                get;
+                private set;
+            }
+
+            public QSyncableAction(Moai.Platform.Menus.Action target) : base((QObject)null)
+            {
+                this.Target = target;
+                this.Connect(this, SIGNAL("triggered(bool)"), SLOT("OnTriggered(bool)"));
+            }
+
+            [Q_SLOT]
+            public void Resync()
+            {
+                if (this.Target == null)
+                    return;
+                Moai.Platform.Menus.Action.ActionSyncData data = this.Target.GetSyncData() as Moai.Platform.Menus.Action.ActionSyncData;
+
+                this.Text = data.Text;
+                //this.ReleaseShortcut((int)data.UserData.Object);
+                //data.UserData.Object = this.GrabShortcut(KeyUtil.FromPlatform(data.Shortcut));
+                this.Enabled = data.Enabled && data.Implemented;
+                if (data.ItemIcon != null)
+                {
+                    this.icon = LinuxImageList.ConvertToQIcon(data.ItemIcon);
+                    this.IconVisibleInMenu = true;
+                }
+                else
+                    this.IconVisibleInMenu = false;
+            }
+
+            [Q_SLOT]
+            public void OnTriggered(bool isChecked)
+            {
+                if (this.Target == null)
+                    return;
+                this.Target.OnActivate();
+            }
+        }
+
         /// <summary>
         /// Wraps the specified action by assigning it's handlers and returning
         /// the menu item related to it.
         /// </summary>
         /// <param name="action">The action to wrap.</param>
         /// <returns>The menu item for the action.</returns>
-        private static MenuItem WrapAction(Moai.Platform.Menus.Action action)
+        private static QAction WrapAction(Moai.Platform.Menus.Action action)
         {
-            ImageMenuItem mi = new ImageMenuItem("ERROR! UNSET MENU ITEM");
+            m_Log.Debug("Wrapping action " + action.GetType().FullName + ".");
+            QSyncableAction mi = new QSyncableAction(action);
+            LinuxNativePool.Instance.Retain(mi);
             if (action == null)
             {
-                (mi.Child as Label).Text = "ERROR! UNKNOWN ACTION";
-                mi.Sensitive = false;
+                mi.Text = "ERROR! UNKNOWN ACTION";
+                mi.Enabled = false;
                 return mi;
             }
             action.SyncDataChanged += (sender, e) =>
             {
-                ActionWrapper.ActionSyncDataChanged(action.GetSyncData() as Moai.Platform.Menus.Action.ActionSyncData, mi);
+                mi.Resync();
             };
             action.OnInitialize();
-            ActionWrapper.ActionSyncDataChanged(action.GetSyncData() as Moai.Platform.Menus.Action.ActionSyncData, mi);
-            mi.Activated += new EventHandler((sender, e) => { action.OnActivate(); });
+            mi.Resync();
             return mi;
         }
 
-        private static void ActionSyncDataChanged(Moai.Platform.Menus.Action.ActionSyncData data, ImageMenuItem mi)
+        public static QMenu GetContextMenu(Moai.Platform.Menus.Action[] actions)
         {
-            // Set properties.
-            System.Action act = () =>
-            {
-                (mi.Child as AccelLabel).Text = data.Text;
-                //mi.ShortcutKeys = KeyUtil.FromPlatform(data.Shortcut);
-                //mi.ShowShortcutKeys = false;
-                mi.Sensitive = data.Enabled && data.Implemented;
-                //mi.Image = LinuxImageList.ConvertToGtk(data.ItemIcon);
-            };
-            /*if (mi.Parent != null && (mi.Window.InvokeRequired)
-                mi.Parent.Invoke(act);
-            else*/
-                act();
-        }
-
-        public static Menu GetContextMenu(Moai.Platform.Menus.Action[] actions)
-        {
-            Menu ctx = new Menu();
+            m_Log.Debug("Getting context menu.");
+            QMenu ctx = new QMenu();
+            LinuxNativePool.Instance.Retain(ctx);
             foreach (Moai.Platform.Menus.Action a in actions)
             {
                 if (a is DynamicGroupAction)
-                    ctx.Append(ActionWrapper.GetMenuItems(a as DynamicGroupAction));
+                    ctx.AddMenu(ActionWrapper.GetMenuItems(a as DynamicGroupAction));
                 else if (a is SeperatorAction)
-                    ctx.Append(new MenuItem());
+                    ctx.AddSeparator();
                 else
-                    ctx.Append(ActionWrapper.WrapAction(a));
+                    ctx.AddAction(ActionWrapper.WrapAction(a));
             }
             return ctx;
         }
 
-        internal static MenuBar GetMainMenu(DynamicGroupAction group)
+        internal static QMenuBar GetMainMenu(DynamicGroupAction group)
         {
-            MenuBar ms = new MenuBar();
+            m_Log.Debug("Getting main menu for " + group.Text + ".");
+            QMenuBar ms = new QMenuBar();
+            LinuxNativePool.Instance.Retain(ms);
             foreach (Moai.Platform.Menus.Action a in group.Actions)
             {
                 if (a is DynamicGroupAction)
-                    ms.Append(ActionWrapper.GetMenuItems(a as DynamicGroupAction));
+                {
+                    m_Log.Debug("Recursive menu add for " + a.GetType().FullName + ".");
+                    ms.AddMenu(ActionWrapper.GetMenuItems(a as DynamicGroupAction));
+                }
                 else if (a is SeperatorAction)
-                    ms.Append(new MenuItem());
+                    ms.AddSeparator();
                 else
-                    ms.Append(ActionWrapper.WrapAction(a));
+                {
+                    m_Log.Debug("Normal menu add for " + a.GetType().FullName + ".");
+                    ms.AddAction(ActionWrapper.WrapAction(a));
+                }
             }
             return ms;
         }
 
-        private static MenuItem GetMenuItems(DynamicGroupAction group)
+        private static QMenu GetMenuItems(DynamicGroupAction group)
         {
-            Menu ctx = new Menu();
+            m_Log.Debug("Getting menu items for " + group.Text + ".");
+            QMenu ctx = new QMenu(group.GetType().FullName);
+            LinuxNativePool.Instance.Retain(ctx);
             foreach (Moai.Platform.Menus.Action a in group.Actions)
             {
                 if (a is DynamicGroupAction)
-                    ctx.Append(ActionWrapper.GetMenuItems(a as DynamicGroupAction));
+                {
+                    m_Log.Debug("Recursive menu add for " + a.GetType().FullName + ".");
+                    ctx.AddMenu(ActionWrapper.GetMenuItems(a as DynamicGroupAction));
+                }
                 else if (a is SeperatorAction)
-                    ctx.Append(new MenuItem());
+                    ctx.AddSeparator();
                 else
-                    ctx.Append(ActionWrapper.WrapAction(a));
+                {
+                    m_Log.Debug("Normal menu add for " + a.GetType().FullName + ".");
+                    ctx.AddAction(ActionWrapper.WrapAction(a));
+                }
             }
-            MenuItem trigger = new MenuItem(group.Text);
-            trigger.Submenu = ctx;
-            return trigger;
+            ctx.Title = group.Text;
+            return ctx;
         }
 
-        internal static Toolbar GetToolBar(DynamicGroupAction group)
+        internal static QToolBar GetToolBar(DynamicGroupAction group)
         {
-            return new Toolbar();
+            return new QToolBar();
         }
     }
 }

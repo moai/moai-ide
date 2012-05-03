@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Gtk;
 using Moai.Platform.Linux.UI;
+using Qyoto;
 
 namespace Moai.Platform.Linux.Tools
 {
@@ -14,6 +14,10 @@ namespace Moai.Platform.Linux.Tools
         /// </summary>
         private void InitializeComponent()
         {
+            this.c_TreeView = new QTreeView(this);
+            this.c_TreeView.Resize(250, 0);
+
+            /*
             this.c_TreeView = new TreeView();
             this.c_TreeViewColumn = new TreeViewColumn();
             this.c_TreeViewCellRenderer = new CellRendererText();
@@ -34,13 +38,17 @@ namespace Moai.Platform.Linux.Tools
             //
             // SolutionExplorerTool
             //
-            this.Add(this.c_TreeView);
-            this.ShowAll();
+            */
+            this.SetWidget(this.c_TreeView);
         }
 
+        QTreeView c_TreeView = null;
+
+        /*
         TreeView c_TreeView = null;
         TreeStore c_TreeStore = null;
         TreeViewColumn c_TreeViewColumn = null;
         CellRendererText c_TreeViewCellRenderer = null;
+        */
     }
 }

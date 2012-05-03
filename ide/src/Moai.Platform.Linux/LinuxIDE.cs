@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Moai.Platform.UI;
 using Moai.Platform.Linux.Menus;
 using Moai.Platform.Linux.UI;
 using Moai.Platform.Linux.Tools;
@@ -9,7 +10,7 @@ using Qyoto;
 
 namespace Moai.Platform.Linux
 {
-    public partial class LinuxIDE : QWidget, IIDE
+    public partial class LinuxIDE : QMainWindow, IIDE
     {
         public event EventHandler Opened;
         public event EventHandler Closed;
@@ -24,32 +25,33 @@ namespace Moai.Platform.Linux
         }
 
         /// <summary>
-        /// This event is raised when the window is first shown.
+        /// This event is raised when the window is shown.
         /// </summary>
-        /// <param name="sender">The sender of the event.</param>
-        /// <param name="e">The event information.</param>
-        void IDE_Shown(object sender, EventArgs e)
+        protected override void ShowEvent(QShowEvent arg1)
         {
+            base.ShowEvent(arg1);
+
             // Load the main menu.
-            //this.SetMainMenu(ActionWrapper.GetMainMenu(Central.Manager.MenuManager.MainMenu));
+            this.SetMainMenu(ActionWrapper.GetMainMenu(Central.Manager.MenuManager.MainMenu));
 
             // Load the tool bar.
-            //this.SetToolBar(ActionWrapper.GetToolBar(Central.Manager.MenuManager.ToolBar));
+            this.SetToolBar(ActionWrapper.GetToolBar(Central.Manager.MenuManager.ToolBar));
 
             // Set up the workspace.
-            //Central.Manager.ToolsManager = new Moai.Platform.Linux.Tools.Manager();
+            Central.Manager.ToolsManager = new Moai.Platform.Linux.Tools.Manager();
             //Central.Manager.ToolsManager.Show(typeof(Moai.Platform.Linux.Tools.ErrorListTool));
             //Central.Manager.ToolsManager.Show(typeof(Moai.Platform.Linux.Tools.ImmediateWindowTool));
-            //Central.Manager.ToolsManager.Show(typeof(Moai.Platform.Linux.Tools.SolutionExplorerTool));
+            Central.Manager.ToolsManager.Show(typeof(Moai.Platform.Linux.Tools.SolutionExplorerTool));
 
             // Show the start page.
-            //this.ShowDock(new Moai.Platform.Windows.Designers.Start.Designer(null), ToolPosition.Document);
+            this.ShowDock(new Moai.Platform.Linux.Designers.Start.Designer(), ToolPosition.Document);
         }
 
         #region IIDE Members
 
         public void Exit()
         {
+            this.c_Documents.Clear();
             QApplication.Quit();
         }
 
@@ -65,15 +67,26 @@ namespace Moai.Platform.Linux
 
         public void ShowDock(Moai.Platform.UI.ITool tool, Moai.Platform.UI.ToolPosition position)
         {
-            throw new NotSupportedException();
-			
             switch (position)
             {
+                case Moai.Platform.UI.ToolPosition.DockLeft:
+                    this.AddDockWidget(Qt.DockWidgetArea.LeftDockWidgetArea, tool as QDockWidget);
+                    break;
+                case Moai.Platform.UI.ToolPosition.DockTop:
+                    this.AddDockWidget(Qt.DockWidgetArea.TopDockWidgetArea, tool as QDockWidget);
+                    break;
                 case Moai.Platform.UI.ToolPosition.DockRight:
-                    //this.c_RightTools.AppendPage(tool as Widget, new AccelLabel((tool as Tool).Title));
+                    this.AddDockWidget(Qt.DockWidgetArea.RightDockWidgetArea, tool as QDockWidget);
                     break;
                 case Moai.Platform.UI.ToolPosition.DockBottom:
-                    //this.c_BottomTools.AppendPage(tool as Widget, new AccelLabel((tool as Tool).Title));
+                    this.AddDockWidget(Qt.DockWidgetArea.BottomDockWidgetArea, tool as QDockWidget);
+                    break;
+                case Moai.Platform.UI.ToolPosition.Document:
+                    if (tool is Moai.Designers.Designer)
+                    {
+                        (tool as Moai.Designers.Designer).SwitchParent(this.c_Documents);
+                        this.c_Documents.AddTab(tool as QWidget, (tool as Moai.Designers.Designer).TabText);
+                    }
                     break;
                 default:
                     throw new NotSupportedException();

@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Gtk;
 using Moai.Platform.UI;
 using Moai.Platform.Linux.UI;
 using System.Threading;
+using Qyoto;
 
 namespace Moai.Platform.Linux
 {
@@ -20,18 +20,18 @@ namespace Moai.Platform.Linux
 
         public void ShowMessage(string message, string title, MessageBoxButtons buttons, MessageBoxIcon icon)
         {
-            ButtonsType nativeButtons;
-            MessageType nativeIcon;
+            QMessageBox.StandardButton nativeButtons;
+            QMessageBox.Icon nativeIcon;
             switch (buttons)
             {
                 case Moai.Platform.UI.MessageBoxButtons.OK:
-                    nativeButtons = ButtonsType.Ok;
+                    nativeButtons = QMessageBox.StandardButton.Ok;
                     break;
                 case Moai.Platform.UI.MessageBoxButtons.OKCancel:
-                    nativeButtons = ButtonsType.OkCancel;
+                    nativeButtons = QMessageBox.StandardButton.Ok | QMessageBox.StandardButton.Cancel;
                     break;
                 case Moai.Platform.UI.MessageBoxButtons.YesNo:
-                    nativeButtons = ButtonsType.YesNo;
+                    nativeButtons = QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No;
                     break;
                 default:
                     throw new NotSupportedException();
@@ -39,21 +39,23 @@ namespace Moai.Platform.Linux
             switch (icon)
             {
                 case Moai.Platform.UI.MessageBoxIcon.None:
-                    nativeIcon = MessageType.Other;
+                    nativeIcon = QMessageBox.Icon.NoIcon;
                     break;
                 case Moai.Platform.UI.MessageBoxIcon.Information:
-                    nativeIcon = MessageType.Info;
+                    nativeIcon = QMessageBox.Icon.Information;
                     break;
                 case Moai.Platform.UI.MessageBoxIcon.Warning:
-                    nativeIcon = MessageType.Warning;
+                    nativeIcon = QMessageBox.Icon.Warning;
                     break;
                 case Moai.Platform.UI.MessageBoxIcon.Error:
-                    nativeIcon = MessageType.Error;
+                    nativeIcon = QMessageBox.Icon.Critical;
                     break;
                 default:
                     throw new NotSupportedException();
             }
 
+            QMessageBox dialog = new QMessageBox(nativeIcon, title, message, (uint)nativeButtons, (Central.Manager.IDE as LinuxIDE));
+            dialog.Show();
             //MessageDialog dialog = new MessageDialog((Central.Manager.IDE as LinuxIDE), DialogFlags.Modal, nativeIcon, nativeButtons, message);
             //dialog.Show();
         }
@@ -75,7 +77,12 @@ namespace Moai.Platform.Linux
 
         public string PickExistingFile(PickingData data)
         {
-            throw new NotImplementedException();
+            return QFileDialog.GetOpenFileName(
+                (Central.Manager.IDE as LinuxIDE),
+                "Select File",
+                Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
+                "All Files (*.*)"
+                );
             /*FileChooserDialog fcd = new FileChooserDialog(
                 "Select File",
                 (Central.Manager.IDE as LinuxIDE),

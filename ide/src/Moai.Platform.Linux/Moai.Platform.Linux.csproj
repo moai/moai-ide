@@ -31,10 +31,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="atk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
-    <Reference Include="gdk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
-    <Reference Include="glib-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
-    <Reference Include="gtk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -53,6 +49,12 @@
     </Reference>
     <Reference Include="qscintilla">
       <HintPath>..\..\..\..\..\..\..\..\usr\lib\mono\gac\qscintilla\2.2.0.0__194a23ba31c08164\qscintilla.dll</HintPath>
+    </Reference>
+    <Reference Include="log4net">
+      <HintPath>..\..\libraries\log4net.dll</HintPath>
+    </Reference>
+    <Reference Include="qtwebkit">
+      <HintPath>..\..\..\..\..\..\..\..\usr\lib\mono\gac\qtwebkit\2.2.0.0__194a23ba31c08164\qtwebkit.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -84,6 +86,14 @@
     <Compile Include="UI\LinuxImageList.cs" />
     <Compile Include="UI\ProjectTreeNode.cs" />
     <Compile Include="UI\SolutionTreeNode.cs" />
+    <Compile Include="LinuxNativePool.cs" />
+    <Compile Include="Designers\Designer.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Designers\Code\Designer.cs" />
+    <Compile Include="Designers\Start\Designer.cs" />
+    <Compile Include="Designers\Code\Designer.Designer.cs" />
+    <Compile Include="Designers\Start\Designer.Designer.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Moai.Contracts\Moai.Contracts.csproj">

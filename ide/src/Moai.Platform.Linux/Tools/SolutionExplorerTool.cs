@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Moai.Platform.UI;
-using Gtk;
 using Moai.Platform.Management;
 using Moai.Platform.Linux.UI;
+using Qyoto;
 
 namespace Moai.Platform.Linux.Tools
 {
@@ -27,6 +27,22 @@ namespace Moai.Platform.Linux.Tools
             this.ReloadTree();
         }
 
+        protected override void MousePressEvent(Qyoto.QMouseEvent arg1)
+        {
+            //
+            //this.SetMinimumSize(16777215, 16777215);
+        }
+
+        protected override void ShowEvent(Qyoto.QShowEvent arg1)
+        {
+            //this.Resize(600, this.Height());
+
+            //this.Widget().Resize(250, 16777215);
+            //this.SetSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding);
+            //this.Widget().SetSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding);
+            //this.SetGeometry(0, 0, 250, this.Widget().Height());
+        }
+
         public void ReloadTree()
         {
             // Search the tree node for events to disconnect from.
@@ -43,7 +59,7 @@ namespace Moai.Platform.Linux.Tools
             }*/
 
             // Fill the solution explorer with the tree nodes.
-            try
+            /*try
             {
                 this.c_TreeStore.Clear();
                 if (Central.Manager.ActiveSolution != null)
@@ -52,7 +68,7 @@ namespace Moai.Platform.Linux.Tools
             }
             catch (Exception e)
             {
-            }
+            }*/
 
             // Search the tree node for events to listen to.
             /*if (this.c_SolutionTree.Nodes.Count > 0)
@@ -69,6 +85,7 @@ namespace Moai.Platform.Linux.Tools
              */
         }
 
+        /*
         private TreeIter Wrap(Solution solution)
         {
             TreeIter ti = this.c_TreeStore.AppendValues(new SolutionTreeNode(solution));
@@ -108,6 +125,7 @@ namespace Moai.Platform.Linux.Tools
             BaseTreeNode node = model.GetValue(iter, 0) as BaseTreeNode;
             (cell as CellRendererText).Text = node.Text;
         }
+        */
 
         public override ToolPosition DefaultState
         {

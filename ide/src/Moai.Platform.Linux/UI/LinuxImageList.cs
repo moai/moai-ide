@@ -18,25 +18,29 @@ namespace Moai.Platform.Linux.UI
     	
         internal static QIcon ConvertToQIcon(Icon icon)
         {
-            // FIXME: On Linux systems we should use some sort of
-            // icon caching mechanism so we're not writing out the
-            // every single time we want to use it.
-            string fname = Path.GetTempFileName();
-            icon.ToBitmap().Save(fname, System.Drawing.Imaging.ImageFormat.Png);
-            QIcon result = new QIcon(fname);
-            File.Delete(fname);
-            return result;
+            return LinuxImageList.ConvertToQIcon(icon.ToBitmap());
         }
-        
+
+        internal static QIcon ConvertToQIcon(Image image)
+        {
+            QImage ms = ConvertToQImage(image);
+            QPixmap px = QPixmap.FromImage(ms);
+            return new QIcon(px);
+        }
+
+        internal static QImage ConvertToQImage(Icon icon)
+        {
+            return LinuxImageList.ConvertToQImage(icon.ToBitmap());
+        }
+
         internal static QImage ConvertToQImage(Image image)
         {
-            // FIXME: On Linux systems we should use some sort of
-            // icon caching mechanism so we're not writing out the
-            // every single time we want to use it.
-            string fname = Path.GetTempFileName();
-            image.Save(fname, System.Drawing.Imaging.ImageFormat.Png);
-            QImage result = new QImage(fname);
-            File.Delete(fname);
+            QImage result;
+            using (MemoryStream ms = new MemoryStream())
+            {
+                image.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
+                result = QImage.FromData(new QByteArray(ms.GetBuffer()), "PNG");
+            }
             return result;
         }
 

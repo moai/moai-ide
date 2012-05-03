@@ -2,22 +2,28 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Gtk;
 using Moai.Platform.UI;
+using Qyoto;
 
 namespace Moai.Platform.Linux.Tools
 {
-    public class Tool : Table, ITool
+    public class Tool : QDockWidget, ITool
     {
         public Tool()
-            : base(1, 1, true)
+            : base("Docked Area")
         {
         }
 
         public string Title
         {
-            get;
-            protected set;
+            get
+            {
+                return base.WindowTitle;
+            }
+            protected set
+            {
+                base.WindowTitle = value;
+            }
         }
 
         public virtual ToolPosition DefaultState

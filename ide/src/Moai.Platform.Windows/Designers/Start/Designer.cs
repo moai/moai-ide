@@ -35,7 +35,7 @@ namespace Moai.Platform.Windows.Designers.Start
 
             this.TabText = "Cloud Dashboard";
             this.c_WebBrowser.ScriptErrorsSuppressed = true;
-            this.c_WebBrowser.Url = new System.Uri("http://dashboard.moaicloud.com/login.php", System.UriKind.Absolute);
+            this.c_WebBrowser.Url = new System.Uri("https://dashboard.moaicloud.com/login.php", System.UriKind.Absolute);
         }
 
         /// <summary>
