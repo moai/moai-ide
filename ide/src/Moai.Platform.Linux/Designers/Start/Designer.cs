@@ -3,6 +3,7 @@ using Moai.Platform.Designers;
 using Qyoto;
 using log4net;
 using System.Threading;
+using System.Collections.Generic;
 
 namespace Moai.Platform.Linux.Designers.Start
 {
@@ -15,6 +16,7 @@ namespace Moai.Platform.Linux.Designers.Start
             InitializeComponent();
             this.TabText = "Cloud Dashboard";
             this.c_Browser.Load("https://dashboard.moaicloud.com/login.php");
+            this.Connect(this.c_Browser.Page().NetworkAccessManager(), SIGNAL("sslErrors(QNetworkReply*,const QList<QSslError>&)"), SLOT("OnSslErrors(QNetworkReply*)"));
         }
 
         protected override void ResizeEvent(QResizeEvent arg1)
@@ -51,45 +53,15 @@ namespace Moai.Platform.Linux.Designers.Start
             }
         }
 
-        public class StartNetworkAccessManager : QNetworkAccessManager
+        [Q_SLOT]
+        void OnSslErrors(QNetworkReply reply)
         {
-            public StartNetworkAccessManager() : base()
-            {
-            }
-
-            protected override QNetworkReply CreateRequest(QNetworkAccessManager.Operation op, QNetworkRequest request, QIODevice outgoingData)
-            {
-                // So Qt by default for SSL requires the most secure settings
-                // possible.  This tells Qt not to care about some of the high-security
-                // features so that more pages will be supported in the web browser.
-                try
-                {
-                    QSslConfiguration config = request.SslConfiguration();
-                    config.SetPeerVerifyMode(QSslSocket.PeerVerifyMode.VerifyNone);
-                    config.SetProtocol(QSsl.SslProtocol.TlsV1);
-                    QNetworkRequest req = new QNetworkRequest(request);
-                    req.SetSslConfiguration(config);
-                    QNetworkReply reply = base.CreateRequest(op, req);
-                    reply.IgnoreSslErrors();
-                    LinuxNativePool.Instance.Retain(req);
-                    LinuxNativePool.Instance.Retain(reply);
-                    return reply;
-                }
-                catch (Exception e)
-                {
-                    m_Log.Error("Unable to generate SSL configuration for request.  Page may not load correctly.", e);
-                    return base.CreateRequest(op, request, outgoingData);
-                }
-            }
+            LinuxNativePool.Instance.Retain(reply);
+            reply.IgnoreSslErrors();
         }
 
         public class StartWebPage : QWebPage
         {
-            public StartWebPage(QNetworkAccessManager snam)
-            {
-                this.SetNetworkAccessManager(snam);
-            }
-
             protected override void JavaScriptConsoleMessage(string message, int lineNumber, string sourceID)
             {
                 m_Log.Error("Javascript: " + message);

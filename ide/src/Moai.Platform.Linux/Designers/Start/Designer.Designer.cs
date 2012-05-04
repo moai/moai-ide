@@ -11,12 +11,7 @@ namespace Moai.Platform.Linux.Designers.Start
         private void InitializeComponent()
         {
             this.c_Browser = new QWebView(this);
-            StartNetworkAccessManager snam = new StartNetworkAccessManager();
-            StartWebPage swp = new StartWebPage(snam);
-            //
-            // snam
-            //
-            LinuxNativePool.Instance.Retain(snam);
+            StartWebPage swp = new StartWebPage();
             //
             // swp
             //
