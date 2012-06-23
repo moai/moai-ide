@@ -51,6 +51,7 @@ namespace Moai.Platform.Linux
 
         public void Exit()
         {
+            LinuxPlatform.ShuttingDown = true;
             this.c_Documents.Clear();
             QApplication.Quit();
         }

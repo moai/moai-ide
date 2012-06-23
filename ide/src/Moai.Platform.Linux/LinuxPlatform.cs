@@ -10,6 +10,7 @@ namespace Moai.Platform.Linux
     public class LinuxPlatform : IPlatform
     {
         private static readonly ILog m_Log = LogManager.GetLogger(typeof(LinuxPlatform));
+        internal static bool ShuttingDown = false;
 
         public LinuxPlatform()
         {
@@ -32,7 +33,8 @@ namespace Moai.Platform.Linux
             catch (Exception e)
             {
                 m_Log.Error("An exception occurred while running the Linux platform.", e);
-                throw new ApplicationException("The application is unable to continue due to an inconsistant Qt state.", e);
+                if (!LinuxPlatform.ShuttingDown)
+                    throw new ApplicationException("The application is unable to continue due to an inconsistant Qt state.", e);
             }
         }
 
